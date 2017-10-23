@@ -1,0 +1,29 @@
+<div *ngFor="let field of fields">
+  <div [ngSwitch]="field.type">
+    <app-input-field *ngSwitchCase="'TEXT'" [form]="form" [field]="field"></app-input-field>
+    <app-input-field *ngSwitchCase="'NUMBER'" [form]="form" [field]="field" type="number"></app-input-field>
+    <app-input-field *ngSwitchCase="'INTEGER'" [form]="form" [field]="field" type="number"></app-input-field>
+
+    <app-date-picker *ngSwitchCase="'DATE_PICKER'" [form]="form" [field]="field"></app-date-picker>
+    <app-select-field *ngSwitchCase="'SELECT'" [form]="form" [field]="field"></app-select-field>
+
+
+    <app-sub-form-array *ngSwitchCase="'ARRAY'" [formArray]="form.get(field.name)" [field]="field"></app-sub-form-array>
+    <div *ngSwitchCase="'SUB_FORM'" class="cmp-container">
+      <h2 class="mat-h2">{{field.title}}</h2>
+      <app-sub-form [form]="form.get(field.name)" [fields]="field.options.getSubFields()"></app-sub-form>
+    </div>
+
+    <div *ngSwitchDefault>{{field.type}} is an unknown type. Therefore {{field.name}} cannot be edited.</div>
+  </div>
+
+  <mat-error *ngIf="showRequiredError(field)">
+    {{field.title}} is <strong>required</strong>
+  </mat-error>
+  <mat-error *ngIf="showPatternError(field) && field.type === 'NUMBER'">
+    {{field.title}} only allows <strong>numbers</strong>
+  </mat-error>
+  <mat-error *ngIf="showPatternError(field) && field.type === 'INTEGER'">
+    {{field.title}} only allows <strong>integers</strong>
+  </mat-error>
+</div>

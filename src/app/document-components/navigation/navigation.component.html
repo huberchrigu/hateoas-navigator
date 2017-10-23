@@ -1,0 +1,11 @@
+<mat-toolbar color="primary" class="mat-elevation-z6 cmp-toolbar">
+  <span>
+    <a mat-button routerLink="/">
+      <mat-icon>home</mat-icon>
+      <span>Setty</span>
+    </a>
+  </span>
+  <span *ngFor="let item of items">
+    <a mat-button routerLink="/{{item.name}}">{{getTitle(item)}}</a>
+  </span>
+</mat-toolbar>

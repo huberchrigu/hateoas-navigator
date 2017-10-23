@@ -1,0 +1,12 @@
+<div class="cmp-container">
+  <h2 class="mat-h2">{{field.title}}</h2>
+  <div *ngFor="let subForm of formArray.controls" class="cmp-item">
+    <app-sub-form [form]="subForm" [fields]="field.options.getSubFields()"></app-sub-form>
+    <mat-toolbar>
+      <button type="button" mat-button color="warn" (click)="onRemove(subForm)">Remove</button>
+    </mat-toolbar>
+  </div>
+  <mat-toolbar>
+    <button type="button" mat-button color="primary" (click)="onAdd()">Add</button>
+  </mat-toolbar>
+</div>

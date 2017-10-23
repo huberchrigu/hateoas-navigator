@@ -1,0 +1,12 @@
+<div *ngFor="let property of properties" class="cmp-property">
+  <div *ngIf="!isArray(property)">
+    <div class="cmp-property-title">{{getPropertyTitle(property)}}</div>
+    <div class="cmp-property-value">{{property.getDisplayValue()}}</div>
+  </div>
+  <div class="cmp-sub-object" *ngIf="property.isArray()">
+    <h2 class="mat-h2">{{getPropertyTitle(property)}}</h2>
+    <div class="cmp-array-item" *ngFor="let childObjects of properties.getChildObjects(property)">
+      <app-item-properties [schema]="getDefinition(property)" [properties]="childObjects"></app-item-properties>
+    </div>
+  </div>
+</div>

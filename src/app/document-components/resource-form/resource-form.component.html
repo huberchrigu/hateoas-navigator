@@ -1,0 +1,11 @@
+<div class="mat-elevation-z4 cmp-border">
+  <h1 class="mat-display-1">{{title}}</h1>
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-sub-form [fields]="fields" [form]="form"></app-sub-form>
+
+    <div class="cmp-form-buttons">
+      <a mat-raised-button routerLink="..">Cancel</a>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Save</button>
+    </div>
+  </form>
+</div>

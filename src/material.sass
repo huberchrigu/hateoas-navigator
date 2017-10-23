@@ -1,0 +1,9 @@
+@import '../node_modules/@angular/material/theming'
+
+@include mat-core()
+
+$theme-primary: mat-palette($mat-deep-purple)
+$theme-accent: mat-palette($mat-amber)
+$theme-warn: mat-palette($mat-red)
+
+$theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn)

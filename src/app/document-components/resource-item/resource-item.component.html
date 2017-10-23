@@ -1,0 +1,17 @@
+<div class="mat-elevation-z4 cmp-wrapper">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h1 class="mat-display-1">{{getTitle()}}</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-item-properties [properties]="item.getProperties()" [schema]="schemaAdapter"></app-item-properties>
+    </mat-card-content>
+    <mat-toolbar color="accent">
+      <a mat-button routerLink=".." color="primary">Back to list</a>
+      <a mat-button routerLink="edit">Edit</a>
+      <button mat-button color="warn" (click)="onDelete()">Delete</button>
+    </mat-toolbar>
+  </mat-card>
+</div>
