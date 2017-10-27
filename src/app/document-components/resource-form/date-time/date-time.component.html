@@ -5,6 +5,6 @@
 <!--<mat-datepicker #picker></mat-datepicker>-->
 <!--</mat-form-field>-->
 <div [formGroup]="form" class="cmp-full-width">
-  <md2-datepicker type="datetime" [required]="field.required" [placeholder]="field.title"
+  <md2-datepicker [type]="getType()" [required]="field.required" [placeholder]="field.title"
                   [formControlName]="field.name"></md2-datepicker>
 </div>

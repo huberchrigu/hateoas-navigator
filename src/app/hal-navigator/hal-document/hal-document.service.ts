@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Http, RequestOptionsArgs, Response} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -14,6 +14,7 @@ import {Cacheable} from '@hal-navigator/cache/cacheable';
 import {ItemCacheService} from '@hal-navigator/item/cache/item-cache.service';
 import 'rxjs/add/operator/catch';
 import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 
 @Injectable()
 export class HalDocumentService {
@@ -21,7 +22,8 @@ export class HalDocumentService {
 
   private linkFactory = new DeprecatedLinkFactory();
 
-  constructor(private http: Http, private resourceCacheService: ItemCacheService) {
+  constructor(private http: Http, private resourceCacheService: ItemCacheService,
+              @Inject(MODULE_CONFIG) private MODULE_CONFIG: ModuleConfiguration) {
   }
 
   @Cacheable()
@@ -62,7 +64,7 @@ export class HalDocumentService {
   @Cacheable()
   getSchema(resourceName: string): Observable<SchemaAdapter> {
     return this.getFromApi<JsonSchema>('/profile/' + resourceName, HeaderOptions.withAcceptHeader('application/schema+json'))
-      .map(schema => new SchemaAdapter(schema));
+      .map(schema => new SchemaAdapter(schema, this.getItemDescriptor(resourceName)));
   }
 
   private getFromApi<T>(resourceUrl: string, customArgs?: RequestOptionsArgs): Observable<T> {
@@ -85,5 +87,12 @@ export class HalDocumentService {
   private putToApi(resourceUrl: string, object: any, version: string): Observable<Response> {
     return this.http.put(HalDocumentService.API_PREFIX + resourceUrl, object,
       HeaderOptions.withIfMatchHeader(version));
+  }
+
+  private getItemDescriptor(resourceName: string) {
+    if (this.MODULE_CONFIG && this.MODULE_CONFIG.itemDescriptors) {
+      return this.MODULE_CONFIG.itemDescriptors[resourceName];
+    }
+    return null;
   }
 }

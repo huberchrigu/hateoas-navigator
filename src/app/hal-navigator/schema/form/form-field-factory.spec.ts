@@ -5,7 +5,7 @@ import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
 
 describe('FormFieldFactory', () => {
   it('should create form fields', () => {
-    const testee = new FormFieldFactory([], {});
+    const testee = new FormFieldFactory([], {}, {});
 
     const result = testee.createFormFields({
       textField: {

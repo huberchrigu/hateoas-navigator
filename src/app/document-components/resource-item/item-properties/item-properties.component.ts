@@ -37,7 +37,7 @@ export class ItemPropertiesComponent implements OnInit {
   getDefinition(arrayProperty: ResourceProperty): SchemaAdapter {
     const reference = this.getPropertySchema(arrayProperty).items;
     const schema = this.schemaReferenceFactory.getReferencedSchema(reference);
-    return new SchemaAdapter(schema);
+    return new SchemaAdapter(schema, this.schema.getPropertyDescriptor(arrayProperty.getName()));
   }
 
   private getPropertyValue(property: ResourceProperty): any {
