@@ -1,4 +1,4 @@
-import { SettyUiPage } from './app.po';
+import {SettyUiPage} from './app.po';
 
 describe('setty-ui App', () => {
   let page: SettyUiPage;
@@ -7,8 +7,8 @@ describe('setty-ui App', () => {
     page = new SettyUiPage();
   });
 
-  it('should display message saying app works', () => {
+  it('should display message saying app works', async () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    expect<any>(page.getParagraphText()).toEqual('app works!');
   });
 });
