@@ -21,7 +21,7 @@ describe('SelectFieldComponent', () => {
     fixture = TestBed.createComponent(SelectFieldComponent);
     component = fixture.componentInstance;
     component.field = {} as FormField;
-    component.form = {} as FormGroup;
+    component.formGroup = {} as FormGroup;
     fixture.detectChanges();
   });
 

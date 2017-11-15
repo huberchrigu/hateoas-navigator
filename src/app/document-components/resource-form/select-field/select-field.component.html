@@ -1,5 +1,5 @@
-<mat-form-field [formGroup]="form" class="cmp-full-width">
-  <mat-select [placeholder]="field.title" [formControlName]="field.name">
+<mat-form-field class="cmp-full-width">
+  <mat-select [placeholder]="field.title" [formControl]="control">
     <mat-option *ngFor="let option of field.options.getOptions()" [value]="option">
       {{ option }}
     </mat-option>

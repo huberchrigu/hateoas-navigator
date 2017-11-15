@@ -8,16 +8,19 @@ import {ResourceFormComponent} from './resource-form/resource-form.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ResourceItemComponent} from './resource-item/resource-item.component';
 import {
-  MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatNativeDateModule, MatSelectModule, MatTableModule,
+  MatAutocompleteModule,
+  MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatInputModule, MatNativeDateModule, MatSelectModule, MatTableModule,
   MatToolbarModule
 } from '@angular/material';
-import { InputFieldComponent } from './resource-form/input-field/input-field.component';
-import { DateTimeComponent } from './resource-form/date-time/date-time.component';
-import { SubFormComponent } from './resource-form/sub-form/sub-form.component';
-import { SubFormArrayComponent } from './resource-form/sub-form-array/sub-form-array.component';
-import { ItemPropertiesComponent } from './resource-item/item-properties/item-properties.component';
+import {InputFieldComponent} from './resource-form/input-field/input-field.component';
+import {DateTimeFieldComponent} from './resource-form/date-time-field/date-time-field.component';
+import {FormGroupComponent} from './resource-form/form-group/form-group.component';
+import {FormListComponent} from './resource-form/form-list/form-list.component';
+import {ItemPropertiesComponent} from './resource-item/item-properties/item-properties.component';
 import {Md2DatepickerModule, MdNativeDateModule} from 'md2';
 import {SelectFieldComponent} from '@document-components/resource-form/select-field/select-field.component';
+import {AssociationFieldComponent} from './resource-form/association-field/association-field.component';
+import { FormFieldComponent } from './resource-form/form-field/form-field.component';
 
 @NgModule({
   imports: [
@@ -26,6 +29,7 @@ import {SelectFieldComponent} from '@document-components/resource-form/select-fi
     CommonModule,
     ReactiveFormsModule,
 
+    MatCardModule,
     MatTableModule,
     MatToolbarModule,
     MatButtonModule,
@@ -33,6 +37,7 @@ import {SelectFieldComponent} from '@document-components/resource-form/select-fi
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
+    MatAutocompleteModule,
     // MatDatepickerModule,
     MatNativeDateModule,
 
@@ -46,11 +51,13 @@ import {SelectFieldComponent} from '@document-components/resource-form/select-fi
     ResourceFormComponent,
     ResourceItemComponent,
     InputFieldComponent,
-    DateTimeComponent,
+    DateTimeFieldComponent,
     SelectFieldComponent,
-    SubFormComponent,
-    SubFormArrayComponent,
-    ItemPropertiesComponent
+    FormGroupComponent,
+    FormListComponent,
+    ItemPropertiesComponent,
+    AssociationFieldComponent,
+    FormFieldComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
   entryComponents: [ConfirmationDialogComponent]

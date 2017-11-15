@@ -1,19 +1,19 @@
 import {Component, Input} from '@angular/core';
 import {FormField} from '@hal-navigator/schema/form/form-field';
-import {FormGroup} from '@angular/forms';
+import {AbstractControl} from '@angular/forms';
 import {DateTimeType} from '@hal-navigator/config/module-configuration';
 
 @Component({
-  selector: 'app-date-picker',
-  templateUrl: './date-time.component.html',
-  styleUrls: ['./date-time.component.sass', '../form-fields.sass']
+  selector: 'app-date-time-field',
+  templateUrl: './date-time-field.component.html',
+  styleUrls: ['./date-time-field.component.sass', '../form-fields.sass']
 })
-export class DateTimeComponent {
+export class DateTimeFieldComponent {
   @Input()
   field: FormField;
 
   @Input()
-  form: FormGroup;
+  control: AbstractControl;
 
   getType(): string {
     switch (this.field.options.getDateTimeType()) {

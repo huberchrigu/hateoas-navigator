@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormField} from '@hal-navigator/schema/form/form-field';
-import {FormGroup} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-input-field',
@@ -12,7 +12,7 @@ export class InputFieldComponent {
   field: FormField;
 
   @Input()
-  form: FormGroup;
+  control: FormControl;
 
   @Input()
   type = 'text';

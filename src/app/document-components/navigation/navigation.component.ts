@@ -34,7 +34,7 @@ export class NavigationComponent implements OnInit {
 
   private getSchemas() {
     this.items.forEach(item => {
-      this.halDocumentService.getSchema(item.name).subscribe(schema => this.schemas[item.name] = schema);
+      this.halDocumentService.getJsonSchema(item.name).subscribe(schema => this.schemas[item.name] = schema);
     });
   }
 }

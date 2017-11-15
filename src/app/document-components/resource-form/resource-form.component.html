@@ -1,7 +1,7 @@
 <div class="mat-elevation-z4 cmp-border">
   <h1 class="mat-display-1">{{title}}</h1>
   <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <app-sub-form [fields]="fields" [form]="form"></app-sub-form>
+    <app-form-group [fields]="fields" [formGroup]="form"></app-form-group>
 
     <div class="cmp-form-buttons">
       <a mat-raised-button routerLink="..">Cancel</a>

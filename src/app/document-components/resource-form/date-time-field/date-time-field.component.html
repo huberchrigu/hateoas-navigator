@@ -4,7 +4,5 @@
 <!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
 <!--<mat-datepicker #picker></mat-datepicker>-->
 <!--</mat-form-field>-->
-<div [formGroup]="form" class="cmp-full-width">
-  <md2-datepicker [type]="getType()" [required]="field.required" [placeholder]="field.title"
-                  [formControlName]="field.name"></md2-datepicker>
-</div>
+<md2-datepicker class="cmp-full-width" [type]="getType()" [required]="field.required" [placeholder]="field.title"
+                [formControl]="control"></md2-datepicker>

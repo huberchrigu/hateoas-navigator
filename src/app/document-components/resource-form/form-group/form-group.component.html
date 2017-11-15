@@ -1,0 +1,3 @@
+<div *ngFor="let field of fields">
+  <app-form-field [formGroup]="formGroup" [control]="formGroup.get(field.name)" [field]="field"></app-form-field>
+</div>
