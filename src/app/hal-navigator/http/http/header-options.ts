@@ -1,4 +1,4 @@
-import {Headers, RequestOptionsArgs} from '@angular/http';
+import {HttpHeaders} from '@angular/common/http';
 
 export class HeaderOptions {
   private static ACCEPT_HEADER = 'Accept';
@@ -17,11 +17,7 @@ export class HeaderOptions {
     return HeaderOptions.withHeader(HeaderOptions.IF_MATCH_HEADER, ifMatchHeader);
   }
 
-  private static withHeader(header: string, value: string): RequestOptionsArgs {
-    const headers = new Headers();
-    headers.set(header, value);
-    return {
-      headers: headers
-    };
+  private static withHeader(header: string, value: string): HttpHeaders {
+    return new HttpHeaders().set(header, value);
   }
 }

@@ -1,29 +1,36 @@
 import {Inject, Injectable} from '@angular/core';
-import {Http, RequestOptionsArgs, Response} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/combineLatest';
 import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-adapter';
 import {ResourceObject} from '../resource-object/resource-object';
 import {DeprecatedLinkFactory} from '../link-object/link-factory';
 import {SchemaAdapter} from '../schema/schema-adapter';
 import {ItemAdapter} from '@hal-navigator/item/item-adapter';
-import {JsonSchema} from '@hal-navigator/schema/json-schema';
+import {JsonSchemaDocument} from '@hal-navigator/schema/json-schema';
 import {HeaderOptions} from '@hal-navigator/http/http/header-options';
 import {Cacheable} from '@hal-navigator/cache/cacheable';
 import {ItemCacheService} from '@hal-navigator/item/cache/item-cache.service';
 import 'rxjs/add/operator/catch';
 import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
 import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
+import {AlpsDocumentAdapter} from '@hal-navigator/alp-document/alps-document-adapter';
+import {AlpsDocument} from '@hal-navigator/alp-document/alps-document';
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 
+/**
+ * This is the module's core service providing functionality to access HAL, ALPS and JsonSchema documents.
+ */
 @Injectable()
 export class HalDocumentService {
   private static readonly API_PREFIX = '/api';
+  private static PROFILE_PREFIX = '/profile/';
 
   private linkFactory = new DeprecatedLinkFactory();
 
-  constructor(private http: Http, private resourceCacheService: ItemCacheService,
-              @Inject(MODULE_CONFIG) private MODULE_CONFIG: ModuleConfiguration) {
+  constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
+              @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration) {
   }
 
   @Cacheable()
@@ -39,7 +46,7 @@ export class HalDocumentService {
       .map(resource => new CollectionAdapter(resource));
   }
 
-  deleteResource(document: ResourceObject, version: string): Observable<Response> {
+  deleteResource(document: ResourceObject, version: string): Observable<HttpResponse<void>> {
     const resourceLink = this.linkFactory.fromDocument(document);
     return this.deleteFromApi(resourceLink, version)
       .map(response => this.resourceCacheService.removeFromResponse(resourceLink, response));
@@ -56,43 +63,58 @@ export class HalDocumentService {
   }
 
   getItem(resource: string, id: string): Observable<ItemAdapter> {
-    return this.getResponseFromApi(`/${resource}/${id}`, this.resourceCacheService.getRequestHeader(resource, id))
+    return this.getResponseFromApi<ResourceObject>(`/${resource}/${id}`, this.resourceCacheService.getRequestHeader(resource, id))
       .map(response => this.resourceCacheService.getItemFromGetResponse(response))
       .catch(response => this.resourceCacheService.getItemFromErroneousGetResponse(resource, id, response));
   }
 
   @Cacheable()
-  getSchema(resourceName: string): Observable<SchemaAdapter> {
-    return this.getFromApi<JsonSchema>('/profile/' + resourceName, HeaderOptions.withAcceptHeader('application/schema+json'))
-      .map(schema => new SchemaAdapter(schema, this.getItemDescriptor(resourceName)));
+  getJsonSchema(resourceName: string): Observable<SchemaAdapter> {
+    return this.getFromApi<JsonSchemaDocument>(HalDocumentService.PROFILE_PREFIX + resourceName,
+      HeaderOptions.withAcceptHeader('application/schema+json'))
+      .combineLatest(this.getAlps(resourceName), (schema, alps) =>
+        new SchemaAdapter(schema, alps.getRepresentationDescriptor(), this.getItemDescriptor(resourceName)));
   }
 
-  private getFromApi<T>(resourceUrl: string, customArgs?: RequestOptionsArgs): Observable<T> {
-    return this.getResponseFromApi(resourceUrl, customArgs).map(response => response.json());
+  @Cacheable()
+  getAlps(resourceName: string): Observable<AlpsDocumentAdapter> {
+    return this.getFromApi<AlpsDocument>(HalDocumentService.PROFILE_PREFIX + resourceName)
+      .map(document => new AlpsDocumentAdapter(document));
   }
 
-  private getResponseFromApi(resourceUrl: string, customArgs?: RequestOptionsArgs): Observable<Response> {
-    return this.http.get(HalDocumentService.API_PREFIX + resourceUrl, customArgs);
+  private getFromApi<T>(resourceUrl: string, headers?: HttpHeaders): Observable<T> {
+    return this.getResponseFromApi<T>(resourceUrl, headers).map(response => response.body);
   }
 
-  private deleteFromApi(resourceUrl: string, version: string): Observable<Response> {
-    return this.http.delete(HalDocumentService.API_PREFIX + resourceUrl,
-      HeaderOptions.withIfMatchHeader(version));
+  private getResponseFromApi<T>(resourceUrl: string, headers: HttpHeaders): Observable<HttpResponse<T>> {
+    return this.httpClient.get<T>(HalDocumentService.API_PREFIX + resourceUrl, this.getOptions(headers));
   }
 
-  private postToApi(resourceUrl: string, object: any): Observable<Response> {
-    return this.http.post(HalDocumentService.API_PREFIX + resourceUrl, object);
+  private deleteFromApi(resourceUrl: string, version: string): Observable<HttpResponse<void>> {
+    return this.httpClient.delete<void>(HalDocumentService.API_PREFIX + resourceUrl,
+      this.getOptions(HeaderOptions.withIfMatchHeader(version)));
   }
 
-  private putToApi(resourceUrl: string, object: any, version: string): Observable<Response> {
-    return this.http.put(HalDocumentService.API_PREFIX + resourceUrl, object,
-      HeaderOptions.withIfMatchHeader(version));
+  private postToApi(resourceUrl: string, object: any): Observable<HttpResponse<ResourceObject>> {
+    return this.httpClient.post<ResourceObject>(HalDocumentService.API_PREFIX + resourceUrl, object, this.getOptions());
+  }
+
+  private putToApi(resourceUrl: string, object: any, version: string): Observable<HttpResponse<ResourceObject>> {
+    return this.httpClient.put<ResourceObject>(HalDocumentService.API_PREFIX + resourceUrl, object,
+      this.getOptions(HeaderOptions.withIfMatchHeader(version)));
   }
 
   private getItemDescriptor(resourceName: string) {
-    if (this.MODULE_CONFIG && this.MODULE_CONFIG.itemDescriptors) {
-      return this.MODULE_CONFIG.itemDescriptors[resourceName];
+    if (this.moduleConfig && this.moduleConfig.itemDescriptors) {
+      return this.moduleConfig.itemDescriptors[resourceName];
     }
     return null;
+  }
+
+  private getOptions(headers?: HttpHeaders): { headers: HttpHeaders, observe: 'response' } {
+    return {
+      headers: headers,
+      observe: 'response'
+    };
   }
 }

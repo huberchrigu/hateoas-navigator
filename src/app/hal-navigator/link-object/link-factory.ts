@@ -2,6 +2,9 @@ import {ResourceObject} from '../resource-object/resource-object';
 import {ResourceLinks} from '@hal-navigator/resource-object/resource-links';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
 
+/**
+ * @deprecated
+ */
 export class DeprecatedLinkFactory {
   constructor(private prefix = 'http://localhost:4200') { // TODO: Make globally configurable and search for manual link (de)composition
   }
@@ -38,7 +41,7 @@ export class LinkFactory {
   getLink(linkRelationType: string): ResourceLink {
     const link = this.links[linkRelationType];
     if (link) {
-      return new ResourceLink(linkRelationType, link.href);
+      return new ResourceLink(linkRelationType, link);
     } else {
       throw new Error(`Link ${linkRelationType} does not exist`);
     }

@@ -2,12 +2,13 @@
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 import {DeprecatedLinkDecomposer} from '@hal-navigator/link-object/link-decomposer';
+import {Link} from '@hal-navigator/link-object/link';
+import {LinkObject} from '@hal-navigator/link-object/link-object';
 
-export class ResourceLink {
-  private static SUPPORTED_PROTOCOLS = ['http://', 'https://'];
+export class ResourceLink extends Link {
 
-  constructor(private linkRelationType: string, private href: string) {
-
+  constructor(private linkRelationType: string, private link: LinkObject) {
+    super(link.href);
   }
 
   getRelationType() {
@@ -22,31 +23,11 @@ export class ResourceLink {
     return new DeprecatedLinkDecomposer().getResourceName(this.getRelativeUri());
   }
 
-  /**
-   * 'relative' means without protocol/domain.
-   */
-  private getRelativeUri() {
-    const protocol = this.getProtocol();
-    if (!protocol) {
-      return this.href;
+  getFullUriWithoutTemplatedPart() {
+    if (this.link.templated) {
+      const indexOfFirstBracket = this.href.indexOf('{');
+      return this.href.substring(0, indexOfFirstBracket);
     }
-    return this.getUriAfterDomain(this.href.substring(protocol.length));
-  }
-
-  private getProtocol() {
-    for (const p of ResourceLink.SUPPORTED_PROTOCOLS) {
-      if (this.href.startsWith(p)) {
-        return p;
-      }
-    }
-    return null;
-  }
-
-  private getUriAfterDomain(uriAfterProtocol: string) {
-    const indexOfFirstSlash = uriAfterProtocol.indexOf('/');
-    if (indexOfFirstSlash >= 0) {
-      return uriAfterProtocol.substring(indexOfFirstSlash);
-    }
-    return uriAfterProtocol;
+    return this.href;
   }
 }

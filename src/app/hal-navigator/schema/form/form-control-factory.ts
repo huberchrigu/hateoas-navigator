@@ -5,7 +5,7 @@ import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
 
 export class FormControlFactory {
   private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER,
-    FormFieldType.NUMBER, FormFieldType.INTEGER, FormFieldType.SELECT];
+    FormFieldType.NUMBER, FormFieldType.INTEGER, FormFieldType.SELECT, FormFieldType.LINK];
 
   constructor(private item?: ItemAdapter) {
   }
@@ -18,7 +18,7 @@ export class FormControlFactory {
     return controls;
   }
 
-  private getControl(formField: FormField) {
+  getControl(formField: FormField) {
     const value = this.item ? this.item.getProperty(formField.name).getFormValue() : undefined;
     return this.getControlWithValue(formField, value);
   }

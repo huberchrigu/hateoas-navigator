@@ -1,4 +1,4 @@
-import {JsonSchema, Reference} from '@hal-navigator/schema/json-schema';
+import {JsonSchema} from '@hal-navigator/schema/json-schema';
 
 export class SchemaReferenceFactory {
   private static readonly REFERENCE_PREFIX = '#/definitions/';
@@ -7,7 +7,7 @@ export class SchemaReferenceFactory {
   }
 
 
-  getReferencedSchema(reference: Reference): JsonSchema {
+  getReferencedSchema(reference: JsonSchema): JsonSchema {
     if (reference.$ref.startsWith(SchemaReferenceFactory.REFERENCE_PREFIX)) {
       return this.definitions[reference.$ref.substring(SchemaReferenceFactory.REFERENCE_PREFIX.length)];
     }

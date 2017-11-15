@@ -34,14 +34,40 @@ export class ResourceObjectAdapter {
     }
   }
 
+  /**
+   * Return the object's properties without the metadata plus the embedded object properties.
+   * @returns {ResourceProperties}
+   */
   getProperties(): ResourceProperties {
-    return ResourceProperties.fromObject(this.resourceObject,
+    const properties = ResourceProperties.fromObject(this.resourceObject,
       [ResourceObjectAdapter.LINKS_PROPERTY, ResourceObjectAdapter.EMBEDDED_PROPERTY]);
+    const embedded = this.resourceObject._embedded;
+    if (embedded) {
+      Object.keys(embedded).forEach(key => properties.add(new ResourceProperty(key, embedded[key], true)));
+    }
+    return properties;
   }
 
-  getProperty(propertyName: string) {
+  /**
+   * This can either be a property or an embedded object.
+   */
+  getProperty(propertyName: string): ResourceProperty {
     const value = this.resourceObject[propertyName];
+    if (!value && this.resourceObject._embedded) {
+      const embedded = this.resourceObject._embedded[propertyName];
+      if (embedded) {
+        return new ResourceProperty(propertyName, embedded, true);
+      }
+    }
     return new ResourceProperty(propertyName, value);
+  }
+
+  getSelfUri() {
+    return this.resourceObject._links.self.href;
+  }
+
+  getDisplayValue() {
+    return new ResourceProperty(null, this.resourceObject, true).getDisplayValue();
   }
 
   private getSelfLink() {

@@ -4,6 +4,9 @@ import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-obj
 import {ResourceProperties} from '@hal-navigator/resource-object/properties/resource-properties';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
 
+/**
+ * Treat embedded objects as properties of object type with a link.
+ */
 export class ItemAdapter {
 
   private linkFactory = new DeprecatedLinkFactory();
@@ -11,11 +14,19 @@ export class ItemAdapter {
   constructor(private resourceObject: ResourceObjectAdapter, private version?: string) {
   }
 
+  getDisplayValue(): string {
+    return this.resourceObject.getDisplayValue() as string;
+  }
+
   /**
    * @deprecated
    */
   getDocument(): ResourceObject {
     return this.resourceObject.resourceObject;
+  }
+
+  getItemUri(): string {
+    return this.resourceObject.getSelfUri();
   }
 
   getProperties(): ResourceProperties {

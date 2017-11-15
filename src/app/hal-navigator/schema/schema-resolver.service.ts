@@ -14,6 +14,6 @@ export class SchemaResolverService implements Resolve<SchemaAdapter> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<SchemaAdapter> | Promise<SchemaAdapter> |
     SchemaAdapter {
-    return this.halDocumentService.getSchema(route.params[RouteParams.RESOURCE_PARAM]);
+    return this.halDocumentService.getJsonSchema(route.params[RouteParams.RESOURCE_PARAM]);
   }
 }

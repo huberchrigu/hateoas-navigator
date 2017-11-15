@@ -1,8 +1,8 @@
 import {JsonSchema} from '@hal-navigator/schema/json-schema';
 
 export enum FormFieldType {
-  TEXT = 'TEXT', DATE_PICKER = 'DATE_PICKER', ARRAY = 'ARRAY', SUB_FORM = 'SUB_FORM',
-  NUMBER = 'NUMBER', INTEGER = 'INTEGER', SELECT = 'SELECT'
+  LINK = <any> 'LINK', TEXT = <any> 'TEXT', DATE_PICKER = <any> 'DATE_PICKER', ARRAY = <any> 'ARRAY', SUB_FORM = <any> 'SUB_FORM',
+  NUMBER = <any> 'NUMBER', INTEGER = <any> 'INTEGER', SELECT = <any> 'SELECT'
 }
 
 export function getFormType(propertySchema: JsonSchema): FormFieldType {
@@ -17,7 +17,7 @@ export function getFormType(propertySchema: JsonSchema): FormFieldType {
         if (format === 'date-time') {
           return FormFieldType.DATE_PICKER;
         } else if (format === 'uri') {
-          return FormFieldType.TEXT;
+          return FormFieldType.LINK;
         } else {
           throw new Error(format + ' is an unknown property format');
         }

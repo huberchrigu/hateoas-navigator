@@ -2,8 +2,8 @@ import {FormControlFactory} from '@hal-navigator/schema/form/form-control-factor
 import {ItemAdapter} from '@hal-navigator/item/item-adapter';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
-import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
-import {FormArray, FormControl} from '@angular/forms';
+import {FormArray} from '@angular/forms';
+import createSpyObj = jasmine.createSpyObj;
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {
@@ -21,10 +21,10 @@ describe('FormControlFactory', () => {
         }
       } as FormField
     ];
+    const resourceProperty = createSpyObj('resourceProperty', ['getFormValue']);
+    resourceProperty.getFormValue.and.returnValue([{'value': 1}, {'value': 2}]);
     const properties = {
-      'array': {
-        getFormValue: () => [{'value': 1}, {'value': 2}]
-      } as ResourceProperty
+      'array': resourceProperty
     };
     const item = {
       getProperty: (name) => properties[name]

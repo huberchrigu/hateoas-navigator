@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export class DeprecatedLinkDecomposer {
   getResourceName(relativeUrl: string) {
     if (!relativeUrl && !relativeUrl.startsWith('/')) {

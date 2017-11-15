@@ -1,15 +1,15 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
-import {HttpModule} from '@angular/http';
 import {HalDocumentService} from './hal-document/hal-document.service';
 import {CollectionResolverService} from './collection/collection-resolver.service';
 import {SchemaResolverService} from './schema/schema-resolver.service';
 import {ItemResolverService} from './item/item-resolver.service';
 import {ItemCacheService} from './item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   imports: [
-    HttpModule
+    HttpClientModule
   ],
   providers: [
     HalDocumentService,

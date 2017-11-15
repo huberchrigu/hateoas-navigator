@@ -1,58 +1,123 @@
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {getFormType} from '@hal-navigator/schema/form/form-field-type';
-import {JsonSchema, Reference} from '@hal-navigator/schema/json-schema';
+import {JsonSchema} from '@hal-navigator/schema/json-schema';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
 import {FormFieldOptions} from '@hal-navigator/schema/form/form-field-options';
 import {DateTimeType, ItemDescriptor} from '@hal-navigator/config/module-configuration';
+import {AlpsDescriptorAdapter} from '@hal-navigator/alp-document/alps-descriptor-adapter';
 
+/**
+ * Creates a form field from a JSON schema. A schema of type 'object' has sub-schemas, i.e. this will lead to recursive creations of the
+ * sub-schemas' factories.
+ */
 export class FormFieldFactory {
-  private schemaReferenceFactory: SchemaReferenceFactory;
 
-  constructor(private requiredProperties: string[], private definitions: { [definition: string]: JsonSchema },
-              private descriptor: ItemDescriptor) {
-    this.schemaReferenceFactory = new SchemaReferenceFactory(definitions);
+  constructor(private fieldName: string, private schema: JsonSchema, private required: boolean,
+              private schemaReferenceFactory: SchemaReferenceFactory,
+              private alpsDescriptor: AlpsDescriptorAdapter, private descriptor: ItemDescriptor) {
   }
 
-  createFormFields(properties: { [name: string]: JsonSchema }): FormField[] {
-    return Object.keys(properties).map(key => {
-      const property = properties[key];
-      return this.createFormField(key, property);
-    });
+  toFormField(): FormField {
+    if (this.isReference()) {
+      const referencedSchema = this.schemaReferenceFactory.getReferencedSchema(this.schema);
+      return this.withReplacedSchema(referencedSchema).toFormField();
+    }
+    return this.createFormField();
   }
 
-  private createFormField(name: string, property: JsonSchema) {
-    return new FormField(name,
-      getFormType(property),
-      this.requiredProperties ? this.requiredProperties.includes(name) : false,
-      property.readOnly,
-      property.title,
-      this.createOptions(property, this.descriptor ? this.descriptor[name] : null));
+  private createFormField(): FormField {
+    return new FormField(this.fieldName, getFormType(this.schema),
+      this.required,
+      this.schema.readOnly,
+      this.schema.title,
+      this.createOptions());
   }
 
   /**
    * This method supports only arrays and objects with a $ref reference.
    */
-  private createOptions(property: JsonSchema, descriptor: ItemDescriptor): FormFieldOptions {
+  private createOptions(): FormFieldOptions {
     const formFieldOptions = new FormFieldOptions();
-    if (property.items) {
-      this.setSubFields(formFieldOptions, property.items, descriptor);
-    } else if (property.type === 'object') {
-      this.setSubFields(formFieldOptions, property, descriptor);
-    } else if (property.enum) {
-      formFieldOptions.setOptions(property.enum);
-    } else if (property.format === 'date-time') {
-      formFieldOptions.setDateTimeType(descriptor && descriptor.dateTimeType ? descriptor.dateTimeType : DateTimeType.DATE_TIME);
+    switch (this.schema.type) {
+      case 'array':
+        formFieldOptions.setArraySpec(this.getArraySpec());
+        break;
+      case 'object':
+        formFieldOptions.setSubFields(this.getSubFieldsForObject());
+        break;
+      default:
+        formFieldOptions.setOptions(this.schema.enum);
+        switch (this.schema.format) {
+          case 'date-time':
+            formFieldOptions.setDateTimeType(this.getDateTimeType());
+            break;
+          case 'uri':
+            formFieldOptions.setLinkedResource(this.getLinkedResource());
+            break;
+        }
     }
     return formFieldOptions;
   }
 
-  private setSubFields(formFieldOptions: FormFieldOptions, reference: Reference, descriptor: ItemDescriptor) {
-    const referencedSchema = this.schemaReferenceFactory.getReferencedSchema(reference);
-    if (referencedSchema.type !== 'object' && referencedSchema.properties) {
-      throw new Error('Invalid reference ' + JSON.stringify(reference));
+  /**
+   * Computes the sub-fields for an 'object' type.
+   */
+  private getSubFieldsForObject(): FormField[] {
+    if (!this.schema.properties) {
+      throw new Error('A object needs properties, but " + this.fieldName + " has not');
     }
-    const children = new FormFieldFactory(referencedSchema.requiredProperties, this.definitions, descriptor)
-      .createFormFields(referencedSchema.properties);
-    formFieldOptions.setSubFields(children);
+    return Object.keys(this.schema.properties).map(propertyName => this.createNewFactory(
+      propertyName,
+      this.schema.properties[propertyName],
+      this.schema.requiredProperties.includes(propertyName),
+      this.alpsDescriptor ? this.alpsDescriptor.getDescriptors().find(d => d.getName() === propertyName) : null,
+      this.descriptor ? this.descriptor[propertyName] : null)
+      .toFormField());
+  }
+
+  private isReference(): boolean {
+    return !!this.schema.$ref;
+  }
+
+  private getDateTimeType() {
+    return this.descriptor && this.descriptor.dateTimeType ?
+      this.descriptor.dateTimeType : DateTimeType.DATE_TIME;
+  }
+
+  private getLinkedResource() {
+    if (!this.alpsDescriptor) {
+      throw new Error(`Unknown collection resource name for URI typed ${this.fieldName} because alps descriptor was not found.`)
+    }
+    return this.alpsDescriptor.getCollectionResourceName();
+  }
+
+  private getArraySpec(): FormField {
+    if (!this.schema.items) {
+      throw new Error(`${this.fieldName} is an array without 'items' property.`);
+    }
+    return this.createNewFactoryForArrayItems()
+      .toFormField();
+  }
+
+  private withReplacedSchema(otherSchema: JsonSchema) {
+    return this.createNewFactory(this.fieldName,
+      otherSchema,
+      this.required,
+      this.alpsDescriptor,
+      this.descriptor);
+  }
+
+  private createNewFactoryForArrayItems() {
+    return this.createNewFactory(this.fieldName, this.schema.items, true, this.alpsDescriptor, this.descriptor);
+  }
+
+  private createNewFactory(fieldName: string, jsonSchema: JsonSchema, required: boolean,
+                           alpsDescriptor: AlpsDescriptorAdapter, descriptor: ItemDescriptor): FormFieldFactory {
+    return new FormFieldFactory(fieldName,
+      jsonSchema,
+      required,
+      this.schemaReferenceFactory,
+      alpsDescriptor,
+      descriptor);
   }
 }
