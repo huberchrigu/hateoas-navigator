@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {ItemAdapter} from '@hal-navigator/item/item-adapter';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {CollectionAdapter} from '@hal-navigator/collection/collection-adapter';
 import {Observable} from 'rxjs/Observable';
 import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
+import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
 
 @Component({
   selector: 'app-resource-list',
@@ -15,7 +16,7 @@ export class ResourceListComponent implements OnInit {
 
   propertyNames: Array<string> = [];
 
-  private dataSource: DataSource<ItemAdapter>;
+  private dataSource: DataSource<ResourceObjectAdapter>;
   private resourceName: string;
   private schema: SchemaAdapter;
 
@@ -23,7 +24,7 @@ export class ResourceListComponent implements OnInit {
   }
 
   ngOnInit() {
-    const listObservable = this.route.data.map((data: RouteData) => data.listAdapter);
+    const listObservable = this.route.data.map((data: RouteData) => data.collectionAdapter);
     this.initTableMetadata(listObservable);
     this.initDataSource(listObservable);
     this.route.data.subscribe((data: RouteData) => this.schema = data.schemaAdapter);
@@ -41,24 +42,24 @@ export class ResourceListComponent implements OnInit {
     return 'new';
   }
 
-  onClick(item: ItemAdapter) {
-    this.router.navigateByUrl(item.getDetailLink());
+  onClick(item: VersionedResourceObject) {
+    this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
   }
 
-  getDisplayValue(item: ItemAdapter, propertyName: string) {
-    return item.getProperty(propertyName).getDisplayValue();
+  getDisplayValue(item: VersionedResourceObject, propertyName: string) {
+    return item.getData(propertyName, d => d.getDisplayValue());
   }
 
-  private initTableMetadata(listObservable: Observable<CollectionAdapter>) {
-    listObservable.subscribe(listAdapter => {
-      this.propertyNames = listAdapter.getPropertyNames();
-      this.resourceName = listAdapter.getResourceName();
+  private initTableMetadata(collectionObservable: Observable<CollectionAdapter>) {
+    collectionObservable.subscribe(collectionAdapter => {
+      this.propertyNames = collectionAdapter.getPropertyNames();
+      this.resourceName = collectionAdapter.getResourceName();
     });
   }
 
-  private initDataSource(listObservable: Observable<CollectionAdapter>) {
+  private initDataSource(collectionObservable: Observable<CollectionAdapter>) {
     this.dataSource = {
-      connect: () => listObservable.map(listAdapter => listAdapter.getItems()),
+      connect: () => collectionObservable.map(collectionAdapter => collectionAdapter.getItems()),
       disconnect: () => {
       }
     };
@@ -66,6 +67,6 @@ export class ResourceListComponent implements OnInit {
 }
 
 interface RouteData {
-  listAdapter: CollectionAdapter;
+  collectionAdapter: CollectionAdapter;
   schemaAdapter: SchemaAdapter;
 }

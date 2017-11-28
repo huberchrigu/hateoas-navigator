@@ -40,7 +40,7 @@ const routes: Routes = [
     path: ':' + RouteParams.RESOURCE_PARAM,
     component: ResourceListComponent,
     resolve: {
-      listAdapter: CollectionResolverService,
+      collectionAdapter: CollectionResolverService,
       schemaAdapter: SchemaResolverService
     }
   },

@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InputFieldComponent} from './input-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 
 describe('InputFieldComponent', () => {
@@ -21,7 +21,7 @@ describe('InputFieldComponent', () => {
     fixture = TestBed.createComponent(InputFieldComponent);
     component = fixture.componentInstance;
     component.field = {} as FormField;
-    component.formGroup = {} as FormGroup;
+    component.control = {} as FormControl;
     fixture.detectChanges();
   });
 

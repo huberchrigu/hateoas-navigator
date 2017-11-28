@@ -1,0 +1,9 @@
+<mat-form-field class="cmp-full-width">
+  <input [formControl]="control" matInput [placeholder]="field.title" attr.aria-label="{{field.title}}"
+         [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let value of filteredItems | async" [value]="value.name">
+      <span>{{ value.title }}</span>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

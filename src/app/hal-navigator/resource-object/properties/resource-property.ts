@@ -1,42 +1,24 @@
 import {DisplayValueConverter} from '@hal-navigator/resource-object/properties/display-value-converter';
 import {ValueConverter} from '@hal-navigator/resource-object/properties/value-converter';
 import {DateConverter} from '@hal-navigator/resource-object/properties/date-converter';
-import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
-import {ResourceLink} from '@hal-navigator/link-object/resource-link';
+import {DataHolder} from '@hal-navigator/resource-object/resource-field';
+import {JsonType} from '@hal-navigator/resource-object/resource-object';
 
-export class ResourceProperty {
+export class ResourceProperty implements DataHolder {
   private dateConverter = new DateConverter();
   private displayValueConverter = new DisplayValueConverter();
   private formValueConverter: ValueConverter<Date, Array<any>, Object> = new ValueConverter(
     (value: string) => this.dateConverter.parseToDate(value)
   ) as ValueConverter<Date, Array<any>, Object>;
 
-  constructor(private name: string, private value: any, private uriType = false) {
-
+  constructor(private name: string, private value: JsonType) {
   }
 
   getName(): string {
     return this.name;
   }
 
-  getValue(): string | number | Object | Array<any> {
-    return this.value;
-  }
-
-  /**
-   * The this property is an embedded object, remove metadata.
-   * <p>
-   * <b>Warning</b>: This behavior was already implemented for the <code>ResourceObjectAdapter</code>.
-   * Therefore the architecture is not sufficient yet. A resource object should never be also a property!
-   */
   getDisplayValue(): string | number {
-    if (this.uriType) {
-      const properties = {};
-      Object.keys(this.value)
-        .filter(propertyName => propertyName !== '_links' && propertyName !== '_embedded')
-        .forEach(propertyName => properties[propertyName] = this.value[propertyName]);
-      return this.displayValueConverter.transform(properties);
-    }
     return this.displayValueConverter.transform(this.value);
   }
 
@@ -45,22 +27,34 @@ export class ResourceProperty {
    * Transform other values otherwise.
    */
   getFormValue() {
-    if (this.uriType) {
-      const resourceObject = this.value as ResourceObject;
-      return new ResourceLink('self', resourceObject._links.self).getFullUriWithoutTemplatedPart();
-    }
     return this.formValueConverter.transform(this.value);
   }
 
-  getArrayValue(): Array<any> {
+  getArrayValue(): Array<JsonType> {
     if (this.isArray()) {
-      return this.value;
+      return this.value as Array<JsonType>;
     } else {
       throw new Error(this.value + ' is not an array');
     }
   }
 
-  private isArray(): boolean {
+  isArray(): boolean {
     return Array.isArray((this.value));
+  }
+
+  isUriType(): boolean {
+    return false;
+  }
+
+  getChildren(): ResourceProperty[] {
+    return this.getArrayValue().map(o => new ResourceProperty(this.name, o));
+  }
+
+  // TODO: Merge together with ResourceObjectAdapter, which does the same.
+  getObjectProperties(): ResourceProperty[] {
+    if (typeof this.value !== 'object') {
+      throw new Error(JSON.stringify(this.value) + ' is not an object!');
+    }
+    return Object.keys(this.value).map(key => new ResourceProperty(key, this.value[key]));
   }
 }

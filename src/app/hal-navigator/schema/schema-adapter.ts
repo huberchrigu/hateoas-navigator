@@ -1,16 +1,20 @@
 import {JsonSchemaDocument} from './json-schema';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {AbstractControl} from '@angular/forms';
-import {ItemAdapter} from '@hal-navigator/item/item-adapter';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {FormFieldFactory} from '@hal-navigator/schema/form/form-field-factory';
 import {FormControlFactory} from '@hal-navigator/schema/form/form-control-factory';
 import {ItemDescriptor} from '@hal-navigator/config/module-configuration';
 import {AlpsDescriptorAdapter} from '@hal-navigator/alp-document/alps-descriptor-adapter';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
+import {Observable} from 'rxjs/Observable';
+import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
 
 export class SchemaAdapter {
 
-  constructor(private schema: JsonSchemaDocument, private alpsDescriptor: AlpsDescriptorAdapter, private descriptor: ItemDescriptor) {
+  constructor(private schema: JsonSchemaDocument, private alpsDescriptor: AlpsDescriptorAdapter, private descriptor: ItemDescriptor,
+              private halDocumentService: HalDocumentService) {
   }
 
   getSchema() {
@@ -27,18 +31,29 @@ export class SchemaAdapter {
     return this.schema.title;
   }
 
-  asControls(item?: ItemAdapter): { [key: string]: AbstractControl } {
+  asControls(item?: VersionedResourceObject): { [key: string]: AbstractControl } {
     return new FormControlFactory(item).getControls(this.getFields());
   }
 
-  getPropertyDescriptor(propertyName: string) {
-    return this.descriptor ? this.descriptor[propertyName] : null;
+  /**
+   * @deprecated
+   */
+  getPropertyDescriptor(property: ResourceProperty) {
+    return this.descriptor ? this.descriptor[property.getName()] : null;
   }
 
   /**
    * @Deprecated
    */
-  getAlpsDescriptorForProperty(propertyName: string) {
-    return this.alpsDescriptor.getDescriptors().find(d => d.getName() === propertyName);
+  getAlpsDescriptorForProperty(property: ResourceProperty) {
+    return this.alpsDescriptor.getDescriptors().find(d => d.getName() === property.getName());
+  }
+
+  resolve(): Observable<SchemaAdapter> {
+    if (this.schema.format === 'uri') {
+      const name = this.alpsDescriptor.getCollectionResourceName();
+      return this.halDocumentService.getJsonSchema(name);
+    }
+    return Observable.of(this);
   }
 }

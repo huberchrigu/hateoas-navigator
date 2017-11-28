@@ -1,4 +1,3 @@
-import {ItemAdapter} from '../item/item-adapter';
 import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
 
 export class CollectionAdapter {
@@ -10,14 +9,14 @@ export class CollectionAdapter {
     return this.resourceObject.getResourceName();
   }
 
-  getItems(): Array<ItemAdapter> {
-    return this.getEmbeddedContent().map(item => new ItemAdapter(item));
+  getItems(): Array<ResourceObjectAdapter> {
+    return this.getEmbeddedContent();
   }
 
   getPropertyNames(): Array<string> {
     const properties = [];
     this.getItems().forEach(item => {
-      for (const property of item.getProperties().getPropertyNames()) {
+      for (const property of this.getNamesOfItem(item)) {
         if (properties.indexOf(property) < 0) {
           properties.push(property);
         }
@@ -27,8 +26,12 @@ export class CollectionAdapter {
   }
 
   private getEmbeddedContent(): ResourceObjectAdapter[] {
-    return this.resourceObject.getEmbeddedObjects(
+    return this.resourceObject.getEmbeddedResources(
       this.resourceObject.getResourceName()
     );
+  }
+
+  private getNamesOfItem(resourceObject: ResourceObjectAdapter) {
+    return resourceObject.getAllData().map(p => p.getName());
   }
 }

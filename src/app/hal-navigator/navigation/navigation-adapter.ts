@@ -10,6 +10,6 @@ export class NavigationFactory {
   getItems(): Array<NavigationItem> {
     return this.resourceObject.getLinks()
       .filter(link => link.getRelationType() !== LinkFactory.PROFILE_RELATION_TYPE)
-      .map(link => new NavigationItem(link.getRelationType(), link.getHref()));
+      .map(link => new NavigationItem(link.getRelationType(), link.getFullUri()));
   }
 }

@@ -6,18 +6,31 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
 import {Observable} from 'rxjs/Observable';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
+import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import SpyObj = jasmine.SpyObj;
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
   let fixture: ComponentFixture<ResourceItemComponent>;
+  let versionedResourceObject: SpyObj<VersionedResourceObject>;
 
   beforeEach(async(() => {
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('itemAdapter', ['getAllData']);
+    versionedResourceObject.getAllData.and.returnValue([
+      {} as ResourceProperty
+    ]);
+
     TestBed.configureTestingModule({
       declarations: [ResourceItemComponent],
       providers: [
         {
           provide: ActivatedRoute, useValue: {
-          data: Observable.of({itemAdapter: jasmine.createSpyObj('itemAdapter', ['getProperties']), schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])})
+          data: Observable.of(
+            {
+              itemAdapter: versionedResourceObject,
+              schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
+            })
         }
         },
         {provide: MatDialog, useValue: {}},
@@ -35,7 +48,7 @@ describe('ResourceItemComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should fetch the resource data', () => {
+    expect(versionedResourceObject.getAllData).toHaveBeenCalled();
   });
 });

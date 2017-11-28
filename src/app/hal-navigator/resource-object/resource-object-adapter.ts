@@ -1,16 +1,25 @@
-import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
+import {JsonObject, ResourceObject} from '@hal-navigator/resource-object/resource-object';
 import {LinkFactory} from '@hal-navigator/link-object/link-factory';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceProperties} from '@hal-navigator/resource-object/properties/resource-properties';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import {DataHolder} from '@hal-navigator/resource-object/resource-field';
+import {DisplayValueConverter} from '@hal-navigator/resource-object/properties/display-value-converter';
 
-export class ResourceObjectAdapter {
+/**
+ * A resource object represents a HAL resource with links and - if any - embedded resource objects.
+ */
+export class ResourceObjectAdapter implements DataHolder {
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
+  private static METADATA_PROPERTIES = [ResourceObjectAdapter.LINKS_PROPERTY, ResourceObjectAdapter.EMBEDDED_PROPERTY];
 
   private linkFactory: LinkFactory;
+  private displayValueConverter: DisplayValueConverter = new DisplayValueConverter();
 
   constructor(public resourceObject: ResourceObject) {
+    if (Array.isArray(resourceObject) || !resourceObject._links) {
+      throw new Error('This is not a valid resource object: ' + JSON.stringify(resourceObject));
+    }
     this.linkFactory = new LinkFactory(resourceObject._links);
   }
 
@@ -25,7 +34,10 @@ export class ResourceObjectAdapter {
     return this.getSelfLink().extractResourceName();
   }
 
-  getEmbeddedObjects(linkRelationType: string): ResourceObjectAdapter[] {
+  /**
+   * Expects the embedded resources, i.e. it must be an array!
+   */
+  getEmbeddedResources(linkRelationType: string): ResourceObjectAdapter[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
       return embedded.map(e => new ResourceObjectAdapter(e));
@@ -35,42 +47,58 @@ export class ResourceObjectAdapter {
   }
 
   /**
-   * Return the object's properties without the metadata plus the embedded object properties.
-   * @returns {ResourceProperties}
+   * Returns the resource properties plus the embedded resources' properties.
+   * Since {@link ResourceObjectAdapter} does not work for arrays, we convert them to resource properties.
    */
-  getProperties(): ResourceProperties {
-    const properties = ResourceProperties.fromObject(this.resourceObject,
-      [ResourceObjectAdapter.LINKS_PROPERTY, ResourceObjectAdapter.EMBEDDED_PROPERTY]);
+  getAllData(): ResourceProperty[] {
+    const properties: Array<ResourceProperty> = this.getProperties();
     const embedded = this.resourceObject._embedded;
     if (embedded) {
-      Object.keys(embedded).forEach(key => properties.add(new ResourceProperty(key, embedded[key], true)));
+      properties.push(...Object.keys(embedded)
+        .map(key => this.toResourceProperty(key, embedded[key])));
     }
     return properties;
+  }
+
+  getProperties(): ResourceProperty[] {
+    return Object.keys(this.resourceObject)
+      .filter(key => this.filterOutMetadata(key))
+      .map(key => new ResourceProperty(key, this.resourceObject[key]));
   }
 
   /**
    * This can either be a property or an embedded object.
    */
-  getProperty(propertyName: string): ResourceProperty {
+  getData<T>(propertyName: string, applyFunction: (data: DataHolder) => T): T | T[] {
     const value = this.resourceObject[propertyName];
     if (!value && this.resourceObject._embedded) {
       const embedded = this.resourceObject._embedded[propertyName];
       if (embedded) {
-        return new ResourceProperty(propertyName, embedded, true);
+        return Array.isArray(embedded) ? embedded
+            .map(e => new ResourceObjectAdapter(e))
+            .map(e => applyFunction(e))
+          : applyFunction(new ResourceObjectAdapter(embedded));
       }
     }
-    return new ResourceProperty(propertyName, value);
+    return applyFunction(new ResourceProperty(propertyName, value));
   }
 
-  getSelfUri() {
-    return this.resourceObject._links.self.href;
-  }
-
+  /**
+   * Show only the this resource's properties and ignore any embedded resources.
+   */
   getDisplayValue() {
-    return new ResourceProperty(null, this.resourceObject, true).getDisplayValue();
+    return this.displayValueConverter.transform(this.getRawProperties());
   }
 
-  private getSelfLink() {
+  getFormValue(): string {
+    return new ResourceLink('self', this.resourceObject._links.self).getFullUriWithoutTemplatedPart();
+  }
+
+  isUriType(): boolean {
+    return true;
+  }
+
+  getSelfLink(): ResourceLink {
     return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
   }
 
@@ -81,5 +109,28 @@ export class ResourceObjectAdapter {
     } else {
       throw new Error(`Embedded object ${linkRelationType} does not exist.`);
     }
+  }
+
+  private filterOutMetadata(key: string) {
+    return !ResourceObjectAdapter.METADATA_PROPERTIES.some(p => p === key);
+  }
+
+  private getRawProperties(): JsonObject {
+    return this.getRawPropertiesOf(this.resourceObject);
+  }
+
+  private toResourceProperty(resourceName: string, resource: ResourceObject | ResourceObject[]): ResourceProperty {
+    if (Array.isArray(resource)) {
+      return new ResourceProperty(resourceName, resource.map(r => this.getRawPropertiesOf(r)));
+    }
+    return new ResourceProperty(resourceName, this.getRawProperties());
+  }
+
+  private getRawPropertiesOf(resourceObject: ResourceObject): JsonObject {
+    const properties = {};
+    Object.keys(resourceObject)
+      .filter(key => this.filterOutMetadata(key))
+      .forEach(key => properties[key] = resourceObject[key]);
+    return properties;
   }
 }

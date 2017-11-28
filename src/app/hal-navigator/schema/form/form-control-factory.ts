@@ -1,13 +1,13 @@
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {ItemAdapter} from '@hal-navigator/item/item-adapter';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
 
 export class FormControlFactory {
   private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER,
     FormFieldType.NUMBER, FormFieldType.INTEGER, FormFieldType.SELECT, FormFieldType.LINK];
 
-  constructor(private item?: ItemAdapter) {
+  constructor(private item?: VersionedResourceObject) {
   }
 
   getControls(fields: FormField[]): { [key: string]: AbstractControl } {
@@ -19,15 +19,15 @@ export class FormControlFactory {
   }
 
   getControl(formField: FormField) {
-    const value = this.item ? this.item.getProperty(formField.name).getFormValue() : undefined;
+    const value = this.item ? this.item.getData(formField.name, d => d.getFormValue()) : undefined;
     return this.getControlWithValue(formField, value);
   }
 
   private getControlWithValue(formField: FormField, value: any) {
     if (formField.type === FormFieldType.ARRAY) {
-      const array: AbstractControl[] = [];
+      let array: AbstractControl[] = [];
       if (Array.isArray(value)) {
-        value.forEach(obj => array.push(this.getFormGroup(formField, obj)));
+        array = value.map(item => this.getControlWithValue(formField.options.getArraySpec(), item));
       }
       return new FormArray(array);
     } else if (FormControlFactory.STANDARD_CONTROLS.includes(formField.type)) {

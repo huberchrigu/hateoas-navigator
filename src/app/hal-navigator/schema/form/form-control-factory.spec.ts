@@ -1,25 +1,21 @@
 import {FormControlFactory} from '@hal-navigator/schema/form/form-control-factory';
-import {ItemAdapter} from '@hal-navigator/item/item-adapter';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
 import {FormArray} from '@angular/forms';
 import createSpyObj = jasmine.createSpyObj;
+import {FormFieldOptions} from '@hal-navigator/schema/form/form-field-options';
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {
     const fields: FormField[] = [
-      {
-        name: 'array',
-        type: FormFieldType.ARRAY,
-        options: {
+      createFieldMock('array', FormFieldType.ARRAY, <FormFieldOptions> {
+        getArraySpec: () => createFieldMock('array', FormFieldType.SUB_FORM, <FormFieldOptions> {
           getSubFields: () => [
-            {
-              name: 'value',
-              type: FormFieldType.TEXT
-            } as FormField
+            createFieldMock('value', FormFieldType.TEXT)
           ]
-        }
-      } as FormField
+        })
+      })
     ];
     const resourceProperty = createSpyObj('resourceProperty', ['getFormValue']);
     resourceProperty.getFormValue.and.returnValue([{'value': 1}, {'value': 2}]);
@@ -27,8 +23,8 @@ describe('FormControlFactory', () => {
       'array': resourceProperty
     };
     const item = {
-      getProperty: (name) => properties[name]
-    } as ItemAdapter;
+      getData: (name, applyFunction) => applyFunction(properties[name])
+    } as VersionedResourceObject;
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);
@@ -38,3 +34,11 @@ describe('FormControlFactory', () => {
     expect(arrayControl.controls[0].value).toEqual({'value': 1});
   });
 });
+
+function createFieldMock(name: string, type: FormFieldType, options?: FormFieldOptions): FormField {
+  return {
+    name: name,
+    type: type,
+    options: options
+  } as FormField;
+}

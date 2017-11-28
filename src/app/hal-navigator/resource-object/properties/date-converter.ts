@@ -6,9 +6,8 @@ import {Moment} from 'moment';
  * Parsing always happens in strict mode, otherwise values containing any number will be converted to a date/time!
  */
 export class DateConverter {
-  private static FORMAT_WITH_TIMEZONE = 'YYYY-MM-DDTHH:mm:ss.SSSZZ';
-  private static FORMAT_WITHOUT_TIMEZONE = 'YYYY-MM-DDTHH:mm:ss';
-  private static TIME_FORMAT = 'HH:mm:ss';
+  private static DATE_FORMATS = ['YYYY-MM-DDTHH:mm:ss.SSSZZ', 'YYYY-MM-DDTHH:mm:ss'];
+  private static TIME_FORMATS = ['HH:mm:ssZZ', 'HH:mm:ss', 'HH:mmZZ', 'HH:mm'];
 
   constructor(private format = 'LLL') {
   }
@@ -35,13 +34,13 @@ export class DateConverter {
     return undefined;
   }
 
-  private getValidDate(value: string) {
-    const dateWithTimezone = moment.utc(value, [DateConverter.FORMAT_WITH_TIMEZONE, DateConverter.FORMAT_WITHOUT_TIMEZONE], true);
+  private getValidDate(value: string): Moment {
+    const dateWithTimezone = moment.utc(value, DateConverter.DATE_FORMATS, true);
     return dateWithTimezone.isValid() ? dateWithTimezone.local() : undefined;
   }
 
-  private getValidTime(value: string) {
-    const time = moment.utc(value, DateConverter.TIME_FORMAT, true);
+  private getValidTime(value: string): Moment {
+    const time = moment.utc(value, DateConverter.TIME_FORMATS, true);
     return time.isValid() ? time.local() : undefined;
   }
 }
