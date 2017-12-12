@@ -1,7 +1,7 @@
 import {TestBed, inject} from '@angular/core/testing';
 
 import {ItemResolverService} from './item-resolver.service';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 
 describe('ItemResolverService', () => {
   beforeEach(() => {

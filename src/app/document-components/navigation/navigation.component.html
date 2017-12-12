@@ -6,6 +6,6 @@
     </a>
   </span>
   <span *ngFor="let item of items">
-    <a mat-button routerLink="/{{item.name}}">{{getTitle(item)}}</a>
+    <a mat-button routerLink="/{{item.link}}">{{item.title}}</a>
   </span>
 </mat-toolbar>

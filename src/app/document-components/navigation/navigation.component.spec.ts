@@ -2,9 +2,10 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NavigationComponent} from './navigation.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
-import {NavigationFactory} from '@hal-navigator/navigation/navigation-adapter';
+import {NavigationFactory} from '@hal-navigator/navigation/navigation-factory';
+import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -17,10 +18,10 @@ describe('NavigationComponent', () => {
       providers: [
         {
           provide: HalDocumentService, useValue: {
-          getRootNavigation: () => Observable.of({
-            getItems: () => []
-          } as NavigationFactory)
-        } as HalDocumentService
+            getRootNavigation: () => Observable.of({
+              getItems: () => Observable.of([])
+            } as NavigationFactory)
+          } as HalDocumentService
         }
       ]
     })
@@ -33,7 +34,7 @@ describe('NavigationComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should create an empty navigation item list', () => {
+    expect(component.items.length).toBe(0);
   });
 });

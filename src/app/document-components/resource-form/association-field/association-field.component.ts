@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {FormControl} from '@angular/forms';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/do';

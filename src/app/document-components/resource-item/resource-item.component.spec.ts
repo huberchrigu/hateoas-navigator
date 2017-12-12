@@ -4,7 +4,7 @@ import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
 import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
@@ -16,7 +16,7 @@ describe('ResourceItemComponent', () => {
   let versionedResourceObject: SpyObj<VersionedResourceObject>;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('itemAdapter', ['getAllData']);
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('resourceObject', ['getAllData']);
     versionedResourceObject.getAllData.and.returnValue([
       {} as ResourceProperty
     ]);
@@ -28,7 +28,7 @@ describe('ResourceItemComponent', () => {
           provide: ActivatedRoute, useValue: {
           data: Observable.of(
             {
-              itemAdapter: versionedResourceObject,
+              resourceObject: versionedResourceObject,
               schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
             })
         }

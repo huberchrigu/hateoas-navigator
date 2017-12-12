@@ -1,20 +1,24 @@
 import {Link} from '@hal-navigator/link-object/link';
 import {LinkObject} from '@hal-navigator/link-object/link-object';
 import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
+import {Observable} from 'rxjs/Observable';
+import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
+import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
 
 /**
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 export class ResourceLink extends Link {
-  static fromResourceObject(resourceObject: ResourceObject) {
-    return new ResourceLink('self', resourceObject._links.self);
+  static fromResourceObject(resourceObject: ResourceObject, resourceDescriptorResolver: ResourceDescriptorResolver) {
+    return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
   static relativeUriFromId(resource: string, id: string): string {
     return '/' + resource + '/' + id;
   }
 
-  constructor(private linkRelationType: string, private link: LinkObject) {
+  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorResolver) {
     super(link.href);
   }
 
@@ -31,21 +35,32 @@ export class ResourceLink extends Link {
     const resourceUrl = relativeUrl.substring(1);
     const secondSlashIndex = resourceUrl.indexOf('/');
     if (secondSlashIndex > -1) {
-      return this.removeOptionalPart(resourceUrl.substring(0, secondSlashIndex));
+      return this.removeTemplatedPart(resourceUrl.substring(0, secondSlashIndex));
     }
-    return this.removeOptionalPart(resourceUrl);
+    return this.removeTemplatedPart(resourceUrl);
   }
 
   getFullUriWithoutTemplatedPart() {
-    if (this.link.templated) {
-      const indexOfFirstBracket = this.href.indexOf('{');
-      return this.href.substring(0, indexOfFirstBracket);
-    }
-    return this.href;
+    return this.removeTemplatedPart(this.href);
   }
 
-  private removeOptionalPart(resourceNameWithOptionalPart: string) {
-    const optionalPartIndex = resourceNameWithOptionalPart.indexOf('{');
-    return optionalPartIndex >= 0 ? resourceNameWithOptionalPart.substring(0, optionalPartIndex) : resourceNameWithOptionalPart;
+  getRelativeUriWithoutTemplatedPart() {
+    return this.removeTemplatedPart(this.getRelativeUri());
+  }
+
+  getResource(): Observable<VersionedResourceObject> {
+    throw new Error('Not implemented yet');
+  }
+
+  getResourceDescriptor(): Observable<ResourceDescriptor> {
+    return this.resourceDescriptorResolver.resolve(this.extractResourceName());
+  }
+
+  private removeTemplatedPart(uri: string) {
+    if (this.link.templated) {
+      const indexOfFirstBracket = uri.indexOf('{');
+      return uri.substring(0, indexOfFirstBracket);
+    }
+    return uri;
   }
 }

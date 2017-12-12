@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {FormGroup} from '@angular/forms';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
 
@@ -39,7 +39,7 @@ export class ResourceFormComponent implements OnInit {
       (resourceName, object) => this.halDocumentService.create(resourceName, object) :
       (resourceName, object) => this.halDocumentService.update(resourceName, this.route.snapshot.url[1].path, object, this.version);
     return submitFunction(this.route.snapshot.url[0].path, this.form.value).subscribe((item: VersionedResourceObject) => {
-      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.resourceObject).getRelativeUri());
+      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.resourceObject, undefined).getRelativeUri());
     });
   }
 }

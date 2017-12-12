@@ -24,7 +24,7 @@ const routes: Routes = [
     path: `:${RouteParams.RESOURCE_PARAM}/:${RouteParams.ID_PARAM}`,
     component: ResourceItemComponent,
     resolve: {
-      itemAdapter: ItemResolverService,
+      resourceObject: ItemResolverService,
       schemaAdapter: SchemaResolverService
     }
   },

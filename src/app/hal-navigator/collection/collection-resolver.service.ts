@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {CollectionAdapter} from './collection-adapter';
 import {Observable} from 'rxjs/Observable';
-import {HalDocumentService} from '../hal-document/hal-document.service';
+import {HalDocumentService} from '../resource-services/hal-document.service';
 import {RouteParams} from '@hal-navigator/routing/route-params';
 
 @Injectable()

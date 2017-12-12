@@ -1,6 +1,7 @@
 import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
 import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
 import {ResourceLinks} from '@hal-navigator/resource-object/resource-links';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
 
 describe('ResourceObjectAdapter', () => {
   it('should get the relative link to this resource', () => {
@@ -8,12 +9,13 @@ describe('ResourceObjectAdapter', () => {
       _links: {
         self: {href: 'http://localhost:4200/resource/1'}
       }
-    } as ResourceObject);
+    } as ResourceObject, {} as ResourceDescriptorResolver);
     expect(testee.getSelfLink().getRelativeUri()).toEqual('/resource/1');
   });
 
   it('should transform an array property to a display value', () => {
-    const testee = new ResourceObjectAdapter(dummyResource('property', 'test', true));
+    const testee = new ResourceObjectAdapter(dummyResource('property', 'test', true),
+      {} as ResourceDescriptorResolver);
 
     expect(testee.getDisplayValue()).toEqual('property: test');
   });

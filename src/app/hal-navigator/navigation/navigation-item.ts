@@ -1,4 +1,4 @@
 export class NavigationItem {
-  constructor(public name: string, public link: string) {
+  constructor(public link: string, public title: string) {
   }
 }

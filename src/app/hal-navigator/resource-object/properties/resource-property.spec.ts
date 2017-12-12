@@ -5,7 +5,7 @@ describe('ResourceProperty', () => {
     const testee = new ResourceProperty('array', [
       {
         'property': 'test'
-      }]);
+      }], null);
 
     expect(testee.getDisplayValue()).toEqual('property: test');
   });

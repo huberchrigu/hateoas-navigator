@@ -5,14 +5,20 @@ import 'rxjs/add/observable/of';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
 import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
+import {Injectable} from '@angular/core';
 
 /**
  * Caches the returned items and saves them together with the <code>ETag</code>. The next time this resource is requested,
  * a 304 Not Modified response can be handled by returning the cached object instead.
  */
+@Injectable()
 export class ItemCacheService {
   private static E_TAG_HEADER = 'ETag';
   private cache: { [key: string]: VersionedResourceObject } = {};
+
+  constructor(private descriptorResolver: ResourceDescriptorResolver) {
+  }
 
   getItemFromModifyingResponse(response: HttpResponse<ResourceObject>): VersionedResourceObject {
     return this.handleOkResponse(response);
@@ -44,7 +50,7 @@ export class ItemCacheService {
   private handleOkResponse(response: HttpResponse<ResourceObject>): VersionedResourceObject {
     const version = response.headers.get(ItemCacheService.E_TAG_HEADER);
     const resourceObject = response.body;
-    const item = new VersionedResourceObject(resourceObject, version);
+    const item = new VersionedResourceObject(resourceObject, version, this.descriptorResolver);
     if (version && item) {
       this.addToCache(item);
     }

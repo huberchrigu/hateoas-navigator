@@ -8,13 +8,16 @@ import {ItemDescriptor} from '@hal-navigator/config/module-configuration';
 import {AlpsDescriptorAdapter} from '@hal-navigator/alp-document/alps-descriptor-adapter';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
 import {Observable} from 'rxjs/Observable';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
+/**
+ * @deprecated
+ */
 export class SchemaAdapter {
 
   constructor(private schema: JsonSchemaDocument, private alpsDescriptor: AlpsDescriptorAdapter, private descriptor: ItemDescriptor,
-              private halDocumentService: HalDocumentService) {
+              private schemaService: SchemaService) {
   }
 
   getSchema() {
@@ -52,7 +55,7 @@ export class SchemaAdapter {
   resolve(): Observable<SchemaAdapter> {
     if (this.schema.format === 'uri') {
       const name = this.alpsDescriptor.getCollectionResourceName();
-      return this.halDocumentService.getJsonSchema(name);
+      return this.schemaService.getJsonSchema(name);
     }
     return Observable.of(this);
   }

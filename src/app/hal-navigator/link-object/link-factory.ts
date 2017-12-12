@@ -1,11 +1,12 @@
 import {ResourceLinks} from '@hal-navigator/resource-object/resource-links';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
 
 export class LinkFactory {
   static PROFILE_RELATION_TYPE = 'profile';
   static SELF_RELATION_TYPE = 'self';
 
-  constructor(private links: ResourceLinks) {
+  constructor(private links: ResourceLinks, private resourceDescriptorResolver: ResourceDescriptorResolver) {
 
   }
 
@@ -20,7 +21,7 @@ export class LinkFactory {
   getLink(linkRelationType: string): ResourceLink {
     const link = this.links[linkRelationType];
     if (link) {
-      return new ResourceLink(linkRelationType, link);
+      return new ResourceLink(linkRelationType, link, this.resourceDescriptorResolver);
     } else {
       throw new Error(`Link ${linkRelationType} does not exist`);
     }

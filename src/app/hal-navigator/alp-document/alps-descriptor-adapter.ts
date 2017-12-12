@@ -5,7 +5,7 @@ import {AlpsDescriptorType} from '@hal-navigator/alp-document/alps-descriptor-ty
 export class AlpsDescriptorAdapter {
   private static readonly PROFILE_PREFIX = '/profile/';
 
-  constructor(private descriptor: AlpsDescriptor) {
+  constructor(public descriptor: AlpsDescriptor) {
   }
 
   getName(): string {

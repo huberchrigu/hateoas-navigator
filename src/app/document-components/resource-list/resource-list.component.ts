@@ -30,14 +30,23 @@ export class ResourceListComponent implements OnInit {
     this.route.data.subscribe((data: RouteData) => this.schema = data.schemaAdapter);
   }
 
+  /**
+   * @deprecated
+   */
   getPropertyTitle(property: string) {
     return this.schema.getSchema().properties[property].title;
   }
 
+  /**
+   * @deprecated
+   */
   getTitle() {
     return this.schema.getTitle();
   }
 
+  /**
+   * @deprecated
+   */
   getNewLink(): string {
     return 'new';
   }
@@ -46,6 +55,9 @@ export class ResourceListComponent implements OnInit {
     this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
   }
 
+  /**
+   * @deprecated
+   */
   getDisplayValue(item: VersionedResourceObject, propertyName: string) {
     return item.getData(propertyName, d => d.getDisplayValue());
   }
@@ -66,6 +78,7 @@ export class ResourceListComponent implements OnInit {
   }
 }
 
+// TODO: Should be part of the resolver module
 interface RouteData {
   collectionAdapter: CollectionAdapter;
   schemaAdapter: SchemaAdapter;

@@ -4,7 +4,8 @@ import {NotNull} from '../../../decorators/not-null';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
 import {JsonSchema} from '@hal-navigator/schema/json-schema';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
+import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 @Component({
   selector: 'app-item-properties',
@@ -22,7 +23,7 @@ export class ItemPropertiesComponent implements OnInit {
   private schemaReferenceFactory: SchemaReferenceFactory;
   private propertyDefinitions: { [propertyName: string]: SchemaAdapter } = {};
 
-  constructor(private halDocumentService: HalDocumentService) {
+  constructor(private halDocumentService: HalDocumentService, private schemaService: SchemaService) {
   }
 
   ngOnInit() {
@@ -33,6 +34,9 @@ export class ItemPropertiesComponent implements OnInit {
     this.properties.filter(p => p.isArray()).forEach(p => this.initPropertySchema(p));
   }
 
+  /**
+   * @deprecated
+   */
   getPropertyTitle(property: ResourceProperty): string {
     return this.getPropertySchema(property).title;
   }
@@ -41,6 +45,9 @@ export class ItemPropertiesComponent implements OnInit {
     return this.propertyDefinitions[arrayProperty.getName()];
   }
 
+  /**
+   * @deprecated
+   */
   private initPropertySchema(arrayProperty: ResourceProperty) {
     const arrayItems = this.getPropertySchema(arrayProperty).items;
     let schema: JsonSchema;
@@ -51,11 +58,14 @@ export class ItemPropertiesComponent implements OnInit {
     }
     const alpsDescriptor = this.schema.getAlpsDescriptorForProperty(arrayProperty);
     const itemDescriptor = this.schema.getPropertyDescriptor(arrayProperty);
-    new SchemaAdapter(schema, alpsDescriptor, itemDescriptor, this.halDocumentService)
+    new SchemaAdapter(schema, alpsDescriptor, itemDescriptor, this.schemaService)
       .resolve()
       .subscribe(resolvedSchema => this.propertyDefinitions[arrayProperty.getName()] = resolvedSchema);
   }
 
+  /**
+   * @deprecated
+   */
   @NotNull()
   private getPropertySchema(property: ResourceProperty): JsonSchema {
     return this.schema.getSchema().properties[property.getName()];

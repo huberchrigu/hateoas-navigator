@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceFormComponent} from './resource-form.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {Observable} from 'rxjs/Observable';

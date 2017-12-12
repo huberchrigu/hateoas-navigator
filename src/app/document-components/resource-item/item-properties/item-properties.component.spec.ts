@@ -3,9 +3,10 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ItemPropertiesComponent} from './item-properties.component';
 import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
-import {HalDocumentService} from '@hal-navigator/hal-document/hal-document.service';
+import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;
+import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 describe('ItemPropertiesComponent', () => {
   let component: ItemPropertiesComponent;
@@ -16,7 +17,8 @@ describe('ItemPropertiesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ItemPropertiesComponent],
       providers: [
-        {provide: HalDocumentService, useValue: {}}
+        {provide: HalDocumentService, useValue: {}},
+        {provide: SchemaService, useValue: {}}
       ]
     })
       .compileComponents();
