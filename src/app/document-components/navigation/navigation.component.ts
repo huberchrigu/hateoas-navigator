@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {NavigationItem} from '@hal-navigator/navigation/navigation-item';
+import 'rxjs/add/operator/mergeMap';
 
 @Component({
   selector: 'app-navigation',

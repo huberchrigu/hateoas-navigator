@@ -5,7 +5,6 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
 import {NavigationFactory} from '@hal-navigator/navigation/navigation-factory';
-import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -28,11 +27,11 @@ describe('NavigationComponent', () => {
       .compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     fixture = TestBed.createComponent(NavigationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create an empty navigation item list', () => {
     expect(component.items.length).toBe(0);
