@@ -13,6 +13,8 @@ export class CollectionResolverService implements Resolve<CollectionAdapter> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<CollectionAdapter> | Promise<CollectionAdapter> |
     CollectionAdapter {
-    return this.halDocumentService.getCollection(route.params[RouteParams.RESOURCE_PARAM]);
+    return this.halDocumentService
+      .getCollection(route.params[RouteParams.RESOURCE_PARAM])
+      .flatMap(collection => collection.resolve().map(() => collection));
   }
 }

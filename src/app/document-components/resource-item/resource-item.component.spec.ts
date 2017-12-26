@@ -16,10 +16,11 @@ describe('ResourceItemComponent', () => {
   let versionedResourceObject: SpyObj<VersionedResourceObject>;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('resourceObject', ['getAllData']);
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('resourceObject', ['getAllData', 'getDescriptor']);
     versionedResourceObject.getAllData.and.returnValue([
       {} as ResourceProperty
     ]);
+    versionedResourceObject.getDescriptor.and.returnValue({getTitle: () => 'Test'});
 
     TestBed.configureTestingModule({
       declarations: [ResourceItemComponent],
@@ -28,8 +29,7 @@ describe('ResourceItemComponent', () => {
           provide: ActivatedRoute, useValue: {
           data: Observable.of(
             {
-              resourceObject: versionedResourceObject,
-              schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
+              resourceObject: versionedResourceObject
             })
         }
         },

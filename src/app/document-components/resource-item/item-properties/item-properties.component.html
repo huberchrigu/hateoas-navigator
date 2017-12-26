@@ -1,15 +1,12 @@
 <div *ngFor="let property of properties" class="cmp-property">
   <div *ngIf="!property.isArray() || property.isUriType()">
-    <div class="cmp-property-title">{{getPropertyTitle(property)}}</div>
+    <div class="cmp-property-title">{{property.getDescriptor().getTitle()}}</div>
     <div class="cmp-property-value">{{property.getDisplayValue()}}</div>
   </div>
   <div class="cmp-sub-object" *ngIf="property.isArray() && !property.isUriType()">
-    <h2 class="mat-h2">{{getPropertyTitle(property)}}</h2>
-    <ng-container *ngIf="getDefinition(property)">
+    <h2 class="mat-h2">{{property.getDescriptor().getTitle()}}</h2>
       <div class="cmp-array-item" *ngFor="let child of property.getChildren()">
-        <app-item-properties [schema]="getDefinition(property)"
-                             [properties]="child.getObjectProperties()"></app-item-properties>
+        <app-item-properties [properties]="child.getObjectProperties()"></app-item-properties>
       </div>
-    </ng-container>
   </div>
 </div>

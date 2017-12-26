@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import SpyObj = jasmine.SpyObj;
 import {ResourceListComponent} from '@document-components/resource-list/resource-list.component';
 import {CollectionAdapter} from '@hal-navigator/collection/collection-adapter';
-import {MatHeaderRow, MatRow, MatTableModule} from '@angular/material';
+import {MatTableModule} from '@angular/material';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -14,7 +14,8 @@ describe('ResourceListComponent', () => {
   let collectionAdapter: SpyObj<CollectionAdapter>;
 
   beforeEach(async(() => {
-    collectionAdapter = jasmine.createSpyObj('collectionAdapter', ['getItems', 'getResourceName', 'getPropertyNames']);
+    collectionAdapter = jasmine.createSpyObj('collectionAdapter', ['getItems', 'getResourceName', 'getPropertyNames', 'getDescriptor']);
+    collectionAdapter.getDescriptor.and.returnValue({getTitle: () => 'Resources'});
     TestBed.configureTestingModule({
       imports: [MatTableModule],
       declarations: [ResourceListComponent],

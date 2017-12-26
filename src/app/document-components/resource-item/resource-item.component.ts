@@ -6,7 +6,6 @@ import {ConfirmationDialogData} from '@document-components/confirmation-dialog/c
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {MatDialog} from '@angular/material';
 import {ConfirmationDialogResult} from '@document-components/confirmation-dialog/confirmation-dialog-result';
-import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 
 @Component({
   selector: 'app-resource-item',
@@ -15,8 +14,6 @@ import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 })
 export class ResourceItemComponent implements OnInit {
 
-  private schemaAdapter: SchemaAdapter;
-
   resourceObject: VersionedResourceObject;
 
   constructor(private route: ActivatedRoute, private halDocumentService: HalDocumentService, private dialog: MatDialog,
@@ -24,16 +21,13 @@ export class ResourceItemComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: { resourceObject: VersionedResourceObject, schemaAdapter: SchemaAdapter }) => {
+    this.route.data.subscribe((data: { resourceObject: VersionedResourceObject }) => {
       this.resourceObject = data.resourceObject;
-      this.schemaAdapter = data.schemaAdapter;
     });
   }
-  /**
-   * @deprecated
-   */
+
   getTitle() {
-    return this.schemaAdapter.getTitle();
+    return this.resourceObject.getDescriptor().getTitle();
   }
 
   onDelete() {

@@ -1,5 +1,5 @@
 <div>
-  <h1 class="mat-display-1">{{getTitle()}}</h1>
+  <h1 class="mat-display-1">{{collection.getDescriptor().getTitle()}}</h1>
 </div>
 <mat-toolbar color="accent" class="mat-elevation-z4">
   <a mat-button [routerLink]="getNewLink()">
@@ -8,11 +8,11 @@
   </a>
 </mat-toolbar>
 <mat-table #table [dataSource]="dataSource" class="mat-elevation-z4">
-  <ng-container *ngFor="let propertyName of propertyNames" [matColumnDef]="propertyName">
+  <ng-container *ngFor="let propertyName of collection.getPropertyNames()" [matColumnDef]="propertyName">
     <mat-header-cell *matHeaderCellDef>{{getPropertyTitle(propertyName)}}</mat-header-cell>
     <mat-cell *matCellDef="let row">{{getDisplayValue(row, propertyName)}}</mat-cell>
   </ng-container>
 
-  <mat-header-row *matHeaderRowDef="propertyNames"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: propertyNames;" (click)="onClick(row)" class="app-pointer"></mat-row>
+  <mat-header-row *matHeaderRowDef="collection.getPropertyNames()"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: collection.getPropertyNames();" (click)="onClick(row)" class="app-pointer"></mat-row>
 </mat-table>

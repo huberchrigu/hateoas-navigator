@@ -24,8 +24,7 @@ const routes: Routes = [
     path: `:${RouteParams.RESOURCE_PARAM}/:${RouteParams.ID_PARAM}`,
     component: ResourceItemComponent,
     resolve: {
-      resourceObject: ItemResolverService,
-      schemaAdapter: SchemaResolverService
+      resourceObject: ItemResolverService
     }
   },
   {
@@ -40,8 +39,7 @@ const routes: Routes = [
     path: ':' + RouteParams.RESOURCE_PARAM,
     component: ResourceListComponent,
     resolve: {
-      collectionAdapter: CollectionResolverService,
-      schemaAdapter: SchemaResolverService
+      collectionAdapter: CollectionResolverService
     }
   },
   {

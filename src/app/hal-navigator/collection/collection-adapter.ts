@@ -1,12 +1,21 @@
 import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {Observable} from 'rxjs/Observable';
 
 export class CollectionAdapter {
   constructor(private resourceObject: ResourceObjectAdapter) {
 
   }
 
+  resolve(): Observable<ResourceObjectAdapter> {
+    return this.resourceObject.resolveDescriptor();
+  }
+
   getResourceName() {
     return this.resourceObject.getResourceName();
+  }
+
+  getDescriptor() {
+    return this.resourceObject.getDescriptor();
   }
 
   getItems(): Array<ResourceObjectAdapter> {

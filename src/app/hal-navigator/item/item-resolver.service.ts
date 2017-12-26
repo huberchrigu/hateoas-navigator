@@ -13,7 +13,9 @@ export class ItemResolverService implements Resolve<VersionedResourceObject> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceObject> |
     Promise<VersionedResourceObject> | VersionedResourceObject {
-    return this.halDocumentService.getItem(route.params[RouteParams.RESOURCE_PARAM], route.params[RouteParams.ID_PARAM]);
+    return this.halDocumentService
+      .getItem(route.params[RouteParams.RESOURCE_PARAM], route.params[RouteParams.ID_PARAM])
+      .flatMap(resource => resource.resolveDescriptorAndAssociations()
+        .map(() => resource));
   }
-
 }
