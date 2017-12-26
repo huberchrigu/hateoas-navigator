@@ -1,5 +1,5 @@
 export interface JsonSchema {
-  title: string;
+  title?: string;
   properties?: { [property: string]: JsonSchema }; // for objects
   requiredProperties?: string[]; // for objects
   readOnly?: boolean;
