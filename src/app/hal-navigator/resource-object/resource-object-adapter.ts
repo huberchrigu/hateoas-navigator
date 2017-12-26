@@ -110,9 +110,19 @@ export class ResourceObjectAdapter extends AbstractResourceField {
   resolveDescriptor(): Observable<ResourceObjectAdapter> {
     return this.descriptorResolver.resolve(this.getResourceName())
       .map(descriptor => {
+        if (!descriptor) {
+          throw new Error('The descriptor resolver should return a descriptor');
+        }
         this.descriptor = descriptor;
         return this;
       });
+  }
+
+  resolveDescriptorAndAssociations(): Observable<ResourceObjectAdapter> {
+    return this.descriptorResolver.resolveWithAssociations(this.getResourceName()).map(descriptor => {
+      this.descriptor = descriptor;
+      return this;
+    });
   }
 
   private getEmbedded(linkRelationType: string): ResourceObject | ResourceObject[] {

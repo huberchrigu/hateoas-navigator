@@ -15,14 +15,20 @@ export class DefaultDescriptorResolver implements ResourceDescriptorResolver {
 
   }
 
-  resolve(resourceName: string): Observable<ResourceDescriptor> {
+  resolve(resourceName: string): Observable<CombiningDescriptor> {
     return this.schemaService.getJsonSchema(resourceName)
       .combineLatest(this.schemaService.getAlps(resourceName), (jsonSchema, alps) => {
         return new CombiningDescriptor([
           new StaticResourceDescriptor(resourceName, this.config),
-          new JsonSchemaDescriptor(resourceName, jsonSchema.getSchema(), new SchemaReferenceFactory(jsonSchema.getSchema().definitions)),
-          new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor)
+          new JsonSchemaDescriptor(resourceName, jsonSchema.getSchema(),
+            new SchemaReferenceFactory(jsonSchema.getSchema().definitions), this.schemaService),
+          new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor, this.schemaService)
         ]);
       });
+  }
+
+  resolveWithAssociations(resourceName: string): Observable<ResourceDescriptor> {
+    return this.resolve(resourceName)
+      .flatMap(descriptor => descriptor.resolveAssociations());
   }
 }
