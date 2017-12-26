@@ -6,7 +6,7 @@ import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-factory';
 import {ResourceObject} from '../resource-object/resource-object';
 import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
-import {HeaderOptions} from '@hal-navigator/http/http/header-options';
+import {HeaderOptions} from '@hal-navigator/http/header-options';
 import {Cacheable} from '@hal-navigator/cache/cacheable';
 import {ItemCacheService} from '@hal-navigator/item/cache/item-cache.service';
 import 'rxjs/add/operator/catch';

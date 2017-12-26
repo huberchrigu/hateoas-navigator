@@ -1,4 +1,4 @@
-import {HeaderOptions} from '@hal-navigator/http/http/header-options';
+import {HeaderOptions} from 'app/hal-navigator/http/header-options';
 
 describe('HeaderOptions', () => {
 

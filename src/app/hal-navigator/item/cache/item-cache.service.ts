@@ -1,5 +1,5 @@
 import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
-import {HeaderOptions} from '@hal-navigator/http/http/header-options';
+import {HeaderOptions} from '@hal-navigator/http/header-options';
 import {Observable, ObservableInput} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';

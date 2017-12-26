@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Cacheable} from '@hal-navigator/cache/cacheable';
-import {HeaderOptions} from '@hal-navigator/http/http/header-options';
+import {HeaderOptions} from '@hal-navigator/http/header-options';
 import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {JsonSchemaDocument} from '@hal-navigator/schema/json-schema';
 import {AlpsDocumentAdapter} from '@hal-navigator/alp-document/alps-document-adapter';
