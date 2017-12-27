@@ -11,8 +11,7 @@ export class ResourceProperty extends AbstractResourceField {
   ) as ValueConverter<Date, Array<any>, Object>;
 
   constructor(private name: string, private value: JsonType, descriptor: ResourceDescriptor) {
-    super();
-    this.descriptor = descriptor;
+    super(descriptor);
   }
 
   getName(): string {

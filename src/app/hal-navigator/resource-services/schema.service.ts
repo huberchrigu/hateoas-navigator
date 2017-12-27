@@ -2,7 +2,6 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Cacheable} from '@hal-navigator/cache/cacheable';
 import {HeaderOptions} from '@hal-navigator/http/header-options';
-import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {JsonSchemaDocument} from '@hal-navigator/schema/json-schema';
 import {AlpsDocumentAdapter} from '@hal-navigator/alp-document/alps-document-adapter';
 import {AlpsDocument} from '@hal-navigator/alp-document/alps-document';
@@ -18,11 +17,9 @@ export class SchemaService {
   }
 
   @Cacheable()
-  getJsonSchema(resourceName: string): Observable<SchemaAdapter> {
+  getJsonSchema(resourceName: string): Observable<JsonSchemaDocument> {
     return this.getFromApi<JsonSchemaDocument>(SchemaService.PROFILE_PREFIX + resourceName,
-      HeaderOptions.withAcceptHeader('application/schema+json'))
-      .combineLatest(this.getAlps(resourceName), (schema, alps) =>
-        new SchemaAdapter(schema, alps.getRepresentationDescriptor(), this.getItemDescriptor(resourceName), this));
+      HeaderOptions.withAcceptHeader('application/schema+json'));
   }
 
   @Cacheable()
@@ -33,12 +30,5 @@ export class SchemaService {
 
   private getFromApi<T>(resourceUrl: string, headers?: HttpHeaders): Observable<T> {
     return this.httpClient.get<T>(Api.PREFIX + resourceUrl, {headers: headers});
-  }
-
-  private getItemDescriptor(resourceName: string) {
-    if (this.moduleConfig && this.moduleConfig.itemDescriptors) {
-      return this.moduleConfig.itemDescriptors[resourceName];
-    }
-    return null;
   }
 }

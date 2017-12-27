@@ -4,6 +4,8 @@ import {Observable} from 'rxjs/Observable';
 import {AssociatedResourceResolver} from '@hal-navigator/descriptor/association/associated-resource-resolver';
 import {AssociatedResourceListener} from '@hal-navigator/descriptor/association/associated-resource-listener';
 import {LOGGER} from '../../logging/logger';
+import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormFieldFactoryBuilder} from '@hal-navigator/schema/form/form-field-factory-builder';
 
 /**
  * Accepts a list of resource descriptors. Each request is forward to any item of this list.
@@ -28,6 +30,12 @@ export class CombiningDescriptor implements ResourceDescriptor {
   @NotNull()
   getName(): string {
     return this.getFirstResult(d => d.getName());
+  }
+
+  toFormField(): FormField {
+    const builder = new FormFieldFactoryBuilder();
+    this.priorityList.reverse().forEach(d => builder.withResourceDescriptor(d));
+    return builder.build().toFormField();
   }
 
   getChild(resourceName: string): ResourceDescriptor {

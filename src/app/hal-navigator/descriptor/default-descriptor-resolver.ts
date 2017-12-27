@@ -18,12 +18,14 @@ export class DefaultDescriptorResolver implements ResourceDescriptorResolver {
   resolve(resourceName: string): Observable<CombiningDescriptor> {
     return this.schemaService.getJsonSchema(resourceName)
       .combineLatest(this.schemaService.getAlps(resourceName), (jsonSchema, alps) => {
-        return new CombiningDescriptor([
-          new StaticResourceDescriptor(resourceName, this.config),
-          new JsonSchemaDescriptor(resourceName, jsonSchema.getSchema(),
-            new SchemaReferenceFactory(jsonSchema.getSchema().definitions), this.schemaService),
-          new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor, this.schemaService)
-        ]);
+        const descriptors = [];
+        if (this.config && this.config.itemDescriptors) {
+          descriptors.push(new StaticResourceDescriptor(resourceName, this.config.itemDescriptors[resourceName]));
+        }
+        descriptors.push(new JsonSchemaDescriptor(resourceName, jsonSchema,
+          new SchemaReferenceFactory(jsonSchema.definitions), this.schemaService),
+          new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor, this.schemaService));
+        return new CombiningDescriptor(descriptors);
       });
   }
 

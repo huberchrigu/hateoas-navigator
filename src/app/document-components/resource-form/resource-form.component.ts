@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {FormField} from '@hal-navigator/schema/form/form-field';
 import {FormGroup} from '@angular/forms';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
+import {FormControlFactory} from '@hal-navigator/schema/form/form-control-factory';
+import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
 
 @Component({
   selector: 'app-new-resource',
@@ -23,13 +24,16 @@ export class ResourceFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: { schemaAdapter: SchemaAdapter, itemAdapter: VersionedResourceObject }) => {
-      this.fields = data.schemaAdapter.getFields();
-      this.title = data.schemaAdapter.getTitle();
-      this.form = new FormGroup(data.schemaAdapter.asControls(data.itemAdapter));
-      this.newItem = !data.itemAdapter;
+    this.route.data.subscribe((data: { resourceObject: VersionedResourceObject, resourceDescriptor: ResourceDescriptor }) => {
+      const resourceObject = data.resourceObject;
+      const descriptor = resourceObject ? resourceObject.getDescriptor() : data.resourceDescriptor;
+      this.fields = descriptor.toFormField().options.getSubFields();
+      this.title = descriptor.getTitle();
+      const controls = new FormControlFactory(resourceObject).getControls(this.fields);
+      this.form = new FormGroup(controls);
+      this.newItem = !data.resourceObject;
       if (!this.newItem) {
-        this.version = data.itemAdapter.getVersion();
+        this.version = data.resourceObject.getVersion();
       }
     });
   }

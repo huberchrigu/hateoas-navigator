@@ -5,6 +5,7 @@ import {NotNull} from '../../decorators/not-null';
 import {Observable} from 'rxjs/Observable';
 import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 import {AssociatedResourceListener} from '@hal-navigator/descriptor/association/associated-resource-listener';
+import {FormField} from '@hal-navigator/schema/form/form-field';
 
 /**
  * Resolved children needs to be cached, as a {@link JsonSchemaDescriptor} is not stateless ({@link #associatedSchema} is resolved
@@ -30,6 +31,10 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
     return this.name;
   }
 
+  toFormField(): FormField {
+    return undefined;
+  }
+
   getChild(resourceName: string): ResourceDescriptor {
     return this.resolveChild(resourceName);
   }
@@ -47,10 +52,18 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
       return null;
     }
     return this.schemaService.getJsonSchema(this.getAssociatedResourceName()).map(associatedSchema => {
-      this.associatedSchema = associatedSchema.getSchema();
-      return new JsonSchemaDescriptor(this.getAssociatedResourceName(), associatedSchema.getSchema(),
-        new SchemaReferenceFactory(associatedSchema.getSchema().definitions), this.schemaService);
+      this.associatedSchema = associatedSchema;
+      return new JsonSchemaDescriptor(this.getAssociatedResourceName(), associatedSchema,
+        new SchemaReferenceFactory(associatedSchema.definitions), this.schemaService);
     });
+  }
+
+  getSchema() {
+    return this.schema;
+  }
+
+  getReferenceFactory() {
+    return this.schemaReferenceFactory;
   }
 
   private resolveChild(propertyName: string): JsonSchemaDescriptor {

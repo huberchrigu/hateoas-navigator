@@ -3,6 +3,7 @@
  * fetching this information from the backend or by static configuration.
  */
 import {Observable} from 'rxjs/Observable';
+import {FormField} from '@hal-navigator/schema/form/form-field';
 
 export interface ResourceDescriptor {
   getTitle(): string;
@@ -14,4 +15,6 @@ export interface ResourceDescriptor {
   getChildren(): Array<ResourceDescriptor>;
 
   resolveAssociation(): Observable<ResourceDescriptor>;
+
+  toFormField(): FormField;
 }

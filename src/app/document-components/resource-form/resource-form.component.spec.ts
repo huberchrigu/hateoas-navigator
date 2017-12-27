@@ -6,13 +6,22 @@ import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {Observable} from 'rxjs/Observable';
+import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
+import {FormField} from '@hal-navigator/schema/form/form-field';
 
 describe('ResourceFormComponent', () => {
   let component: ResourceFormComponent;
   let fixture: ComponentFixture<ResourceFormComponent>;
 
   beforeEach(async(() => {
-      const schemaMock = createSpyObj('schemaAdapter', ['getFields', 'getTitle', 'asControls']);
+      const resourceDescriptor = jasmine.createSpyObj<ResourceDescriptor>('resourceDescriptor', ['toFormField', 'getTitle']);
+      resourceDescriptor.toFormField.and.returnValue({
+        options: {
+          getSubFields: () => []
+        }
+      } as FormField);
+      resourceDescriptor.getTitle.and.returnValue('Resource');
+
       TestBed.configureTestingModule({
         declarations: [ResourceFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
@@ -23,17 +32,14 @@ describe('ResourceFormComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               data: Observable.of({
-                schemaAdapter: schemaMock
+                resourceDescriptor: resourceDescriptor
               } as Data)
             } as ActivatedRoute
           }
         ]
       }).compileComponents();
-
-      schemaMock.asControls.and.returnValue([]);
     })
-  )
-  ;
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ResourceFormComponent);
@@ -41,8 +47,7 @@ describe('ResourceFormComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should get title from resource descriptor', () => {
+    expect(component.title).toEqual('Resource');
   });
-})
-;
+});

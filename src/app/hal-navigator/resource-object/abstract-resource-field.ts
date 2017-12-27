@@ -6,7 +6,8 @@ import {JsonType} from '@hal-navigator/resource-object/resource-object';
 export abstract class AbstractResourceField implements ResourceField {
   private displayValueConverter: DisplayValueConverter = new DisplayValueConverter();
 
-  protected descriptor: ResourceDescriptor;
+  constructor(protected descriptor: ResourceDescriptor = undefined) {
+  }
 
   getDisplayValue(): string | number {
     return this.displayValueConverter.transform(this.toRawProperty());

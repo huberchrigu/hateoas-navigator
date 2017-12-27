@@ -6,6 +6,7 @@ import {ResourceField} from '@hal-navigator/resource-object/resource-field';
 import {Observable} from 'rxjs/Observable';
 import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
 import {AbstractResourceField} from '@hal-navigator/resource-object/abstract-resource-field';
+import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
 
 /**
  * A resource object represents a HAL resource with links and - if any - embedded resource objects.
@@ -18,8 +19,9 @@ export class ResourceObjectAdapter extends AbstractResourceField {
 
   private linkFactory: LinkFactory;
 
-  constructor(public resourceObject: ResourceObject, private descriptorResolver: ResourceDescriptorResolver) {
-    super();
+  constructor(public resourceObject: ResourceObject, private descriptorResolver: ResourceDescriptorResolver,
+              descriptor: ResourceDescriptor = null) {
+    super(descriptor);
     if (Array.isArray(resourceObject) || !resourceObject._links) {
       throw new Error('This is not a valid resource object: ' + JSON.stringify(resourceObject));
     }
@@ -39,12 +41,12 @@ export class ResourceObjectAdapter extends AbstractResourceField {
   }
 
   /**
-   * Expects the embedded resources, i.e. it must be an array!
+   * Expects the embedded resources, i.e. it must be an array! Also assumes that the resource description remains the same.
    */
   getEmbeddedResources(linkRelationType: string): ResourceObjectAdapter[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
-      return embedded.map(e => new ResourceObjectAdapter(e, this.descriptorResolver)); // TODO: Fix resolver
+      return embedded.map(e => new ResourceObjectAdapter(e, this.descriptorResolver, this.descriptor));
     } else {
       throw new Error('Embedded object ' + linkRelationType + ' was not an array as expected');
     }
@@ -84,7 +86,7 @@ export class ResourceObjectAdapter extends AbstractResourceField {
       const embedded = this.resourceObject._embedded[propertyName];
       if (embedded) {
         return Array.isArray(embedded) ? embedded
-            .map(e => new ResourceObjectAdapter(e, this.descriptorResolver)) // TODO: Fix resolver
+            .map(e => new ResourceObjectAdapter(e, this.descriptorResolver, this.getSubDescriptor(propertyName))) // TODO: Fix resolver
             .map(e => applyFunction(e))
           : applyFunction(new ResourceObjectAdapter(embedded, this.descriptorResolver)); // TODO: Fix resolver
       }

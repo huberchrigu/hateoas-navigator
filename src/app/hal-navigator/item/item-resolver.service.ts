@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import {RouteParams} from '@hal-navigator/routing/route-params';
 
 @Injectable()
-export class ItemResolverService implements Resolve<VersionedResourceObject> {
+export class ResourceObjectResolverService implements Resolve<VersionedResourceObject> {
 
   constructor(private halDocumentService: HalDocumentService) {
   }

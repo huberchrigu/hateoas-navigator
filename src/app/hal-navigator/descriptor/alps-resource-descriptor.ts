@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {AlpsDescriptorAdapter} from '@hal-navigator/alp-document/alps-descriptor-adapter';
 import {AssociatedResourceResolver} from '@hal-navigator/descriptor/association/associated-resource-resolver';
 import {AssociatedResourceListener} from '@hal-navigator/descriptor/association/associated-resource-listener';
+import {FormField} from '@hal-navigator/schema/form/form-field';
 
 export class AlpsResourceDescriptor extends AssociatedResourceListener implements ResourceDescriptor, AssociatedResourceResolver {
   private associatedDescriptor: AlpsDescriptorAdapter;
@@ -51,5 +52,13 @@ export class AlpsResourceDescriptor extends AssociatedResourceListener implement
       return new AlpsDescriptorAdapter(this.alps).getCollectionResourceName();
     }
     return null;
+  }
+
+  getAlpsDescriptor() {
+    return this.alps;
+  }
+
+  toFormField(): FormField {
+    return undefined;
   }
 }

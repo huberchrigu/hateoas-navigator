@@ -1,6 +1,5 @@
 import {DefaultDescriptorResolver} from '@hal-navigator/descriptor/default-descriptor-resolver';
 import {async} from '@angular/core/testing';
-import {SchemaAdapter} from '@hal-navigator/schema/schema-adapter';
 import {JsonSchema, JsonSchemaDocument} from '@hal-navigator/schema/json-schema';
 import {ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 import {Observable} from 'rxjs/Observable';
@@ -23,9 +22,7 @@ describe('DefaultDescriptorResolver', () => {
       } as JsonSchema
     }
   } as JsonSchemaDocument;
-  schemaService.getJsonSchema.and.returnValue(Observable.of({
-    getSchema: () => schema
-  } as SchemaAdapter));
+  schemaService.getJsonSchema.and.returnValue(Observable.of(schema));
   const alpsDescriptor = {
     descriptor: {
       descriptors: []
