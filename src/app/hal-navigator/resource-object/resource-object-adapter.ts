@@ -86,9 +86,9 @@ export class ResourceObjectAdapter extends AbstractResourceField {
       const embedded = this.resourceObject._embedded[propertyName];
       if (embedded) {
         return Array.isArray(embedded) ? embedded
-            .map(e => new ResourceObjectAdapter(e, this.descriptorResolver, this.getSubDescriptor(propertyName))) // TODO: Fix resolver
+            .map(e => new ResourceObjectAdapter(e, this.descriptorResolver, this.getSubDescriptor(propertyName)))
             .map(e => applyFunction(e))
-          : applyFunction(new ResourceObjectAdapter(embedded, this.descriptorResolver)); // TODO: Fix resolver
+          : applyFunction(new ResourceObjectAdapter(embedded, this.descriptorResolver, this.getSubDescriptor(propertyName)));
       }
     }
     return applyFunction(new ResourceProperty(propertyName, value, this.getSubDescriptor(propertyName)));
