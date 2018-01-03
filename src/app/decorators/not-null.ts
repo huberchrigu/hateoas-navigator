@@ -6,7 +6,7 @@ export function NotNull(): MethodDecorator {
       if (returnValue) {
         return returnValue;
       }
-      throw new Error(`Method ${propertyKey} in ${this.constructor.name} returned null value for arguments ${JSON.stringify(args)}`);
+      throw new Error(`Method ${propertyKey}() in ${this.constructor.name} returned null value for arguments "${JSON.stringify(args)}"`);
     };
     return descriptor;
   };
