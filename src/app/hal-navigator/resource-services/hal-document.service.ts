@@ -16,6 +16,7 @@ import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
 import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
 import {Api} from '@hal-navigator/resource-services/api';
+import {Required, Validate} from '../../decorators/required';
 
 /**
  * This is the module's core service providing functionality to access HAL, ALPS and JsonSchema documents.
@@ -41,29 +42,34 @@ export class HalDocumentService {
       .map(root => new NavigationFactory(root));
   }
 
-  getCollection(resourceName: string): Observable<CollectionAdapter> {
+  @Validate
+  getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
     return this.getFromApi<ResourceObject>('/' + resourceName)
       .map(collectionHalDocument => new ResourceObjectAdapter(collectionHalDocument, this.descriptorResolver))
       .map(resource => new CollectionAdapter(resource));
   }
 
-  deleteResource(document: ResourceObject, version: string): Observable<HttpResponse<void>> {
+  @Validate
+  deleteResource(@Required document: ResourceObject, version: string): Observable<HttpResponse<void>> {
     const resourceLink = ResourceLink.fromResourceObject(document, undefined).getRelativeUri();
     return this.deleteFromApi(resourceLink, version)
       .map(response => this.resourceCacheService.removeFromResponse(resourceLink, response));
   }
 
-  create(resourceName: string, object: any): Observable<VersionedResourceObject> {
+  @Validate
+  create(@Required resourceName: string, object: any): Observable<VersionedResourceObject> {
     return this.postToApi('/' + resourceName, object)
       .map(response => this.resourceCacheService.getItemFromModifyingResponse(response));
   }
 
-  update(resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceObject> {
+  @Validate
+  update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceObject> {
     return this.putToApi('/' + resourceName + '/' + id, object, version)
       .map(response => this.resourceCacheService.getItemFromModifyingResponse(response));
   }
 
-  getItem(resource: string, id: string): Observable<VersionedResourceObject> {
+  @Validate
+  getItem(@Required resource: string, @Required id: string): Observable<VersionedResourceObject> {
     return this.getResponseFromApi<ResourceObject>(`/${resource}/${id}`, this.resourceCacheService.getRequestHeader(resource, id))
       .map(response => this.resourceCacheService.getItemFromGetResponse(response))
       .catch(response => this.resourceCacheService.getItemFromErroneousGetResponse(resource, id, response));
@@ -73,7 +79,8 @@ export class HalDocumentService {
     return this.getResponseFromApi<T>(resourceUrl, headers).map(response => response.body);
   }
 
-  private getResponseFromApi<T>(resourceUrl: string, headers: HttpHeaders): Observable<HttpResponse<T>> {
+  @Validate
+  private getResponseFromApi<T>(@Required resourceUrl: string, headers: HttpHeaders): Observable<HttpResponse<T>> {
     return this.httpClient.get<T>(Api.PREFIX + resourceUrl, HalDocumentService.getOptions(headers));
   }
 

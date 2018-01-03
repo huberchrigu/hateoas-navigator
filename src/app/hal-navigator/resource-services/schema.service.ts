@@ -8,6 +8,7 @@ import {AlpsDocument} from '@hal-navigator/alp-document/alps-document';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 import {Api} from '@hal-navigator/resource-services/api';
+import {Required, Validate} from '../../decorators/required';
 
 @Injectable()
 export class SchemaService {
@@ -28,7 +29,8 @@ export class SchemaService {
       .map(document => new AlpsDocumentAdapter(document));
   }
 
-  private getFromApi<T>(resourceUrl: string, headers?: HttpHeaders): Observable<T> {
+  @Validate
+  private getFromApi<T>(@Required resourceUrl: string, headers?: HttpHeaders): Observable<T> {
     return this.httpClient.get<T>(Api.PREFIX + resourceUrl, {headers: headers});
   }
 }
