@@ -9,6 +9,8 @@ import {AlpsDescriptorAdapter} from '@hal-navigator/alp-document/alps-descriptor
 /**
  * Creates a form field from a JSON schema. A schema of type 'object' has sub-schemas, i.e. this will lead to recursive creations of the
  * sub-schemas' factories.
+ *
+ * @deprecated
  */
 export class FormFieldFactory {
 
@@ -26,10 +28,10 @@ export class FormFieldFactory {
   }
 
   private createFormField(): FormField {
-    return new FormField(this.fieldName, getFormType(this.schema),
-      this.required,
-      this.schema.readOnly,
-      this.schema.title,
+    return new FormField(this.fieldName, getFormType(this.schema), // TODO: Can be done directly in descriptors
+      this.required, // TODO: Enable getParent() function in descriptors, then this can be done directly there.
+      this.schema.readOnly, // TODO: Can be done directly in descriptors
+      this.schema.title, // TODO: Can be done directly in descriptors
       this.createOptions());
   }
 
@@ -46,13 +48,13 @@ export class FormFieldFactory {
         formFieldOptions.setSubFields(this.getSubFieldsForObject());
         break;
       default:
-        formFieldOptions.setOptions(this.schema.enum);
+        formFieldOptions.setOptions(this.schema.enum); // TODO: Can be done directly in descriptor
         switch (this.schema.format) {
           case 'date-time':
-            formFieldOptions.setDateTimeType(this.getDateTimeType());
+            formFieldOptions.setDateTimeType(this.getDateTimeType()); // TODO: Can be done directly in descriptor
             break;
           case 'uri':
-            formFieldOptions.setLinkedResource(this.getLinkedResource());
+            formFieldOptions.setLinkedResource(this.getLinkedResource()); // TODO: Can be done directly in descriptor
             break;
         }
     }

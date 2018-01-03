@@ -1,7 +1,8 @@
-import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
-import {ItemDescriptor} from '@hal-navigator/config/module-configuration';
+import {ResourceDescriptor} from 'app/hal-navigator/descriptor/resource-descriptor';
+import {ItemDescriptor} from 'app/hal-navigator/config/module-configuration';
 import {Observable} from 'rxjs/Observable';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from 'app/hal-navigator/schema/form/form-field';
+import {StaticFormField} from '@hal-navigator/descriptor/static/static-form-field';
 
 export class StaticResourceDescriptor implements ResourceDescriptor {
   constructor(private name: string, private config: ItemDescriptor) {
@@ -30,11 +31,15 @@ export class StaticResourceDescriptor implements ResourceDescriptor {
     return undefined;
   }
 
+  getAssociatedResource() {
+    return undefined;
+  }
+
   getItemDescriptor() {
     return this.config;
   }
 
   toFormField(): FormField {
-    return undefined;
+    return new StaticFormField(this);
   }
 }

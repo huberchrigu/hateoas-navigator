@@ -2,10 +2,10 @@ import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-des
 import {ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 import {Observable} from 'rxjs/Observable';
 import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
-import {CombiningDescriptor} from '@hal-navigator/descriptor/combining-descriptor';
-import {StaticResourceDescriptor} from '@hal-navigator/descriptor/static-resource-descriptor';
-import {JsonSchemaDescriptor} from '@hal-navigator/descriptor/json-schema-descriptor';
-import {AlpsResourceDescriptor} from '@hal-navigator/descriptor/alps-resource-descriptor';
+import {CombiningDescriptor} from '@hal-navigator/descriptor/combining/combining-descriptor';
+import {StaticResourceDescriptor} from '@hal-navigator/descriptor/static/static-resource-descriptor';
+import {JsonSchemaDescriptor} from '@hal-navigator/descriptor/json-schema/json-schema-descriptor';
+import {AlpsResourceDescriptor} from '@hal-navigator/descriptor/alps/alps-resource-descriptor';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
 import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
@@ -22,7 +22,7 @@ export class DefaultDescriptorResolver implements ResourceDescriptorResolver {
         if (this.config && this.config.itemDescriptors) {
           descriptors.push(new StaticResourceDescriptor(resourceName, this.config.itemDescriptors[resourceName]));
         }
-        descriptors.push(new JsonSchemaDescriptor(resourceName, jsonSchema,
+        descriptors.push(new JsonSchemaDescriptor(resourceName, jsonSchema, null,
           new SchemaReferenceFactory(jsonSchema.definitions), this.schemaService),
           new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor, this.schemaService));
         return new CombiningDescriptor(descriptors);
