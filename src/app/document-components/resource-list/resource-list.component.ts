@@ -23,7 +23,7 @@ export class ResourceListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data
-      .map((data: RouteData) => data.collectionAdapter)
+      .map((data: ResourceListRouteData) => data.collectionAdapter)
       .subscribe(collection => {
         this.initTableMetadata(collection);
         this.initDataSource(collection);
@@ -69,7 +69,6 @@ export class ResourceListComponent implements OnInit {
   }
 }
 
-// TODO: Should be part of the resolver module
-interface RouteData {
+interface ResourceListRouteData {
   collectionAdapter: CollectionAdapter;
 }
