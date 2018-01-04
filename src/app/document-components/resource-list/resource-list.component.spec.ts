@@ -14,7 +14,7 @@ describe('ResourceListComponent', () => {
   let collectionAdapter: SpyObj<CollectionAdapter>;
 
   beforeEach(async(() => {
-    collectionAdapter = jasmine.createSpyObj('collectionAdapter', ['getItems', 'getResourceName', 'getPropertyNames', 'getDescriptor']);
+    collectionAdapter = jasmine.createSpyObj('collectionAdapter', ['getItems', 'getName', 'getPropertyNames', 'getDescriptor']);
     collectionAdapter.getDescriptor.and.returnValue({getTitle: () => 'Resources'});
     TestBed.configureTestingModule({
       imports: [MatTableModule],

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from '@hal-navigator/form/form-field';
 import {AbstractControl} from '@angular/forms';
 import {DateTimeType} from '@hal-navigator/config/module-configuration';
 

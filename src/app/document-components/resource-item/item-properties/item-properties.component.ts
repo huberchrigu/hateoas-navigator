@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 
 @Component({
   selector: 'app-item-properties',

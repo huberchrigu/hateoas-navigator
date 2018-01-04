@@ -1,24 +1,24 @@
-import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {ResourceAdapter} from '@hal-navigator/hal-resource/resource-adapter';
 import {Observable} from 'rxjs/Observable';
 
 export class CollectionAdapter {
-  constructor(private resourceObject: ResourceObjectAdapter) {
+  constructor(private resourceObject: ResourceAdapter) {
 
   }
 
-  resolve(): Observable<ResourceObjectAdapter> {
+  resolve(): Observable<ResourceAdapter> {
     return this.resourceObject.resolveDescriptor();
   }
 
   getResourceName() {
-    return this.resourceObject.getResourceName();
+    return this.resourceObject.getName();
   }
 
   getDescriptor() {
     return this.resourceObject.getDescriptor();
   }
 
-  getItems(): Array<ResourceObjectAdapter> {
+  getItems(): Array<ResourceAdapter> {
     return this.getEmbeddedContent();
   }
 
@@ -34,13 +34,13 @@ export class CollectionAdapter {
     return properties;
   }
 
-  private getEmbeddedContent(): ResourceObjectAdapter[] {
+  private getEmbeddedContent(): ResourceAdapter[] {
     return this.resourceObject.getEmbeddedResources(
-      this.resourceObject.getResourceName()
+      this.resourceObject.getName(), true
     );
   }
 
-  private getNamesOfItem(resourceObject: ResourceObjectAdapter) {
+  private getNamesOfItem(resourceObject: ResourceAdapter) {
     return resourceObject.getAllData().map(p => p.getName());
   }
 }

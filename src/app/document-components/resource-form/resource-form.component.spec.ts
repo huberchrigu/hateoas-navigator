@@ -6,15 +6,15 @@ import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {Observable} from 'rxjs/Observable';
-import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
+import {FormField} from '@hal-navigator/form/form-field';
 
 describe('ResourceFormComponent', () => {
   let component: ResourceFormComponent;
   let fixture: ComponentFixture<ResourceFormComponent>;
 
   beforeEach(async(() => {
-      const resourceDescriptor = jasmine.createSpyObj<ResourceDescriptor>('resourceDescriptor', ['toFormField', 'getTitle']);
+      const resourceDescriptor = jasmine.createSpyObj<PropertyDescriptor>('resourceDescriptor', ['toFormField', 'getTitle']);
       resourceDescriptor.toFormField.and.returnValue({
         options: {
           getSubFields: () => []

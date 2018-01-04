@@ -6,17 +6,17 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
-import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
-import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
+import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 import SpyObj = jasmine.SpyObj;
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
   let fixture: ComponentFixture<ResourceItemComponent>;
-  let versionedResourceObject: SpyObj<VersionedResourceObject>;
+  let versionedResourceObject: SpyObj<VersionedResourceAdapter>;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObject>('resourceObject', ['getAllData', 'getDescriptor']);
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getAllData', 'getDescriptor']);
     versionedResourceObject.getAllData.and.returnValue([
       {} as ResourceProperty
     ]);

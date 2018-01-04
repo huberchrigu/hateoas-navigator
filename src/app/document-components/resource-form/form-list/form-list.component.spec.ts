@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormListComponent} from './form-list.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormArray} from '@angular/forms';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from '@hal-navigator/form/form-field';
 
 describe('FormListComponent', () => {
   let component: FormListComponent;

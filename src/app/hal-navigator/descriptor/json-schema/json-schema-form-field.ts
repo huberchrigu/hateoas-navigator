@@ -1,7 +1,7 @@
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from '@hal-navigator/form/form-field';
 import {JsonSchemaDescriptor} from '@hal-navigator/descriptor/json-schema/json-schema-descriptor';
-import {FormFieldType, getFormType} from '@hal-navigator/schema/form/form-field-type';
-import {FormFieldOptions} from '@hal-navigator/schema/form/form-field-options';
+import {FormFieldType, getFormType} from '@hal-navigator/form/form-field-type';
+import {FormFieldOptions} from '@hal-navigator/form/form-field-options';
 import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 export class JsonSchemaFormField implements FormField {

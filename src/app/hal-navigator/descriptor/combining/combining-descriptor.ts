@@ -1,12 +1,12 @@
-import {ResourceDescriptor} from 'app/hal-navigator/descriptor/resource-descriptor';
+import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {NotNull} from '../../../decorators/not-null';
 import {Observable} from 'rxjs/Observable';
 import {AssociatedResourceResolver} from 'app/hal-navigator/descriptor/association/associated-resource-resolver';
 import {AssociatedResourceListener} from 'app/hal-navigator/descriptor/association/associated-resource-listener';
 import {LOGGER} from '../../../logging/logger';
-import {FormField} from 'app/hal-navigator/schema/form/form-field';
-import {FormFieldOptions} from 'app/hal-navigator/schema/form/form-field-options';
-import {FormFieldType} from 'app/hal-navigator/schema/form/form-field-type';
+import {FormField} from 'app/hal-navigator/form/form-field';
+import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
+import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
 
 /**
  * Accepts a list of resource descriptors. Each request is forward to any item of this list.
@@ -16,8 +16,8 @@ import {FormFieldType} from 'app/hal-navigator/schema/form/form-field-type';
  * {@link AssociatedResourceListener listeners} about the name, such that every descriptor can
  * {@link ResourceDescriptor#resolveAssociation() resolve its association to another resource, if there is any}.
  */
-export class CombiningDescriptor implements ResourceDescriptor {
-  constructor(private priorityList: Array<ResourceDescriptor>) {
+export class CombiningDescriptor implements PropertyDescriptor {
+  constructor(private priorityList: Array<PropertyDescriptor>) {
     if (priorityList.length === 0) {
       throw new Error('Invalid descriptor: No descriptors to combine');
     }
@@ -65,7 +65,7 @@ export class CombiningDescriptor implements ResourceDescriptor {
     return formField.type ? formField : null;
   }
 
-  getChild(resourceName: string): ResourceDescriptor {
+  getChild(resourceName: string): PropertyDescriptor {
     return new CombiningDescriptor(this.priorityList
       .map(d => d.getChild(resourceName))
       .filter(d => d));
@@ -121,7 +121,7 @@ export class CombiningDescriptor implements ResourceDescriptor {
       .map(() => this);
   }
 
-  private getFirstResult<T>(f: (d: ResourceDescriptor) => T): T {
+  private getFirstResult<T>(f: (d: PropertyDescriptor) => T): T {
     return this.getFirstResultIn(this.priorityList, f);
   }
 

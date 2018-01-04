@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {AbstractControl, FormArray} from '@angular/forms';
-import {FormField} from '@hal-navigator/schema/form/form-field';
-import {FormControlFactory} from '@hal-navigator/schema/form/form-control-factory';
+import {FormField} from '@hal-navigator/form/form-field';
+import {FormControlFactory} from '@hal-navigator/form/form-control-factory';
 
 @Component({
   selector: 'app-form-list',

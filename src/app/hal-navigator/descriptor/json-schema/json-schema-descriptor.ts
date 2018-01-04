@@ -1,17 +1,17 @@
-import {ResourceDescriptor} from 'app/hal-navigator/descriptor/resource-descriptor';
+import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {JsonSchema} from 'app/hal-navigator/schema/json-schema';
 import {SchemaReferenceFactory} from 'app/hal-navigator/schema/schema-reference-factory';
 import {Observable} from 'rxjs/Observable';
 import {SchemaService} from 'app/hal-navigator/resource-services/schema.service';
 import {AssociatedResourceListener} from 'app/hal-navigator/descriptor/association/associated-resource-listener';
-import {FormField} from 'app/hal-navigator/schema/form/form-field';
+import {FormField} from 'app/hal-navigator/form/form-field';
 import {JsonSchemaFormField} from '@hal-navigator/descriptor/json-schema/json-schema-form-field';
 
 /**
  * Resolved children needs to be cached, as a {@link JsonSchemaDescriptor} is not stateless ({@link #associatedSchema} is resolved
  * and later used).
  */
-export class JsonSchemaDescriptor extends AssociatedResourceListener implements ResourceDescriptor {
+export class JsonSchemaDescriptor extends AssociatedResourceListener implements PropertyDescriptor {
   private associatedSchema: JsonSchemaDescriptor;
   private children: { [propertyName: string]: JsonSchemaDescriptor } = {};
 
@@ -36,14 +36,14 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
     return new JsonSchemaFormField(this, this.schemaService);
   }
 
-  getChild(resourceName: string): ResourceDescriptor {
+  getChild(resourceName: string): PropertyDescriptor {
     if (this.schema.format === 'uri') {
       return this.getAssociatedResource().getChild(resourceName);
     }
     return this.resolveChild(resourceName);
   }
 
-  getChildren(): Array<ResourceDescriptor> {
+  getChildren(): Array<PropertyDescriptor> {
     const children = this.resolveProperties();
     if (!children) {
       return [];

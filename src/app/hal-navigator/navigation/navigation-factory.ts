@@ -1,5 +1,5 @@
 import {NavigationItem} from './navigation-item';
-import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {ResourceAdapter} from '@hal-navigator/hal-resource/resource-adapter';
 import {LinkFactory} from '@hal-navigator/link-object/link-factory';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/concat';
@@ -7,7 +7,7 @@ import 'rxjs/add/observable/forkJoin';
 
 export class NavigationFactory {
 
-  constructor(private resourceObject: ResourceObjectAdapter) {
+  constructor(private resourceObject: ResourceAdapter) {
   }
 
   getItems(): Observable<Array<NavigationItem>> {

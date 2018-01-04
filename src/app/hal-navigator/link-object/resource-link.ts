@@ -1,16 +1,16 @@
 import {Link} from '@hal-navigator/link-object/link';
 import {LinkObject} from '@hal-navigator/link-object/link-object';
-import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
+import {HalResource} from '@hal-navigator/hal-resource/hal-resource';
 import {Observable} from 'rxjs/Observable';
-import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
-import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
+import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
+import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
 
 /**
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 export class ResourceLink extends Link {
-  static fromResourceObject(resourceObject: ResourceObject, resourceDescriptorResolver: ResourceDescriptorResolver) {
+  static fromResourceObject(resourceObject: HalResource, resourceDescriptorResolver: ResourceDescriptorResolver) {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
@@ -48,11 +48,11 @@ export class ResourceLink extends Link {
     return this.removeTemplatedPart(this.getRelativeUri());
   }
 
-  getResource(): Observable<VersionedResourceObject> {
+  getResource(): Observable<VersionedResourceAdapter> {
     throw new Error('Not implemented yet');
   }
 
-  getResourceDescriptor(): Observable<ResourceDescriptor> {
+  getResourceDescriptor(): Observable<PropertyDescriptor> {
     return this.resourceDescriptorResolver.resolve(this.extractResourceName());
   }
 

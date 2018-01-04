@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
+import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
 import {CollectionAdapter} from '@hal-navigator/collection/collection-adapter';
 import {Observable} from 'rxjs/Observable';
-import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {ResourceAdapter} from '@hal-navigator/hal-resource/resource-adapter';
 
 @Component({
   selector: 'app-resource-list',
@@ -16,7 +16,7 @@ export class ResourceListComponent implements OnInit {
   collection: CollectionAdapter;
   propertyNames: Array<string>;
 
-  private dataSource: DataSource<ResourceObjectAdapter>;
+  private dataSource: DataSource<ResourceAdapter>;
 
   constructor(private router: Router, private route: ActivatedRoute) {
   }
@@ -44,14 +44,14 @@ export class ResourceListComponent implements OnInit {
     return 'new';
   }
 
-  onClick(item: VersionedResourceObject) {
+  onClick(item: VersionedResourceAdapter) {
     this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
   }
 
   /**
    * @deprecated
    */
-  getDisplayValue(item: VersionedResourceObject, propertyName: string) {
+  getDisplayValue(item: VersionedResourceAdapter, propertyName: string) {
     return item.getData(propertyName, d => d.getDisplayValue());
   }
 

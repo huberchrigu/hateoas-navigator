@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
-import {ResourceProperty} from '@hal-navigator/resource-object/properties/resource-property';
+import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;
 
@@ -30,10 +30,10 @@ describe('ItemPropertiesComponent', () => {
   });
 
   function initArrayProperty() {
-    arrayProperty = jasmine.createSpyObj('arrayProperty', ['isArray', 'isUriType', 'getChildren', 'getName', 'getDescriptor']);
+    arrayProperty = jasmine.createSpyObj('arrayProperty', ['isArray', 'getArrayItems', 'getName', 'getDescriptor']);
     arrayProperty.isArray.and.returnValue(true);
     arrayProperty.getName.and.returnValue('array');
-    arrayProperty.getChildren.and.returnValue([{getObjectProperties: () => []}]);
+    arrayProperty.getArrayItems.and.returnValue([{getObjectProperties: () => []}]);
     arrayProperty.getDescriptor.and.returnValue({getTitle: () => 'Array'});
   }
 });

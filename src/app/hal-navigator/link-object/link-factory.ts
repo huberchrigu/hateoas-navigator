@@ -1,6 +1,6 @@
-import {ResourceLinks} from '@hal-navigator/resource-object/resource-links';
+import {ResourceLinks} from '@hal-navigator/hal-resource/resource-links';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
 
 export class LinkFactory {
   static PROFILE_RELATION_TYPE = 'profile';

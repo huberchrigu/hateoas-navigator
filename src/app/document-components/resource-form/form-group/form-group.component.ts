@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from '@hal-navigator/form/form-field';
 import {FormGroup} from '@angular/forms';
 
 @Component({

@@ -9,7 +9,7 @@ import {ResourceFormComponent} from '@document-components/resource-form/resource
 import {ResourceItemComponent} from '@document-components/resource-item/resource-item.component';
 import {RouteParams} from '@hal-navigator/routing/route-params';
 import {ResourceObjectResolverService} from '@hal-navigator/item/item-resolver.service';
-import {ResourceDescriptorResolverService} from '@hal-navigator/descriptor/resource-descriptor-resolver.service';
+import {ResourceDescriptorResolverService} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver.service';
 
 const routes: Routes = [
   {

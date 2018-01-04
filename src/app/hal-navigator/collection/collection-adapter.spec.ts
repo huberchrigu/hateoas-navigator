@@ -1,9 +1,9 @@
 import {CollectionAdapter} from '@hal-navigator/collection/collection-adapter';
-import {ResourceObjectAdapter} from '@hal-navigator/resource-object/resource-object-adapter';
+import {ResourceAdapter} from '@hal-navigator/hal-resource/resource-adapter';
 
 describe('CollectionAdapter', () => {
   it('should return no properties', () => {
-    const resourceObject = jasmine.createSpyObj<ResourceObjectAdapter>('resourceObject', ['getEmbeddedResources', 'getResourceName']);
+    const resourceObject = jasmine.createSpyObj<ResourceAdapter>('resourceObject', ['getEmbeddedResources', 'getName']);
     resourceObject.getEmbeddedResources.and.returnValue([]);
 
     const testee = new CollectionAdapter(resourceObject);

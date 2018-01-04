@@ -1,7 +1,7 @@
-import {FormField} from '@hal-navigator/schema/form/form-field';
-import {AlpsResourceDescriptor} from '@hal-navigator/descriptor/alps/alps-resource-descriptor';
-import {FormFieldType} from '@hal-navigator/schema/form/form-field-type';
-import {FormFieldOptions} from '@hal-navigator/schema/form/form-field-options';
+import {FormField} from '@hal-navigator/form/form-field';
+import {AlpsPropertyDescriptor} from '@hal-navigator/descriptor/alps/alps-property-descriptor';
+import {FormFieldType} from '@hal-navigator/form/form-field-type';
+import {FormFieldOptions} from '@hal-navigator/form/form-field-options';
 
 export class AlpsFormField implements FormField {
   name: string;
@@ -11,7 +11,7 @@ export class AlpsFormField implements FormField {
   title: string;
   options: FormFieldOptions;
 
-  constructor(alpsResourceDescriptor: AlpsResourceDescriptor) {
+  constructor(alpsResourceDescriptor: AlpsPropertyDescriptor) {
     this.name = alpsResourceDescriptor.getName();
     this.options = new FormFieldOptions();
     this.options.setLinkedResource(alpsResourceDescriptor.resolveAssociatedResourceName());

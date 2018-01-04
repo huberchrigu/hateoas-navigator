@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FormFieldComponent} from './form-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {FormField} from '@hal-navigator/schema/form/form-field';
+import {FormField} from '@hal-navigator/form/form-field';
 import {FormControl} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;

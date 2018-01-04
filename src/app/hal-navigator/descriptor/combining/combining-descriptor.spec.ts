@@ -1,26 +1,26 @@
 import {CombiningDescriptor} from 'app/hal-navigator/descriptor/combining/combining-descriptor';
-import {ResourceDescriptor} from 'app/hal-navigator/descriptor/resource-descriptor';
-import {AlpsResourceDescriptor} from 'app/hal-navigator/descriptor/alps/alps-resource-descriptor';
+import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
+import {AlpsPropertyDescriptor} from 'app/hal-navigator/descriptor/alps/alps-property-descriptor';
 import {JsonSchemaDescriptor} from 'app/hal-navigator/descriptor/json-schema/json-schema-descriptor';
-import {FormField} from 'app/hal-navigator/schema/form/form-field';
-import {FormFieldOptions} from 'app/hal-navigator/schema/form/form-field-options';
-import {FormFieldType} from 'app/hal-navigator/schema/form/form-field-type';
+import {FormField} from 'app/hal-navigator/form/form-field';
+import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
+import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
 import {DateTimeType} from 'app/hal-navigator/config/module-configuration';
 import {SchemaReferenceFactory} from '@hal-navigator/schema/schema-reference-factory';
-import {AlpsDocumentAdapter} from '@hal-navigator/alp-document/alps-document-adapter';
+import {AlpsDocumentAdapter} from '@hal-navigator/alps-document/alps-document-adapter';
 import {alps, jsonSchema} from '@hal-navigator/descriptor/combining/sample-input.spec';
-import {ResourceDescriptorMockBuilder} from '@hal-navigator/descriptor/combining/resource-descriptor-mock-builder.spec';
+import {PropertyDescriptorMockBuilder} from '@hal-navigator/descriptor/combining/property-descriptor-mock-builder.spec';
 
 describe('CombiningDescriptor', () => {
   it('should group all children by name', () => {
     const testee = new CombiningDescriptor([
-      new ResourceDescriptorMockBuilder().withChildren([
-        new ResourceDescriptorMockBuilder().withName('A').build(),
-        new ResourceDescriptorMockBuilder().withName('B').build()
+      new PropertyDescriptorMockBuilder().withChildren([
+        new PropertyDescriptorMockBuilder().withName('A').build(),
+        new PropertyDescriptorMockBuilder().withName('B').build()
       ]).build(),
-      new ResourceDescriptorMockBuilder().withChildren([
-        new ResourceDescriptorMockBuilder().withName('B').build(),
-        new ResourceDescriptorMockBuilder().withName('C').build()
+      new PropertyDescriptorMockBuilder().withChildren([
+        new PropertyDescriptorMockBuilder().withName('B').build(),
+        new PropertyDescriptorMockBuilder().withName('C').build()
       ]).build()
     ]);
     const result = testee.getChildren();
@@ -29,7 +29,7 @@ describe('CombiningDescriptor', () => {
     expectChild(result[1], 2, 'B');
     expectChild(result[2], 1, 'C');
 
-    function expectChild(descriptor: ResourceDescriptor, expectedListLength: number, expectedName: string) {
+    function expectChild(descriptor: PropertyDescriptor, expectedListLength: number, expectedName: string) {
       expect(descriptor['priorityList'].length).toBe(expectedListLength);
       expect(descriptor.getName()).toBe(expectedName);
     }
@@ -40,9 +40,9 @@ describe('CombiningDescriptor', () => {
     const parentResourceName = 'parent';
     const childPropertyName = 'association';
 
-    const alpsChild = prepareNotifiedMock<AlpsResourceDescriptor>(childPropertyName, [])
+    const alpsChild = prepareNotifiedMock<AlpsPropertyDescriptor>(childPropertyName, [])
       .withResolveAssociatedResourceName(associatedResourceName).build();
-    const alpsParent = prepareNotifiedMock<AlpsResourceDescriptor>(parentResourceName, [alpsChild])
+    const alpsParent = prepareNotifiedMock<AlpsPropertyDescriptor>(parentResourceName, [alpsChild])
       .withResolveAssociatedResourceName(null).build();
 
     const jsonSchemaChild = prepareNotifiedMock<JsonSchemaDescriptor>(childPropertyName, []).build();
@@ -64,8 +64,8 @@ describe('CombiningDescriptor', () => {
       expect(jsonSchemaChild.resolveAssociation).toHaveBeenCalled();
     });
 
-    function prepareNotifiedMock<T extends ResourceDescriptor>(resourceName: string, children): ResourceDescriptorMockBuilder<T> {
-      return new ResourceDescriptorMockBuilder<T>()
+    function prepareNotifiedMock<T extends PropertyDescriptor>(resourceName: string, children): PropertyDescriptorMockBuilder<T> {
+      return new PropertyDescriptorMockBuilder<T>()
         .withName(resourceName)
         .withChildren(children)
         .withNotifyAssociatedResource()
@@ -95,27 +95,27 @@ describe('CombiningDescriptor', () => {
       expect(actualValue.readOnly).toBe(readOnly);
     }
 
-    function mockJsonSchemaDescriptorWithDatePickerChild(): ResourceDescriptor {
+    function mockJsonSchemaDescriptorWithDatePickerChild(): PropertyDescriptor {
       const jsonOptions = new FormFieldOptions();
       jsonOptions.setSubFields([new FormField('time', FormFieldType.DATE_PICKER, false,
         false, 'Time', new FormFieldOptions())]);
-      return new ResourceDescriptorMockBuilder().withFormField(
+      return new PropertyDescriptorMockBuilder().withFormField(
         new FormField('object', FormFieldType.SUB_FORM, true, false, 'Object', jsonOptions)
       ).build();
     }
 
-    function mockStaticDescriptorWithTimeOptionChild(): ResourceDescriptor {
+    function mockStaticDescriptorWithTimeOptionChild(): PropertyDescriptor {
       const timeOptions = new FormFieldOptions();
       timeOptions.setDateTimeType(DateTimeType.TIME);
       const staticOptions = new FormFieldOptions();
       staticOptions.setSubFields([new FormField('time', undefined,
         undefined, undefined, undefined, timeOptions)]);
-      return new ResourceDescriptorMockBuilder().withFormField(new FormField('object', undefined,
+      return new PropertyDescriptorMockBuilder().withFormField(new FormField('object', undefined,
         undefined, undefined, undefined, staticOptions)).build();
     }
 
-    function mockAlpsDescriptorWithoutChild(): ResourceDescriptor {
-      return new ResourceDescriptorMockBuilder().withFormField(
+    function mockAlpsDescriptorWithoutChild(): PropertyDescriptor {
+      return new PropertyDescriptorMockBuilder().withFormField(
         new FormField('object', undefined, undefined, undefined, undefined, new FormFieldOptions()))
         .build();
     }
@@ -127,7 +127,7 @@ describe('CombiningDescriptor', () => {
     beforeAll(() => {
       const testee = new CombiningDescriptor([
         new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions), undefined),
-        new AlpsResourceDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, undefined)
+        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, undefined)
       ]);
 
       const meetingGroup = testee.toFormField();

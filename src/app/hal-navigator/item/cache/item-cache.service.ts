@@ -1,11 +1,11 @@
-import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
+import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
 import {HeaderOptions} from '@hal-navigator/http/header-options';
 import {Observable, ObservableInput} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
-import {ResourceObject} from '@hal-navigator/resource-object/resource-object';
+import {HalResource} from '@hal-navigator/hal-resource/hal-resource';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resource-descriptor-resolver';
+import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
 import {Injectable} from '@angular/core';
 
 /**
@@ -15,21 +15,21 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class ItemCacheService {
   private static E_TAG_HEADER = 'ETag';
-  private cache: { [key: string]: VersionedResourceObject } = {};
+  private cache: { [key: string]: VersionedResourceAdapter } = {};
 
   constructor(private descriptorResolver: ResourceDescriptorResolver) {
   }
 
-  getItemFromModifyingResponse(response: HttpResponse<ResourceObject>): VersionedResourceObject {
-    return this.handleOkResponse(response);
+  getItemFromModifyingResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
+    return this.handleOkResponse(resourceName, response);
   }
 
-  getItemFromGetResponse(response: HttpResponse<ResourceObject>): VersionedResourceObject {
-    return this.handleOkResponse(response);
+  getItemFromGetResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
+    return this.handleOkResponse(resourceName, response);
   }
 
   getItemFromErroneousGetResponse(resource: string, id: string,
-                                  response: HttpResponse<ResourceObject>): ObservableInput<VersionedResourceObject> {
+                                  response: HttpResponse<HalResource>): ObservableInput<VersionedResourceAdapter> {
     if (response.status === 304) {
       return this.handleNotModifiedResponse(resource, id);
     }
@@ -47,17 +47,17 @@ export class ItemCacheService {
     return HeaderOptions.withIfNoneMatchHeader(version);
   }
 
-  private handleOkResponse(response: HttpResponse<ResourceObject>): VersionedResourceObject {
+  private handleOkResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
     const version = response.headers.get(ItemCacheService.E_TAG_HEADER);
     const resourceObject = response.body;
-    const item = new VersionedResourceObject(resourceObject, version, this.descriptorResolver);
+    const item = new VersionedResourceAdapter(resourceName, resourceObject, version, this.descriptorResolver);
     if (version && item) {
       this.addToCache(item);
     }
     return item;
   }
 
-  private handleNotModifiedResponse(resource: string, id: string): Observable<VersionedResourceObject> {
+  private handleNotModifiedResponse(resource: string, id: string): Observable<VersionedResourceAdapter> {
     const cachedObject = this.getFromCache(resource, id);
     if (cachedObject) {
       return Observable.of(cachedObject);
@@ -66,7 +66,7 @@ export class ItemCacheService {
     }
   }
 
-  private addToCache(item: VersionedResourceObject): void {
+  private addToCache(item: VersionedResourceAdapter): void {
     this.cache[item.getSelfLink().getRelativeUri()] = item;
   }
 
@@ -74,7 +74,7 @@ export class ItemCacheService {
     this.cache[resourceLink] = undefined;
   }
 
-  private getFromCache(resource: string, id: string): VersionedResourceObject {
+  private getFromCache(resource: string, id: string): VersionedResourceAdapter {
     return this.cache[ResourceLink.relativeUriFromId(resource, id)];
   }
 }

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {VersionedResourceObject} from '@hal-navigator/item/versioned-resource-object';
+import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
 import {ConfirmationDialogComponent} from '@document-components/confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogData} from '@document-components/confirmation-dialog/confirmation-dialog-data';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
@@ -14,14 +14,14 @@ import {ConfirmationDialogResult} from '@document-components/confirmation-dialog
 })
 export class ResourceItemComponent implements OnInit {
 
-  resourceObject: VersionedResourceObject;
+  resourceObject: VersionedResourceAdapter;
 
   constructor(private route: ActivatedRoute, private halDocumentService: HalDocumentService, private dialog: MatDialog,
               private router: Router) {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: { resourceObject: VersionedResourceObject }) => {
+    this.route.data.subscribe((data: { resourceObject: VersionedResourceAdapter }) => {
       this.resourceObject = data.resourceObject;
     });
   }

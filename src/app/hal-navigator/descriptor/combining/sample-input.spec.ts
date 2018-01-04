@@ -1,4 +1,4 @@
-import {AlpsDocument} from '@hal-navigator/alp-document/alps-document';
+import {AlpsDocument} from '@hal-navigator/alps-document/alps-document';
 import {JsonSchemaDocument} from '@hal-navigator/schema/json-schema';
 
 export const jsonSchema: JsonSchemaDocument = JSON.parse(`
