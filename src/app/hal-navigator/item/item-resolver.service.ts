@@ -4,6 +4,8 @@ import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/rou
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
 import {RouteParams} from '@hal-navigator/routing/route-params';
+import {LOGGER} from '../../logging/logger';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class ResourceObjectResolverService implements Resolve<VersionedResourceAdapter> {
@@ -13,9 +15,12 @@ export class ResourceObjectResolverService implements Resolve<VersionedResourceA
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceAdapter> |
     Promise<VersionedResourceAdapter> | VersionedResourceAdapter {
+    const resourceName = route.params[RouteParams.RESOURCE_PARAM];
     return this.halDocumentService
-      .getItem(route.params[RouteParams.RESOURCE_PARAM], route.params[RouteParams.ID_PARAM])
+      .getItem(resourceName, route.params[RouteParams.ID_PARAM])
+      .do(() => LOGGER.debug(`${resourceName} successfully loaded, now resolving descriptors...`))
       .flatMap(resource => resource.resolveDescriptorAndAssociations()
+        .do(() => LOGGER.debug('Descriptor successfully resolved'))
         .map(() => resource));
   }
 }

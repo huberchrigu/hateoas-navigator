@@ -14,7 +14,7 @@ export class AlpsFormField implements FormField {
   constructor(alpsResourceDescriptor: AlpsPropertyDescriptor) {
     this.name = alpsResourceDescriptor.getName();
     this.options = new FormFieldOptions();
-    this.options.setLinkedResource(alpsResourceDescriptor.resolveAssociatedResourceName());
+    this.options.setLinkedResource(alpsResourceDescriptor.getAssociatedResourceName());
     this.options.setSubFields(alpsResourceDescriptor.getChildren().map(d => d.toFormField()));
     this.options.setArraySpec(this);
   }

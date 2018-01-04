@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs/Observable';
 import {FormField} from '@hal-navigator/form/form-field';
 
 /**
@@ -27,14 +26,15 @@ export interface PropertyDescriptor {
 
   /**
    * All child descriptors.
-   * <b>Important:</b> If this property is an association to another resource, this will return an empty list. In this
-   * case, use {@link #getAssociatedResource()}.
+   * <b>Important:</b> If this property is an association to another resource, this will return an empty list.
    * @returns {Array<PropertyDescriptor>} <code>undefined</code> if the children are not known. An empty list if there are no children.
    */
   getChildren(): Array<PropertyDescriptor>;
 
-  resolveAssociation(): Observable<PropertyDescriptor>;
-  getAssociatedResource(): PropertyDescriptor;
+  /**
+   * Is <code>null</code> if this is no association or <code>undefined</code> if unknown.
+   */
+  getAssociatedResourceName(): string;
 
   toFormField(): FormField;
 }

@@ -4,9 +4,10 @@ import {ResourceLink} from 'app/hal-navigator/link-object/resource-link';
 import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 import {JsonProperty} from '@hal-navigator/hal-resource/property/json-property';
 import {Observable} from 'rxjs/Observable';
-import {ResourceDescriptorResolver} from 'app/hal-navigator/descriptor/resolver/resource-descriptor-resolver';
+import {ResourceDescriptorProvider} from 'app/hal-navigator/descriptor/provider/resource-descriptor-provider';
 import {AbstractProperty} from '@hal-navigator/hal-resource/property/abstract-property';
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
+import {AssociationResolver} from '@hal-navigator/descriptor/association/association-resolver';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
@@ -18,7 +19,7 @@ export class ResourceAdapter extends AbstractProperty {
 
   private linkFactory: LinkFactory;
 
-  constructor(name: string, public resourceObject: HalResource, private descriptorResolver: ResourceDescriptorResolver,
+  constructor(name: string, public resourceObject: HalResource, private descriptorResolver: ResourceDescriptorProvider,
               descriptor: PropertyDescriptor = null) {
     super(name, descriptor);
     if (Array.isArray(resourceObject) || !resourceObject._links) {
@@ -34,12 +35,11 @@ export class ResourceAdapter extends AbstractProperty {
   /**
    * Expects the embedded resources, i.e. it must be an array!
    */
-  getEmbeddedResources(linkRelationType: string, useMainDescriptor): ResourceAdapter[] {
+  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceAdapter[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
       return embedded.map(e => new ResourceAdapter(linkRelationType, e, this.descriptorResolver,
         useMainDescriptor ? this.descriptor : this.getSubDescriptor(linkRelationType)));
-      // TODO: Make sure that the descriptor is the same!
     } else {
       throw new Error('Embedded object ' + linkRelationType + ' was not an array as expected');
     }
@@ -48,24 +48,17 @@ export class ResourceAdapter extends AbstractProperty {
   /**
    * Returns the resource properties plus the embedded resources' properties.
    * Since {@link ResourceAdapter} does not work for arrays, we convert them to resource properties.
-   * TODO: Remove usages by toResourceProperty().getProperties() or similar.
-   * @deprecated
    */
-  getAllData(): ResourceProperty[] {
-    const properties: Array<ResourceProperty> = this.getObjectProperties();
-    const embedded = this.resourceObject._embedded;
-    if (embedded) {
-      properties.push(...Object.keys(embedded)
-        .map(key => this.toResourceProperty(key, embedded[key])));
-    }
-    return properties;
+  getPropertiesAndEmbeddedResourcesAsProperties(): ResourceProperty[] {
+    return this.getObjectProperties()
+      .concat(this.getEmbeddedResourcesAsProperties());
   }
 
   /**
-   * This can either be a property or an embedded object.
-   * @deprecated
+   * This can either be a property or an embedded object. If the property matches multiple embedded objects, the function is applied to all
+   * objects.
    */
-  getData<T>(propertyName: string, applyFunction: (data: JsonProperty) => T): T | T[] {
+  getPropertyAs<T>(propertyName: string, applyFunction: (property: JsonProperty) => T): T | T[] {
     const value = this.resourceObject[propertyName];
     if (!value && this.resourceObject._embedded) {
       const embedded = this.resourceObject._embedded[propertyName];
@@ -99,12 +92,16 @@ export class ResourceAdapter extends AbstractProperty {
   }
 
   resolveDescriptorAndAssociations(): Observable<ResourceAdapter> {
-    return this.descriptorResolver.resolveWithAssociations(this.getName()).map(descriptor => {
-      this.descriptor = descriptor;
-      return this;
-    });
+    return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(this.getName())
+      .map(descriptor => {
+        this.descriptor = descriptor;
+        return this;
+      });
   }
 
+  /**
+   * Throws an error if embedded resource does not exist.
+   */
   private getEmbedded(linkRelationType: string): HalResource | HalResource[] {
     const embedded = this.resourceObject._embedded[linkRelationType];
     if (embedded) {
@@ -114,7 +111,18 @@ export class ResourceAdapter extends AbstractProperty {
     }
   }
 
-  private filterOutMetadata(key: string) {
+  /**
+   * Returns an empty list if there are no embedded resources.
+   */
+  private getEmbeddedResourcesAsProperties(): ResourceProperty[] {
+    const embedded = this.resourceObject._embedded;
+    if (!embedded) {
+      return [];
+    }
+    return Object.keys(embedded).map(key => this.toResourceProperty(key, embedded[key]));
+  }
+
+  private filterOutMetadata(key: string): boolean {
     return !ResourceAdapter.METADATA_PROPERTIES.some(p => p === key);
   }
 
@@ -122,13 +130,17 @@ export class ResourceAdapter extends AbstractProperty {
     return this.getRawPropertiesOf(this.resourceObject);
   }
 
+  /**
+   * Transforms the resource(s) to an object or array property.
+   */
   private toResourceProperty(resourceName: string, resource: HalResource | HalResource[]): ResourceProperty {
-    if (Array.isArray(resource)) {
-      return new ResourceProperty(resourceName, resource.map(r => this.getRawPropertiesOf(r)), this.getSubDescriptor(resourceName));
-    }
-    return new ResourceProperty(resourceName, this.toRawProperty(), this.getSubDescriptor(resourceName));
+    const rawValue = Array.isArray(resource) ? resource.map(r => this.getRawPropertiesOf(r)) : this.getRawPropertiesOf(resource);
+    return new ResourceProperty(resourceName, rawValue, this.getSubDescriptor(resourceName));
   }
 
+  /**
+   * Removes the HAL metadata from the resource.
+   */
   private getRawPropertiesOf(resourceObject: HalResource): JsonObject {
     const properties = {};
     Object.keys(resourceObject)

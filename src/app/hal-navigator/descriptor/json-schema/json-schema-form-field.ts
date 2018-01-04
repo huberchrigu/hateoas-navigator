@@ -2,7 +2,6 @@ import {FormField} from '@hal-navigator/form/form-field';
 import {JsonSchemaDescriptor} from '@hal-navigator/descriptor/json-schema/json-schema-descriptor';
 import {FormFieldType, getFormType} from '@hal-navigator/form/form-field-type';
 import {FormFieldOptions} from '@hal-navigator/form/form-field-options';
-import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 
 export class JsonSchemaFormField implements FormField {
   name: string;
@@ -12,7 +11,7 @@ export class JsonSchemaFormField implements FormField {
   title: string;
   options: FormFieldOptions;
 
-  constructor(private jsonSchemaDescriptor: JsonSchemaDescriptor, schemaService: SchemaService) {
+  constructor(private jsonSchemaDescriptor: JsonSchemaDescriptor) {
     this.name = jsonSchemaDescriptor.getName();
     this.type = getFormType(this.jsonSchemaDescriptor.getSchema());
     this.required = this.jsonSchemaDescriptor.getParent() ?
@@ -25,7 +24,7 @@ export class JsonSchemaFormField implements FormField {
       this.options.setSubFields(this.jsonSchemaDescriptor.getChildren().map(c => c.toFormField()));
     } else if (this.type === FormFieldType.ARRAY) {
       this.options.setArraySpec(new JsonSchemaDescriptor(this.name, this.jsonSchemaDescriptor.getArrayItems(), null,
-        this.jsonSchemaDescriptor.getReferenceFactory(), schemaService).toFormField());
+        this.jsonSchemaDescriptor.getReferenceFactory()).toFormField());
     }
   }
 }

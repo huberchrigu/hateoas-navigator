@@ -5,8 +5,8 @@ import {ResourceObjectResolverService} from './item/item-resolver.service';
 import {ItemCacheService} from './item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 import {HttpClientModule} from '@angular/common/http';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
-import {DefaultDescriptorResolver} from '@hal-navigator/descriptor/resolver/default-descriptor-resolver';
+import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
+import {DefaultDescriptorProvider} from '@hal-navigator/descriptor/provider/default-descriptor-provider';
 import {SchemaService} from '@hal-navigator/resource-services/schema.service';
 import {ResourceDescriptorResolverService} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver.service';
 
@@ -25,17 +25,17 @@ import {ResourceDescriptorResolverService} from '@hal-navigator/descriptor/resol
 })
 export class HalNavigatorModule {
   static forRoot(configuration: ModuleConfiguration,
-                 descriptorResolverFactory?: () => ResourceDescriptorResolver,
+                 descriptorResolverFactory?: () => ResourceDescriptorProvider,
                  descriptorResolverDeps?: any[]): ModuleWithProviders {
     const factory = descriptorResolverFactory ? descriptorResolverFactory :
-      (schemaService: SchemaService) => new DefaultDescriptorResolver(configuration, schemaService);
+      (schemaService: SchemaService) => new DefaultDescriptorProvider(configuration, schemaService);
     const deps = descriptorResolverDeps ? descriptorResolverDeps : [SchemaService];
     return {
       ngModule: HalNavigatorModule,
       providers: [{
         provide: MODULE_CONFIG, useValue: configuration
       }, {
-        provide: ResourceDescriptorResolver, useFactory: factory, deps: deps
+        provide: ResourceDescriptorProvider, useFactory: factory, deps: deps
       }]
     };
   }

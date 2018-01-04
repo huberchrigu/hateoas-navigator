@@ -21,18 +21,8 @@ export class PropertyDescriptorMockBuilder<T extends PropertyDescriptor> {
     return this as PropertyDescriptorMockBuilder<T>;
   }
 
-  withResolveAssociatedResourceName(resolvedResourceName: string): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.resolveAssociatedResourceName = resolvedResourceName;
-    return this as PropertyDescriptorMockBuilder<T>;
-  }
-
-  withNotifyAssociatedResource(): PropertyDescriptorMockBuilder<T> {
-    this.mockedFunctions.push('notifyAssociatedResource');
-    return this as PropertyDescriptorMockBuilder<T>;
-  }
-
-  withResolveAssociation(): PropertyDescriptorMockBuilder<T> {
-    this.mockedFunctions.push('resolveAssociation');
+  withAssociatedResourceName(resolvedResourceName: string): PropertyDescriptorMockBuilder<T> {
+    this.returnValues.getAssociatedResourceName = resolvedResourceName;
     return this as PropertyDescriptorMockBuilder<T>;
   }
 

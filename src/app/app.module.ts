@@ -8,6 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DocumentComponentsModule} from '@document-components/document-components.module';
 import {HalNavigatorModule} from '@hal-navigator/hal-navigator.module';
 import {DateTimeType} from '@hal-navigator/config/module-configuration';
+import {PropertyConfigBuilder} from '@hal-navigator/config/property-config-builder';
 
 @NgModule({
   declarations: [
@@ -18,15 +19,14 @@ import {DateTimeType} from '@hal-navigator/config/module-configuration';
     AppRoutingModule,
     DocumentComponentsModule,
     HalNavigatorModule.forRoot({
-      itemDescriptors: {
-        meetingGroups: {
-          preferences: {
-            timeSpan: {
-              from: {dateTimeType: DateTimeType.TIME},
-              to: {dateTimeType: DateTimeType.TIME}
-            }
-          }
-        }
+      itemConfigs: {
+        meetingGroups: new PropertyConfigBuilder()
+          .withProperty('preferences', new PropertyConfigBuilder()
+            .withProperty('timeSpan', new PropertyConfigBuilder()
+              .withProperty('from', {dateTimeType: DateTimeType.TIME})
+              .withProperty('to', {dateTimeType: DateTimeType.TIME})
+              .build())
+            .build())
       }
     }),
 
@@ -35,5 +35,6 @@ import {DateTimeType} from '@hal-navigator/config/module-configuration';
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 }

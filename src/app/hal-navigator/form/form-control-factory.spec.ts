@@ -23,7 +23,7 @@ describe('FormControlFactory', () => {
       'array': resourceProperty
     };
     const item = {
-      getData: (name, applyFunction) => applyFunction(properties[name])
+      getPropertyAs: (name, applyFunction) => applyFunction(properties[name])
     } as VersionedResourceAdapter;
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);

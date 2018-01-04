@@ -41,6 +41,6 @@ export class CollectionAdapter {
   }
 
   private getNamesOfItem(resourceObject: ResourceAdapter) {
-    return resourceObject.getAllData().map(p => p.getName());
+    return resourceObject.getPropertiesAndEmbeddedResourcesAsProperties().map(p => p.getName());
   }
 }

@@ -35,44 +35,6 @@ describe('CombiningDescriptor', () => {
     }
   });
 
-  it('should resolve all associations', () => {
-    const associatedResourceName = 'resource';
-    const parentResourceName = 'parent';
-    const childPropertyName = 'association';
-
-    const alpsChild = prepareNotifiedMock<AlpsPropertyDescriptor>(childPropertyName, [])
-      .withResolveAssociatedResourceName(associatedResourceName).build();
-    const alpsParent = prepareNotifiedMock<AlpsPropertyDescriptor>(parentResourceName, [alpsChild])
-      .withResolveAssociatedResourceName(null).build();
-
-    const jsonSchemaChild = prepareNotifiedMock<JsonSchemaDescriptor>(childPropertyName, []).build();
-    const jsonSchemaParent = prepareNotifiedMock<JsonSchemaDescriptor>(parentResourceName, [jsonSchemaChild]).build();
-
-    const testee = new CombiningDescriptor([
-      alpsParent, jsonSchemaParent
-    ]);
-
-    testee.resolveAssociations().subscribe(() => {
-      expect(alpsParent.resolveAssociatedResourceName).toHaveBeenCalled();
-      expect(alpsParent.getChildren).toHaveBeenCalled();
-      expect(jsonSchemaParent.getChildren).toHaveBeenCalled();
-
-      expect(alpsChild.resolveAssociatedResourceName).toHaveBeenCalled();
-      expect(alpsChild.notifyAssociatedResource).toHaveBeenCalledWith(associatedResourceName);
-      expect(alpsChild.resolveAssociation).toHaveBeenCalled();
-      expect(jsonSchemaChild.notifyAssociatedResource).toHaveBeenCalledWith(associatedResourceName);
-      expect(jsonSchemaChild.resolveAssociation).toHaveBeenCalled();
-    });
-
-    function prepareNotifiedMock<T extends PropertyDescriptor>(resourceName: string, children): PropertyDescriptorMockBuilder<T> {
-      return new PropertyDescriptorMockBuilder<T>()
-        .withName(resourceName)
-        .withChildren(children)
-        .withNotifyAssociatedResource()
-        .withResolveAssociation();
-    }
-  });
-
   it('should provide form field specifications', () => {
     const staticDescriptor = mockStaticDescriptorWithTimeOptionChild();
     const jsonSchemaDescriptor = mockJsonSchemaDescriptorWithDatePickerChild();
@@ -126,8 +88,8 @@ describe('CombiningDescriptor', () => {
 
     beforeAll(() => {
       const testee = new CombiningDescriptor([
-        new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions), undefined),
-        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, undefined)
+        new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions)),
+        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor)
       ]);
 
       const meetingGroup = testee.toFormField();

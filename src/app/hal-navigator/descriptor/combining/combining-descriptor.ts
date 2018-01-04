@@ -1,20 +1,13 @@
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {NotNull} from '../../../decorators/not-null';
-import {Observable} from 'rxjs/Observable';
-import {AssociatedResourceResolver} from 'app/hal-navigator/descriptor/association/associated-resource-resolver';
-import {AssociatedResourceListener} from 'app/hal-navigator/descriptor/association/associated-resource-listener';
-import {LOGGER} from '../../../logging/logger';
 import {FormField} from 'app/hal-navigator/form/form-field';
 import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
 import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
+import {DateTimeType} from '@hal-navigator/config/module-configuration';
 
 /**
- * Accepts a list of resource descriptors. Each request is forward to any item of this list.
- * The first defined is returned. {@link #resolveAssocations()} is a special function
- * to recursively go through all resources and properties,
- * and then searching for an appropriate {@link AssociatedResourceResolver} for finding the associated resource name and notifying all
- * {@link AssociatedResourceListener listeners} about the name, such that every descriptor can
- * {@link ResourceDescriptor#resolveAssociation() resolve its association to another resource, if there is any}.
+ * Accepts a list of descriptors. Each request is forwarded to any item of this list.
+ * The first defined result is returned.
  */
 export class CombiningDescriptor implements PropertyDescriptor {
   constructor(private priorityList: Array<PropertyDescriptor>) {
@@ -31,6 +24,10 @@ export class CombiningDescriptor implements PropertyDescriptor {
   @NotNull()
   getName(): string {
     return this.getFirstResult(d => d.getName());
+  }
+
+  getAssociatedResourceName() {
+    return this.getFirstResult(d => d.getAssociatedResourceName());
   }
 
   toFormField(): FormField {
@@ -52,7 +49,7 @@ export class CombiningDescriptor implements PropertyDescriptor {
     );
     formFieldOptions.setLinkedResource(this.getFirstResultIn(options, o => o.getLinkedResource()));
     formFieldOptions.setOptions(this.getFirstResultIn(options, o => o.getOptions()));
-    formFieldOptions.setDateTimeType(this.getFirstResultIn(options, o => o.getDateTimeType()));
+    formFieldOptions.setDateTimeType(this.getFirstResultIn(options, o => o.getDateTimeType(), DateTimeType.DATE_TIME));
     const arraySpecs = options.map(o => o.getArraySpec()).filter(f => f);
     if (arraySpecs.length > 0 && type === FormFieldType.ARRAY) {
       formFieldOptions.setArraySpec(this.mergeFormFields(arraySpecs));
@@ -77,62 +74,18 @@ export class CombiningDescriptor implements PropertyDescriptor {
       children => new CombiningDescriptor(children));
   }
 
-  getAssociatedResource(): CombiningDescriptor {
-    const all = this.priorityList.map(d => d.getAssociatedResource()).filter(d => d);
-    return all.length > 0 ? new CombiningDescriptor(all) : null;
-  }
-
-  resolveAssociation(): Observable<CombiningDescriptor> {
-    const resolver = this.priorityList
-      .map(d => d as any as AssociatedResourceResolver)
-      .find(descriptor => !!descriptor.resolveAssociatedResourceName);
-    if (resolver) {
-      const resourceName = resolver.resolveAssociatedResourceName();
-      LOGGER.trace(`Found associated resource resolver ${resolver.constructor.name} that returned ${resourceName}.`);
-      this.priorityList
-        .map(descriptor => descriptor as any as AssociatedResourceListener)
-        .filter(descriptor => descriptor.notifyAssociatedResource)
-        .forEach(descriptor => descriptor.notifyAssociatedResource(resourceName));
-    }
-
-    const resolvableAssociations = this.priorityList
-      .map(descriptor => descriptor.resolveAssociation())
-      .filter(d => d);
-    if (resolvableAssociations.length > 0) {
-      return Observable.forkJoin(...resolvableAssociations)
-        .map(descriptors => {
-          LOGGER.debug(`Found ${descriptors.length} descriptors for association in property ${this.getName()}.`);
-          if (descriptors.length > 0) {
-            return new CombiningDescriptor(descriptors);
-          } else {
-            return null;
-          }
-        });
-    } else {
-      return Observable.of(null);
-    }
-  }
-
-  resolveAssociations(): Observable<CombiningDescriptor> {
-    const thisResolution = this.resolveAssociation();
-    return Observable.forkJoin(
-      thisResolution.flatMap(resolvedDescriptor => resolvedDescriptor ? resolvedDescriptor.resolveAssociations() : Observable.of(null)),
-      ...this.getChildren().map(child => child.resolveAssociations()))
-      .map(() => this);
-  }
-
   private getFirstResult<T>(f: (d: PropertyDescriptor) => T): T {
     return this.getFirstResultIn(this.priorityList, f);
   }
 
-  private getFirstResultIn<S, T>(array: Array<S>, f: (d: S) => T): T {
+  private getFirstResultIn<S, T>(array: Array<S>, f: (d: S) => T, defaultValue: T = undefined): T {
     for (const d of array) {
       const result = f(d);
       if (result !== undefined) {
         return result;
       }
     }
-    return undefined;
+    return defaultValue;
   }
 
   private regroupAndMap<T, U>(arrayOfArrays: Array<T[]>, groupByKey: (item: T) => string, finalMapping: (children: Array<T>) => U) {

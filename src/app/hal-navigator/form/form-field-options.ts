@@ -29,7 +29,7 @@ export class FormFieldOptions {
   }
 
   getDateTimeType(): DateTimeType {
-    return this.dateTimeType ? this.dateTimeType : DateTimeType.DATE_TIME;
+    return this.dateTimeType;
   }
 
   setLinkedResource(linkedResource: string) {

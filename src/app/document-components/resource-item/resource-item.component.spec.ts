@@ -16,8 +16,8 @@ describe('ResourceItemComponent', () => {
   let versionedResourceObject: SpyObj<VersionedResourceAdapter>;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getAllData', 'getDescriptor']);
-    versionedResourceObject.getAllData.and.returnValue([
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getPropertiesAndEmbeddedResourcesAsProperties', 'getDescriptor']);
+    versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties.and.returnValue([
       {} as ResourceProperty
     ]);
     versionedResourceObject.getDescriptor.and.returnValue({getTitle: () => 'Test'});
@@ -49,6 +49,6 @@ describe('ResourceItemComponent', () => {
   });
 
   it('should fetch the resource data', () => {
-    expect(versionedResourceObject.getAllData).toHaveBeenCalled();
+    expect(versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties).toHaveBeenCalled();
   });
 });

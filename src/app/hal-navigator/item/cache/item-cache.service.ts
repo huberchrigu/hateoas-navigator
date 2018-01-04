@@ -5,7 +5,7 @@ import 'rxjs/add/observable/of';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
 import {HalResource} from '@hal-navigator/hal-resource/hal-resource';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
+import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
 import {Injectable} from '@angular/core';
 
 /**
@@ -17,7 +17,7 @@ export class ItemCacheService {
   private static E_TAG_HEADER = 'ETag';
   private cache: { [key: string]: VersionedResourceAdapter } = {};
 
-  constructor(private descriptorResolver: ResourceDescriptorResolver) {
+  constructor(private descriptorResolver: ResourceDescriptorProvider) {
   }
 
   getItemFromModifyingResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {

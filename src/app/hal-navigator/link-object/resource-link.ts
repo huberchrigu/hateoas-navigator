@@ -4,13 +4,13 @@ import {HalResource} from '@hal-navigator/hal-resource/hal-resource';
 import {Observable} from 'rxjs/Observable';
 import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
 import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
+import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
 
 /**
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 export class ResourceLink extends Link {
-  static fromResourceObject(resourceObject: HalResource, resourceDescriptorResolver: ResourceDescriptorResolver) {
+  static fromResourceObject(resourceObject: HalResource, resourceDescriptorResolver: ResourceDescriptorProvider) {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
@@ -18,7 +18,7 @@ export class ResourceLink extends Link {
     return '/' + resource + '/' + id;
   }
 
-  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorResolver) {
+  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
     super(link.href);
   }
 

@@ -14,7 +14,7 @@ import {ResourceAdapter} from '@hal-navigator/hal-resource/resource-adapter';
 import {MODULE_CONFIG, ModuleConfiguration} from '@hal-navigator/config/module-configuration';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
+import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
 import {Api} from '@hal-navigator/resource-services/api';
 import {Required, Validate} from '../../decorators/required';
 
@@ -32,7 +32,7 @@ export class HalDocumentService {
 
   constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
               @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration,
-              private descriptorResolver: ResourceDescriptorResolver) {
+              private descriptorResolver: ResourceDescriptorProvider) {
   }
 
   @Cacheable()

@@ -1,48 +1,45 @@
-import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
-import {ItemDescriptor} from 'app/hal-navigator/config/module-configuration';
-import {Observable} from 'rxjs/Observable';
+import {PropertyConfig} from 'app/hal-navigator/config/module-configuration';
 import {FormField} from 'app/hal-navigator/form/form-field';
 import {StaticFormField} from '@hal-navigator/descriptor/static/static-form-field';
+import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
 
 export class StaticPropertyDescriptor implements PropertyDescriptor {
-  constructor(private name: string, private config: ItemDescriptor) {
-    if (!config) {
-      throw new Error('A descriptor needs a configuration');
-    }
+
+  constructor(private name: string, private config: PropertyConfig, private itemConfigs: { [resourceName: string]: PropertyConfig }) {
   }
 
   getTitle(): string {
-    return undefined;
+    return this.config.title;
   }
 
   getName(): string {
     return this.name;
   }
 
-  getChild(resourceName: string): PropertyDescriptor {
-    return this.config[resourceName] ? new StaticPropertyDescriptor(resourceName, this.config[resourceName])
-      : null;
+  getChild(resourceName: string): StaticPropertyDescriptor {
+    return this.config.properties && this.config.properties[resourceName] ? this.resolveChild(resourceName) : null;
   }
 
-  // TODO: Currently configurations are mapped to children too
-  getChildren(): Array<PropertyDescriptor> {
-    return Object.keys(this.config).map(key => new StaticPropertyDescriptor(key, this.config[key]));
+  getChildren(): Array<StaticPropertyDescriptor> {
+    if (!this.config.properties) {
+      return [];
+    }
+    return Object.keys(this.config.properties).map(key => this.resolveChild(key));
   }
 
-  // TODO: Associations may point to custom config too
-  resolveAssociation(): Observable<PropertyDescriptor> {
+  getAssociatedResourceName(): string {
     return undefined;
   }
 
-  getAssociatedResource() {
-    return undefined;
-  }
-
-  getItemDescriptor() {
+  getPropertyConfig() {
     return this.config;
   }
 
   toFormField(): FormField {
     return new StaticFormField(this);
+  }
+
+  private resolveChild(name: string) {
+    return new StaticPropertyDescriptor(name, this.config.properties[name], this.itemConfigs);
   }
 }

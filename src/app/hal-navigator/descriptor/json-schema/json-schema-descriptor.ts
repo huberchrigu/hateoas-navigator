@@ -1,9 +1,6 @@
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {JsonSchema} from 'app/hal-navigator/schema/json-schema';
 import {SchemaReferenceFactory} from 'app/hal-navigator/schema/schema-reference-factory';
-import {Observable} from 'rxjs/Observable';
-import {SchemaService} from 'app/hal-navigator/resource-services/schema.service';
-import {AssociatedResourceListener} from 'app/hal-navigator/descriptor/association/associated-resource-listener';
 import {FormField} from 'app/hal-navigator/form/form-field';
 import {JsonSchemaFormField} from '@hal-navigator/descriptor/json-schema/json-schema-form-field';
 
@@ -11,14 +8,11 @@ import {JsonSchemaFormField} from '@hal-navigator/descriptor/json-schema/json-sc
  * Resolved children needs to be cached, as a {@link JsonSchemaDescriptor} is not stateless ({@link #associatedSchema} is resolved
  * and later used).
  */
-export class JsonSchemaDescriptor extends AssociatedResourceListener implements PropertyDescriptor {
+export class JsonSchemaDescriptor implements PropertyDescriptor {
   private associatedSchema: JsonSchemaDescriptor;
-  private children: { [propertyName: string]: JsonSchemaDescriptor } = {};
 
   constructor(private name: string, private schema: JsonSchema, private parent: JsonSchemaDescriptor,
-              private schemaReferenceFactory: SchemaReferenceFactory,
-              private schemaService: SchemaService) {
-    super();
+              private schemaReferenceFactory: SchemaReferenceFactory) {
     if (!this.schema) {
       throw new Error('A JsonSchema for ' + name + ' is expected');
     }
@@ -33,12 +27,12 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
   }
 
   toFormField(): FormField {
-    return new JsonSchemaFormField(this, this.schemaService);
+    return new JsonSchemaFormField(this);
   }
 
   getChild(resourceName: string): PropertyDescriptor {
     if (this.schema.format === 'uri') {
-      return this.getAssociatedResource().getChild(resourceName);
+      throw new Error(`Property's association ${this.getName()} is not available`)
     }
     return this.resolveChild(resourceName);
   }
@@ -50,20 +44,6 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
     }
     return Object.keys(children)
       .map(propertyName => this.resolveChild(propertyName));
-  }
-
-  resolveAssociation(): Observable<JsonSchemaDescriptor> {
-    if (this.schema.format !== 'uri') {
-      return null;
-    }
-    if (this.associatedSchema) {
-      return Observable.of(this.associatedSchema);
-    }
-    return this.schemaService.getJsonSchema(this.getAssociatedResourceName()).map(associatedSchema => {
-      this.associatedSchema = new JsonSchemaDescriptor(this.getAssociatedResourceName(), associatedSchema, null,
-        new SchemaReferenceFactory(associatedSchema.definitions), this.schemaService);
-      return this.associatedSchema;
-    });
   }
 
   getSchema() {
@@ -86,22 +66,14 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
     return this.resolveReference(this.schema).requiredProperties;
   }
 
-  getAssociatedResource(): JsonSchemaDescriptor {
-    if (!this.associatedSchema) {
-      throw new Error('Schema for association ' + this.schema.title + ' was not resolved yet');
-    }
-    return this.associatedSchema;
+  getAssociatedResourceName(): string {
+    return undefined;
   }
 
   private resolveChild(propertyName: string): JsonSchemaDescriptor {
-    if (this.children[propertyName]) {
-      return this.children[propertyName];
-    }
     const child = this.resolveProperties()[propertyName];
     if (child) {
-      const desc = new JsonSchemaDescriptor(propertyName, child, this, this.schemaReferenceFactory, this.schemaService);
-      this.children[propertyName] = desc;
-      return desc;
+      return new JsonSchemaDescriptor(propertyName, child, this, this.schemaReferenceFactory);
     } else {
       return null;
     }
@@ -113,8 +85,6 @@ export class JsonSchemaDescriptor extends AssociatedResourceListener implements 
       schema = this.schema.items;
     } else if (this.schema.type === 'object') {
       schema = this.schema;
-      // } else if (this.schema.format === 'uri') {
-      //   schema = this.getAssociatedSchema();
     } else {
       return null;
     }

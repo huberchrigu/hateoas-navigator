@@ -23,7 +23,7 @@ describe('JsonSchemaDescriptor', () => {
     const referenceFactoryMock = jasmine.createSpyObj<SchemaReferenceFactory>('schemaReferenceFactory', ['getReferencedSchema']);
     referenceFactoryMock.getReferencedSchema.and.returnValue(referencedSchema);
 
-    const testee = new JsonSchemaDescriptor('testee', array, null, referenceFactoryMock, undefined);
+    const testee = new JsonSchemaDescriptor('testee', array, null, referenceFactoryMock);
 
     expect(testee.getChild('child').getTitle()).toEqual('Child');
     expect(referenceFactoryMock.getReferencedSchema).toHaveBeenCalled();

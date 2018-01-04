@@ -1,12 +1,12 @@
 import {ResourceLinks} from '@hal-navigator/hal-resource/resource-links';
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
-import {ResourceDescriptorResolver} from '@hal-navigator/descriptor/resolver/resource-descriptor-resolver';
+import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
 
 export class LinkFactory {
   static PROFILE_RELATION_TYPE = 'profile';
   static SELF_RELATION_TYPE = 'self';
 
-  constructor(private links: ResourceLinks, private resourceDescriptorResolver: ResourceDescriptorResolver) {
+  constructor(private links: ResourceLinks, private resourceDescriptorResolver: ResourceDescriptorProvider) {
 
   }
 

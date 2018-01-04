@@ -19,7 +19,7 @@ export class FormControlFactory {
   }
 
   getControl(formField: FormField) {
-    const value = this.item ? this.item.getData(formField.name, d => d.getFormValue()) : undefined;
+    const value = this.item ? this.item.getPropertyAs(formField.name, d => d.getFormValue()) : undefined;
     return this.getControlWithValue(formField, value);
   }
 

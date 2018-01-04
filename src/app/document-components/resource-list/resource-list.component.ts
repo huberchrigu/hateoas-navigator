@@ -52,7 +52,7 @@ export class ResourceListComponent implements OnInit {
    * @deprecated
    */
   getDisplayValue(item: VersionedResourceAdapter, propertyName: string) {
-    return item.getData(propertyName, d => d.getDisplayValue());
+    return item.getPropertyAs(propertyName, d => d.getDisplayValue());
   }
 
   private initTableMetadata(collection: CollectionAdapter) {

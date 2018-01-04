@@ -1,12 +1,13 @@
 import {InjectionToken} from '@angular/core';
 
 export interface ModuleConfiguration {
-  itemDescriptors: { [item: string]: ItemDescriptor };
+  itemConfigs: { [resourceName: string]: PropertyConfig };
 }
 
-export interface ItemDescriptor {
-  [property: string]: any | ItemDescriptor;
+export interface PropertyConfig {
+  properties?: { [propertyName: string]: PropertyConfig };
 
+  title?: string;
   dateTimeType?: DateTimeType;
 }
 

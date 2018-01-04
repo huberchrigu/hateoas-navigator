@@ -1,4 +1,4 @@
-import {DefaultDescriptorResolver} from 'app/hal-navigator/descriptor/resolver/default-descriptor-resolver';
+import {DefaultDescriptorProvider} from 'app/hal-navigator/descriptor/provider/default-descriptor-provider';
 import {async} from '@angular/core/testing';
 import {JsonSchema, JsonSchemaDocument} from 'app/hal-navigator/schema/json-schema';
 import {ModuleConfiguration} from 'app/hal-navigator/config/module-configuration';
@@ -8,7 +8,7 @@ import {AlpsDescriptorAdapter} from 'app/hal-navigator/alps-document/alps-descri
 import {AlpsDescriptor} from 'app/hal-navigator/alps-document/alps-descriptor';
 import {SchemaService} from 'app/hal-navigator/resource-services/schema.service';
 
-describe('DefaultDescriptorResolver', () => {
+describe('DefaultDescriptorProvider', () => {
   const schemaService = jasmine.createSpyObj<SchemaService>('schemaService', [
     'getJsonSchema', 'getAlps'
   ]);
@@ -33,7 +33,7 @@ describe('DefaultDescriptorResolver', () => {
   } as AlpsDocumentAdapter));
 
   it('should resolve titles', async(() => {
-    const testee = new DefaultDescriptorResolver({} as ModuleConfiguration, schemaService);
+    const testee = new DefaultDescriptorProvider({} as ModuleConfiguration, schemaService);
     testee.resolve('a').subscribe(desc => {
       expect(schemaService.getJsonSchema).toHaveBeenCalledWith('a');
       expect(desc.getTitle()).toEqual('A');
