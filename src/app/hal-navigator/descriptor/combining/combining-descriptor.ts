@@ -1,9 +1,7 @@
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {NotNull} from '../../../decorators/not-null';
-import {FormField} from 'app/hal-navigator/form/form-field';
-import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
 import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
-import {DateTimeType} from '@hal-navigator/config/module-configuration';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 /**
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.
@@ -30,48 +28,34 @@ export class CombiningDescriptor implements PropertyDescriptor {
     return this.getFirstResult(d => d.getAssociatedResourceName());
   }
 
-  toFormField(): FormField {
-    const fields = this.priorityList.map(d => d.toFormField()).filter(f => f);
+  toFormFieldBuilder(): FormFieldBuilder {
+    const fields = this.priorityList.map(d => d.toFormFieldBuilder()).filter(f => f);
     return this.mergeFormFields(fields);
   }
 
-  private mergeFormFields(fields: Array<FormField>): FormField {
-    const options = fields.map(f => f.options).filter(o => o);
-    const formFieldOptions = new FormFieldOptions();
-    const type = this.getFirstResultIn(fields, f => f.type);
-    const formField = new FormField(
-      this.getFirstResultIn(fields, f => f.name),
-      type,
-      this.getFirstResultIn(fields, f => f.required),
-      this.getFirstResultIn(fields, f => f.readOnly),
-      this.getFirstResultIn(fields, f => f.title),
-      formFieldOptions
-    );
-    formFieldOptions.setLinkedResource(this.getFirstResultIn(options, o => o.getLinkedResource()));
-    formFieldOptions.setOptions(this.getFirstResultIn(options, o => o.getOptions()));
-    formFieldOptions.setDateTimeType(this.getFirstResultIn(options, o => o.getDateTimeType(), DateTimeType.DATE_TIME));
-    const arraySpecs = options.map(o => o.getArraySpec()).filter(f => f);
-    if (arraySpecs.length > 0 && type === FormFieldType.ARRAY) {
-      formFieldOptions.setArraySpec(this.mergeFormFields(arraySpecs));
-    }
-    const subFields = options.map(o => o.getSubFields()).filter(sf => sf);
-    if (subFields.length > 0) {
-      formFieldOptions.setSubFields(this.regroupAndMap(subFields,
-        f => f.name, f => this.mergeFormFields(f)).filter(f => f));
-    }
-    return formField.type ? formField : null;
-  }
-
-  getChild(resourceName: string): PropertyDescriptor {
+  getChildDescriptor(resourceName: string): PropertyDescriptor {
     return new CombiningDescriptor(this.priorityList
-      .map(d => d.getChild(resourceName))
+      .map(d => d.getChildDescriptor(resourceName))
       .filter(d => d));
   }
 
-  getChildren(): CombiningDescriptor[] {
-    return this.regroupAndMap(this.priorityList.map(d => d.getChildren()),
+  getChildrenDescriptors(): CombiningDescriptor[] {
+    return this.regroupAndMap(this.priorityList.map(d => d.getChildrenDescriptors()),
       d => d.getName(),
       children => new CombiningDescriptor(children));
+  }
+
+  getArrayItemsDescriptor(): CombiningDescriptor {
+    const formField = this.toFormFieldBuilder().build();
+    if (formField && formField.getType() === FormFieldType.ARRAY) {
+      const items = this.priorityList.map(d => d.getArrayItemsDescriptor()).filter((d => d));
+      return new CombiningDescriptor(items);
+    }
+  }
+
+  private mergeFormFields(fields: Array<FormFieldBuilder>): FormFieldBuilder {
+    return fields.reduce((mergedForm: FormFieldBuilder, newForm: FormFieldBuilder) => mergedForm.combineWith(newForm),
+      new FormFieldBuilder());
   }
 
   private getFirstResult<T>(f: (d: PropertyDescriptor) => T): T {

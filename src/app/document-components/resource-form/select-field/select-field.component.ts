@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {FormField} from '@hal-navigator/form/form-field';
 import {FormControl} from '@angular/forms';
+import {SelectField} from '@hal-navigator/form/select-field';
 
 @Component({
   selector: 'app-select-field',
@@ -9,7 +9,7 @@ import {FormControl} from '@angular/forms';
 })
 export class SelectFieldComponent {
   @Input()
-  field: FormField;
+  field: SelectField;
 
   @Input()
   control: FormControl;

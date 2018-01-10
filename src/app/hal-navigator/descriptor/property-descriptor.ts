@@ -1,4 +1,4 @@
-import {FormField} from '@hal-navigator/form/form-field';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 /**
  * Describes the schema of a resource or resource property. This interface serves as an abstraction and can be implemented by
@@ -18,23 +18,30 @@ export interface PropertyDescriptor {
 
   /**
    * The child property descriptor. If the current property is an association, the associated resource descriptor's child is returned.
-   * @param {string} resourceName
    * @returns {PropertyDescriptor} <code>null</code> if there is no child.
    * <code>undefined</code> if the descriptor does not know its children.
    */
-  getChild(resourceName: string): PropertyDescriptor;
+  getChildDescriptor(resourceName: string): PropertyDescriptor;
+
+  /**
+   * Returns the descriptor of the array items, if this descriptor represents an array.
+   */
+  getArrayItemsDescriptor(): PropertyDescriptor;
 
   /**
    * All child descriptors.
    * <b>Important:</b> If this property is an association to another resource, this will return an empty list.
    * @returns {Array<PropertyDescriptor>} <code>undefined</code> if the children are not known. An empty list if there are no children.
    */
-  getChildren(): Array<PropertyDescriptor>;
+  getChildrenDescriptors(): Array<PropertyDescriptor>;
 
   /**
    * Is <code>null</code> if this is no association or <code>undefined</code> if unknown.
    */
   getAssociatedResourceName(): string;
 
-  toFormField(): FormField;
+  /**
+   * Provides a form field provider, which can be extended by custom configuration.
+   */
+  toFormFieldBuilder(): FormFieldBuilder;
 }

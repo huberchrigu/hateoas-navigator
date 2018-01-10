@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {FormField} from '@hal-navigator/form/form-field';
 import {AbstractControl} from '@angular/forms';
 import {DateTimeType} from '@hal-navigator/config/module-configuration';
+import {DatePickerField} from '@hal-navigator/form/date-picker-field';
 
 @Component({
   selector: 'app-date-time-field',
@@ -10,13 +10,13 @@ import {DateTimeType} from '@hal-navigator/config/module-configuration';
 })
 export class DateTimeFieldComponent {
   @Input()
-  field: FormField;
+  field: DatePickerField;
 
   @Input()
   control: AbstractControl;
 
   getType(): string {
-    switch (this.field.options.getDateTimeType()) {
+    switch (this.field.getDateTimeType()) {
       case DateTimeType.DATE:
         return 'date';
       case DateTimeType.TIME:
@@ -24,7 +24,7 @@ export class DateTimeFieldComponent {
       case DateTimeType.DATE_TIME:
         return 'datetime';
       default:
-        throw new Error('Missing date/time type for ' + this.field.name);
+        throw new Error('Missing date/time type for ' + this.field.getName());
     }
   }
 }

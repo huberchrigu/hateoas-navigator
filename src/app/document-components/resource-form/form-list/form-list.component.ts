@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {AbstractControl, FormArray} from '@angular/forms';
 import {FormField} from '@hal-navigator/form/form-field';
 import {FormControlFactory} from '@hal-navigator/form/form-control-factory';
+import {ArrayField} from '@hal-navigator/form/array-field';
 
 @Component({
   selector: 'app-form-list',
@@ -16,7 +17,7 @@ export class FormListComponent {
   formArray: FormArray;
 
   @Input()
-  field: FormField;
+  field: ArrayField;
 
   onRemove(control: AbstractControl) {
     const index = this.formArray.controls.indexOf(control);
@@ -24,7 +25,7 @@ export class FormListComponent {
   }
 
   onAdd() {
-    const item: FormField = this.field.options.getArraySpec();
+    const item: FormField = this.field.getArraySpec();
     this.formArray.push(this.formControlFactory.getControl(item));
   }
 }

@@ -1,31 +1,40 @@
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {AlpsDescriptor} from 'app/hal-navigator/alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from 'app/hal-navigator/alps-document/alps-descriptor-adapter';
-import {FormField} from 'app/hal-navigator/form/form-field';
-import {AlpsFormField} from '@hal-navigator/descriptor/alps/alps-form-field';
 import {LOGGER} from '../../../logging/logger';
+import {AbstractPropertyDescriptor} from '@hal-navigator/descriptor/abstract-property-descriptor';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
-export class AlpsPropertyDescriptor implements PropertyDescriptor {
+export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
+
   constructor(private alps: AlpsDescriptor) {
+    super(alps.name);
   }
 
   getTitle(): string {
     return undefined;
   }
 
-  getName(): string {
-    return this.alps.name;
-  }
-
-  getChild(resourceName: string): PropertyDescriptor {
+  getChildDescriptor(resourceName: string): PropertyDescriptor {
     return this.resolveChild(resourceName);
   }
 
-  getChildren(): Array<PropertyDescriptor> {
+  getChildrenDescriptors(): Array<AlpsPropertyDescriptor> {
     if (!this.alps.descriptors) {
       return [];
     }
     return this.alps.descriptors.map(d => this.resolveChild(d.name));
+  }
+
+  /**
+   * Example:
+   * {name: 'members', rt: 'http://...'} can be the output for a field 'members' that is actually an array.
+   *
+   * That is why the {@link FormFieldBuilder} cannot resolve the array descriptors immediately, otherwise this would
+   * end in an endless loop.
+   */
+  getArrayItemsDescriptor(): AbstractPropertyDescriptor {
+    return this;
   }
 
   getAssociatedResourceName(): string {
@@ -35,8 +44,9 @@ export class AlpsPropertyDescriptor implements PropertyDescriptor {
     return null;
   }
 
-  toFormField(): FormField {
-    return new AlpsFormField(this);
+  protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
+    formFieldBuilder
+      .withLinkedResource(this.getAssociatedResourceName());
   }
 
   private resolveChild(resourceName: string) {

@@ -38,6 +38,9 @@ export abstract class AbstractProperty implements JsonProperty {
   protected abstract toRawProperty(): JsonType;
 
   protected getSubDescriptor(fieldName: string) {
-    return this.descriptor ? this.descriptor.getChild(fieldName) : null;
+    if (!this.descriptor) {
+      return this.descriptor;
+    }
+    return this.descriptor.getChildDescriptor(fieldName);
   }
 }

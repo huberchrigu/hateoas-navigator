@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormField} from '@hal-navigator/form/form-field';
 import {AbstractControl} from '@angular/forms';
+import {SubFormField} from '@hal-navigator/form/sub-form-field';
 
 @Component({
   selector: 'app-form-field',
@@ -9,7 +9,7 @@ import {AbstractControl} from '@angular/forms';
 })
 export class FormFieldComponent implements OnInit {
   @Input()
-  field: FormField;
+  field: SubFormField;
 
   @Input()
   control: AbstractControl;

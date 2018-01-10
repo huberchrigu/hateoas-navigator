@@ -6,6 +6,7 @@ export interface ModuleConfiguration {
 
 export interface PropertyConfig {
   properties?: { [propertyName: string]: PropertyConfig };
+  items?: PropertyConfig;
 
   title?: string;
   dateTimeType?: DateTimeType;

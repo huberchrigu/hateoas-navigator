@@ -1,5 +1,6 @@
 import {StaticPropertyDescriptor} from '@hal-navigator/descriptor/static/static-property-descriptor';
 import {DateTimeType, PropertyConfig} from '@hal-navigator/config/module-configuration';
+import {DatePickerField} from '@hal-navigator/form/date-picker-field';
 
 describe('StaticPropertyDescriptor', () => {
   it('should return time option', () => {
@@ -11,6 +12,7 @@ describe('StaticPropertyDescriptor', () => {
       }
     } as PropertyConfig, {});
 
-    expect(testee.getChild('child').toFormField().options.getDateTimeType()).toEqual(DateTimeType.TIME);
+    const child = testee.getChildDescriptor('child').toFormFieldBuilder().build() as DatePickerField;
+    expect(child.getDateTimeType()).toEqual(DateTimeType.TIME);
   });
 });

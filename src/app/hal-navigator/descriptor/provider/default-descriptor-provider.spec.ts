@@ -37,7 +37,7 @@ describe('DefaultDescriptorProvider', () => {
     testee.resolve('a').subscribe(desc => {
       expect(schemaService.getJsonSchema).toHaveBeenCalledWith('a');
       expect(desc.getTitle()).toEqual('A');
-      expect(desc.getChild('b').getTitle()).toEqual('B');
+      expect(desc.getChildDescriptor('b').getTitle()).toEqual('B');
     });
   }));
 });

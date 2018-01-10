@@ -1,30 +1,30 @@
-import {PropertyConfig} from 'app/hal-navigator/config/module-configuration';
-import {FormField} from 'app/hal-navigator/form/form-field';
-import {StaticFormField} from '@hal-navigator/descriptor/static/static-form-field';
-import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
+import {AbstractPropertyDescriptor} from '@hal-navigator/descriptor/abstract-property-descriptor';
+import {PropertyConfig} from '@hal-navigator/config/module-configuration';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
-export class StaticPropertyDescriptor implements PropertyDescriptor {
+export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
 
-  constructor(private name: string, private config: PropertyConfig, private itemConfigs: { [resourceName: string]: PropertyConfig }) {
+  constructor(name: string, private config: PropertyConfig, private itemConfigs: { [resourceName: string]: PropertyConfig }) {
+    super(name);
   }
 
   getTitle(): string {
     return this.config.title;
   }
 
-  getName(): string {
-    return this.name;
-  }
-
-  getChild(resourceName: string): StaticPropertyDescriptor {
+  getChildDescriptor(resourceName: string): StaticPropertyDescriptor {
     return this.config.properties && this.config.properties[resourceName] ? this.resolveChild(resourceName) : null;
   }
 
-  getChildren(): Array<StaticPropertyDescriptor> {
+  getChildrenDescriptors(): Array<StaticPropertyDescriptor> {
     if (!this.config.properties) {
       return [];
     }
     return Object.keys(this.config.properties).map(key => this.resolveChild(key));
+  }
+
+  getArrayItemsDescriptor(): StaticPropertyDescriptor {
+    return this.config.items ? new StaticPropertyDescriptor(null, this.config.items, this.itemConfigs) : null;
   }
 
   getAssociatedResourceName(): string {
@@ -35,8 +35,10 @@ export class StaticPropertyDescriptor implements PropertyDescriptor {
     return this.config;
   }
 
-  toFormField(): FormField {
-    return new StaticFormField(this);
+  protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
+    const items = this.getPropertyConfig().items;
+    formFieldBuilder
+      .withDateTimeType(this.config.dateTimeType);
   }
 
   private resolveChild(name: string) {

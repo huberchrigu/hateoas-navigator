@@ -1,13 +1,13 @@
 import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
 import SpyObj = jasmine.SpyObj;
-import {FormField} from '@hal-navigator/form/form-field';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 export class PropertyDescriptorMockBuilder<T extends PropertyDescriptor> {
   private mockedFunctions: string[] = [];
   private returnValues: any = {};
 
-  withFormField(formField: FormField): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.toFormField = formField;
+  withFormFieldBuilder(formField: FormFieldBuilder): PropertyDescriptorMockBuilder<T> {
+    this.returnValues.toFormFieldBuilder = formField;
     return this as PropertyDescriptorMockBuilder<T>;
   }
 
@@ -16,14 +16,19 @@ export class PropertyDescriptorMockBuilder<T extends PropertyDescriptor> {
     return this as PropertyDescriptorMockBuilder<T>;
   }
 
-  withChildren(children: Array<PropertyDescriptor>): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.getChildren = children;
+  withChildrenDescriptors(children: Array<PropertyDescriptor>): PropertyDescriptorMockBuilder<T> {
+    this.returnValues.getChildrenDescriptors = children;
     return this as PropertyDescriptorMockBuilder<T>;
   }
 
   withAssociatedResourceName(resolvedResourceName: string): PropertyDescriptorMockBuilder<T> {
     this.returnValues.getAssociatedResourceName = resolvedResourceName;
     return this as PropertyDescriptorMockBuilder<T>;
+  }
+
+  withArrayItemsDescriptor(arrayItem: PropertyDescriptor) {
+    this.returnValues.getArrayItemsDescriptor = arrayItem;
+    return this;
   }
 
   build(): SpyObj<T> {

@@ -6,6 +6,7 @@ import {FormField} from '@hal-navigator/form/form-field';
 import {FormControl} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;
+import {SubFormField} from '@hal-navigator/form/sub-form-field';
 
 describe('FormFieldComponent', () => {
   let component: FormFieldComponent;
@@ -24,7 +25,7 @@ describe('FormFieldComponent', () => {
     control = jasmine.createSpyObj<FormControl>('FormControl', ['hasError']);
     fixture = TestBed.createComponent(FormFieldComponent);
     component = fixture.componentInstance;
-    component.field = {} as FormField;
+    component.field = new SubFormField('field', true, false, 'Field', [{} as FormField]);
     component.control = control;
   });
 

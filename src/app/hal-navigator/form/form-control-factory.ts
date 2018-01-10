@@ -2,6 +2,8 @@ import {FormField} from 'app/hal-navigator/form/form-field';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {VersionedResourceAdapter} from 'app/hal-navigator/item/versioned-resource-adapter';
 import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
+import {ArrayField} from '@hal-navigator/form/array-field';
+import {SubFormField} from '@hal-navigator/form/sub-form-field';
 
 export class FormControlFactory {
   private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER,
@@ -13,52 +15,52 @@ export class FormControlFactory {
   getControls(fields: FormField[]): { [key: string]: AbstractControl } {
     const controls = {};
     fields.forEach(f => {
-      controls[f.name] = this.getControl(f);
+      controls[f.getName()] = this.getControl(f);
     });
     return controls;
   }
 
   getControl(formField: FormField) {
-    const value = this.item ? this.item.getPropertyAs(formField.name, d => d.getFormValue()) : undefined;
+    const value = this.item ? this.item.getPropertyAs(formField.getName(), d => d.getFormValue()) : undefined;
     return this.getControlWithValue(formField, value);
   }
 
   private getControlWithValue(formField: FormField, value: any) {
-    if (formField.type === FormFieldType.ARRAY) {
+    if (formField.getType() === FormFieldType.ARRAY) {
       let array: AbstractControl[] = [];
       if (Array.isArray(value)) {
-        array = value.map(item => this.getControlWithValue(formField.options.getArraySpec(), item));
+        array = value.map(item => this.getControlWithValue((formField as ArrayField).getArraySpec(), item));
       }
       return new FormArray(array);
-    } else if (FormControlFactory.STANDARD_CONTROLS.includes(formField.type)) {
+    } else if (FormControlFactory.STANDARD_CONTROLS.includes(formField.getType())) {
       return new FormControl({
-          disabled: formField.readOnly,
+          disabled: formField.isReadOnly(),
           value: value
         },
         this.getValidatorFunctions(formField));
-    } else if (formField.type === FormFieldType.SUB_FORM) {
-      return this.getFormGroup(formField, value);
+    } else if (formField.getType() === FormFieldType.SUB_FORM) {
+      return this.getFormGroup(formField as SubFormField, value);
     } else {
-      throw new Error('Unknown form field type ' + formField.type);
+      throw new Error('Unknown form field type ' + formField.getType());
     }
   }
 
-  private getFormGroup(parentFormField: FormField, obj: Object): FormGroup {
+  private getFormGroup(parentFormField: SubFormField, obj: Object): FormGroup {
     const formGroup: FormGroup = new FormGroup({});
-    parentFormField.options.getSubFields().forEach(f => formGroup.addControl(f.name, this.getControlWithValue(f,
-      obj ? obj[f.name] : undefined)));
+    parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName(), this.getControlWithValue(f,
+      obj ? obj[f.getName()] : undefined)));
     return formGroup;
   }
 
   private getValidatorFunctions(formField: FormField) {
     const validatorFunctions: Array<ValidatorFn> = [];
-    if (formField.required) {
+    if (formField.isRequired()) {
       validatorFunctions.push(Validators.required);
     }
-    if (formField.type === FormFieldType.NUMBER) {
+    if (formField.getType() === FormFieldType.NUMBER) {
       validatorFunctions.push(Validators.pattern('^[0-9]+(.[0-9]*){0,1}$'));
     }
-    if (formField.type === FormFieldType.INTEGER) {
+    if (formField.getType() === FormFieldType.INTEGER) {
       validatorFunctions.push(Validators.pattern('^[0-9]+$'));
     }
     return validatorFunctions;

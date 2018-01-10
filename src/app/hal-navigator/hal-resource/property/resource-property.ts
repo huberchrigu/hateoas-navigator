@@ -35,7 +35,7 @@ export class ResourceProperty extends AbstractProperty {
   }
 
   getArrayItems(): ResourceProperty[] {
-    return this.getArrayValue().map(o => new ResourceProperty(this.getName(), o, this.descriptor));
+    return this.getArrayValue().map(o => new ResourceProperty(this.getName(), o, this.descriptor.getArrayItemsDescriptor()));
   }
 
   protected toRawProperty(): JsonType {

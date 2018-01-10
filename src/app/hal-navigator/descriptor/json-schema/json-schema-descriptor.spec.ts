@@ -2,6 +2,7 @@ import {JsonSchemaDescriptor} from '@hal-navigator/descriptor/json-schema/json-s
 import {JsonSchema} from 'app/hal-navigator/schema/json-schema';
 import {SchemaReferenceFactory} from 'app/hal-navigator/schema/schema-reference-factory';
 import {FormFieldType} from '@hal-navigator/form/form-field-type';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 describe('JsonSchemaDescriptor', () => {
   it('should get referenced child', () => {
@@ -26,7 +27,7 @@ describe('JsonSchemaDescriptor', () => {
 
     const testee = new JsonSchemaDescriptor('testee', array, null, referenceFactoryMock);
 
-    expect(testee.getChild('child').getTitle()).toEqual('Child');
+    expect(testee.getArrayItemsDescriptor().getChildDescriptor('child').getTitle()).toEqual('Child');
     expect(referenceFactoryMock.getReferencedSchema).toHaveBeenCalled();
   });
 
@@ -39,9 +40,9 @@ describe('JsonSchemaDescriptor', () => {
       }
     };
     const testee = new JsonSchemaDescriptor('testee', array, null, {} as SchemaReferenceFactory);
-    const result = testee.toFormField();
+    const builder: FormFieldBuilder = testee.toFormFieldBuilder();
 
-    expect(result.type).toEqual(FormFieldType.ARRAY);
-    expect(result.options.getArraySpec().type).toEqual(FormFieldType.LINK);
+    expect(builder['type']).toEqual(FormFieldType.ARRAY);
+    expect(builder['arraySpecProviders'][0]()['type']).toEqual(FormFieldType.LINK);
   });
 });

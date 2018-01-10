@@ -7,6 +7,8 @@ import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {Observable} from 'rxjs/Observable';
 import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
+import {SubFormField} from '@hal-navigator/form/sub-form-field';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 import {FormField} from '@hal-navigator/form/form-field';
 
 describe('ResourceFormComponent', () => {
@@ -14,12 +16,14 @@ describe('ResourceFormComponent', () => {
   let fixture: ComponentFixture<ResourceFormComponent>;
 
   beforeEach(async(() => {
-      const resourceDescriptor = jasmine.createSpyObj<PropertyDescriptor>('resourceDescriptor', ['toFormField', 'getTitle']);
-      resourceDescriptor.toFormField.and.returnValue({
-        options: {
-          getSubFields: () => []
-        }
-      } as FormField);
+      const resourceDescriptor = jasmine.createSpyObj<PropertyDescriptor>('resourceDescriptor',
+        ['toFormFieldBuilder', 'getTitle']);
+      const form = {
+        getSubFields: () => []
+      } as FormField;
+      resourceDescriptor.toFormFieldBuilder.and.returnValue({
+        build: () => form
+      } as FormFieldBuilder);
       resourceDescriptor.getTitle.and.returnValue('Resource');
 
       TestBed.configureTestingModule({

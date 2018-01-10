@@ -1,8 +1,32 @@
 import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
-import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
+import {NotNull} from '../../decorators/not-null';
 
 export class FormField {
-  constructor(public name: string, public type: FormFieldType, public required: boolean, public readOnly: boolean, public title: string,
-              public options: FormFieldOptions) {
+  constructor(private name: string, private type: FormFieldType, private required: boolean, private readOnly: boolean,
+              private title: string) {
+    if (!this.type) {
+      throw new Error('Cannot create form field ' + name + ' without type');
+    }
+  }
+
+  @NotNull()
+  getName(): string {
+    return this.name;
+  }
+
+  getType(): FormFieldType {
+    return this.type;
+  }
+
+  isRequired(): boolean {
+    return this.required;
+  }
+
+  isReadOnly(): boolean {
+    return this.readOnly;
+  }
+
+  getTitle(): string {
+    return this.title;
   }
 }

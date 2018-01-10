@@ -4,16 +4,13 @@ import {FormField} from 'app/hal-navigator/form/form-field';
 import {FormFieldType} from 'app/hal-navigator/form/form-field-type';
 import {FormArray} from '@angular/forms';
 import createSpyObj = jasmine.createSpyObj;
-import {FormFieldOptions} from 'app/hal-navigator/form/form-field-options';
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {
     const fields: FormField[] = [
-      createFieldMock('array', FormFieldType.ARRAY, <FormFieldOptions> {
-        getArraySpec: () => createFieldMock('array', FormFieldType.SUB_FORM, <FormFieldOptions> {
-          getSubFields: () => [
-            createFieldMock('value', FormFieldType.TEXT)
-          ]
+      createFieldMock('array', FormFieldType.ARRAY, {
+        getArraySpec: createFieldMock('array', FormFieldType.SUB_FORM, {
+          getSubFields: [createFieldMock('value', FormFieldType.TEXT)]
         })
       })
     ];
@@ -35,10 +32,12 @@ describe('FormControlFactory', () => {
   });
 });
 
-function createFieldMock(name: string, type: FormFieldType, options?: FormFieldOptions): FormField {
-  return {
-    name: name,
-    type: type,
-    options: options
-  } as FormField;
+function createFieldMock(name: string, type: FormFieldType, mockedMethods: { [name: string]: any } = {}): FormField {
+  const methodNames = Object.keys(mockedMethods);
+  const mock = jasmine.createSpyObj<FormField>('formControlFactory',
+    ['getName', 'getType', 'isReadOnly', 'isRequired', ...methodNames]);
+  mock.getName.and.returnValue(name);
+  mock.getType.and.returnValue(type);
+  methodNames.forEach(method => mock[method].and.returnValue(mockedMethods[method]));
+  return mock;
 }

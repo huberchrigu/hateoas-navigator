@@ -34,7 +34,7 @@ export class ResourceListComponent implements OnInit {
    * @deprecated
    */
   getPropertyTitle(property: string) {
-    return this.collection.getDescriptor().getChild(property).getTitle();
+    return this.collection.getDescriptor().getChildDescriptor(property).getTitle();
   }
 
   /**

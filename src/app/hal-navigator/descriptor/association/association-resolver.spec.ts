@@ -12,13 +12,16 @@ describe('AssociationResolver', () => {
     descriptorProviderMock.resolve.and.callFake(resource => {
       const rootResource = Observable.of(new PropertyDescriptorMockBuilder()
         .withAssociatedResourceName(null)
-        .withChildren([new PropertyDescriptorMockBuilder()
+        .withChildrenDescriptors([new PropertyDescriptorMockBuilder()
           .withAssociatedResourceName('associatedResource')
-          .withChildren([])
+          .withChildrenDescriptors([])
+          .withArrayItemsDescriptor(null)
           .build()])
+        .withArrayItemsDescriptor(null)
         .build());
       const linkedResource = Observable.of(new PropertyDescriptorMockBuilder()
-        .withChildren([])
+        .withChildrenDescriptors([])
+        .withArrayItemsDescriptor(null)
         .withAssociatedResourceName(null)
         .build());
       return resource === 'rootResource' ? rootResource : linkedResource;
@@ -28,8 +31,8 @@ describe('AssociationResolver', () => {
 
     testee.fetchDescriptorWithAssociations('rootResource').subscribe((descriptor: AssociatedDescriptor) => {
       expect(descriptorProviderMock.resolve).toHaveBeenCalledWith('associatedResource');
-      expect(descriptor.getChildren().length).toBe(1);
-      expect(descriptor.getChildren()[0].getAssociatedResourceName()).toEqual('associatedResource');
+      expect(descriptor.getChildrenDescriptors().length).toBe(1);
+      expect(descriptor.getChildrenDescriptors()[0].getAssociatedResourceName()).toEqual('associatedResource');
     });
   });
 });

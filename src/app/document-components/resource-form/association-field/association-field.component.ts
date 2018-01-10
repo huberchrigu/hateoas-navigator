@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormField} from '@hal-navigator/form/form-field';
 import {FormControl} from '@angular/forms';
 import {HalDocumentService} from '@hal-navigator/resource-services/hal-document.service';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/do';
+import {LinkField} from '@hal-navigator/form/link-field';
 
 /**
  * Currently the input's title is not shown due to https://github.com/angular/material2/issues/4863.
@@ -16,7 +16,7 @@ import 'rxjs/add/operator/do';
 })
 export class AssociationFieldComponent implements OnInit {
   @Input()
-  field: FormField;
+  field: LinkField;
 
   @Input()
   control: FormControl;
@@ -42,7 +42,7 @@ export class AssociationFieldComponent implements OnInit {
   }
 
   private initItems(): Observable<Array<LinkItem>> {
-    return this.halDocumentService.getCollection(this.field.options.getLinkedResource())
+    return this.halDocumentService.getCollection(this.field.getLinkedResource())
       .map(collection => collection.getItems())
       .map(items => items.map(item => {
         return {

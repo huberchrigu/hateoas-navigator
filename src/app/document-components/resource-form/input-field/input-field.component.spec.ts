@@ -4,6 +4,7 @@ import {InputFieldComponent} from './input-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {FormField} from '@hal-navigator/form/form-field';
+import {FormFieldType} from '@hal-navigator/form/form-field-type';
 
 describe('InputFieldComponent', () => {
   let component: InputFieldComponent;
@@ -20,7 +21,7 @@ describe('InputFieldComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InputFieldComponent);
     component = fixture.componentInstance;
-    component.field = {} as FormField;
+    component.field = new FormField('field', FormFieldType.TEXT, undefined, undefined, 'Field');
     component.control = {} as FormControl;
     fixture.detectChanges();
   });

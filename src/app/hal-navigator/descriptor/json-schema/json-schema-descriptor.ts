@@ -1,18 +1,21 @@
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {JsonSchema} from 'app/hal-navigator/schema/json-schema';
 import {SchemaReferenceFactory} from 'app/hal-navigator/schema/schema-reference-factory';
-import {FormField} from 'app/hal-navigator/form/form-field';
-import {JsonSchemaFormField} from '@hal-navigator/descriptor/json-schema/json-schema-form-field';
+import {AbstractPropertyDescriptor} from '@hal-navigator/descriptor/abstract-property-descriptor';
+import {getFormType} from '@hal-navigator/form/form-field-type';
+import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 /**
  * Resolved children needs to be cached, as a {@link JsonSchemaDescriptor} is not stateless ({@link #associatedSchema} is resolved
  * and later used).
  */
-export class JsonSchemaDescriptor implements PropertyDescriptor {
+export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
+
   private associatedSchema: JsonSchemaDescriptor;
 
-  constructor(private name: string, private schema: JsonSchema, private parent: JsonSchemaDescriptor,
+  constructor(name: string, private schema: JsonSchema, private parent: JsonSchemaDescriptor,
               private schemaReferenceFactory: SchemaReferenceFactory) {
+    super(name);
     if (!this.schema) {
       throw new Error('A JsonSchema for ' + name + ' is expected');
     }
@@ -22,28 +25,27 @@ export class JsonSchemaDescriptor implements PropertyDescriptor {
     return this.schema.title;
   }
 
-  getName(): string {
-    return this.name;
-  }
-
-  toFormField(): FormField {
-    return new JsonSchemaFormField(this);
-  }
-
-  getChild(resourceName: string): PropertyDescriptor {
+  getChildDescriptor(resourceName: string): PropertyDescriptor {
     if (this.schema.format === 'uri') {
       throw new Error(`Property's association ${this.getName()} is not available`)
     }
     return this.resolveChild(resourceName);
   }
 
-  getChildren(): Array<PropertyDescriptor> {
+  getChildrenDescriptors(): Array<JsonSchemaDescriptor> {
     const children = this.resolveProperties();
     if (!children) {
       return [];
     }
     return Object.keys(children)
       .map(propertyName => this.resolveChild(propertyName));
+  }
+
+  getArrayItemsDescriptor(): JsonSchemaDescriptor {
+    if (!this.schema.items) {
+      return null;
+    }
+    return new JsonSchemaDescriptor(null, this.resolveReference(this.schema.items), null, this.getReferenceFactory());
   }
 
   getSchema() {
@@ -58,16 +60,26 @@ export class JsonSchemaDescriptor implements PropertyDescriptor {
     return this.parent;
   }
 
-  getArrayItems() {
-    return this.resolveReference(this.schema.items);
-  }
-
-  getRequiredProperties() {
-    return this.resolveReference(this.schema).requiredProperties;
+  /**
+   * Never null/undefined.
+   */
+  getRequiredProperties(): Array<string> {
+    const result = this.resolveReference(this.schema).requiredProperties;
+    return result ? result : [];
   }
 
   getAssociatedResourceName(): string {
     return undefined;
+  }
+
+  protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
+    formFieldBuilder
+      .withType(getFormType(this.getSchema()))
+      .withRequired(this.getParent() ?
+        this.getParent().getRequiredProperties().some(required => required === this.getName()) : true)
+      .withReadOnly(this.getSchema().readOnly)
+      .withTitle(this.getTitle())
+      .withOptions(this.getSchema().enum);
   }
 
   private resolveChild(propertyName: string): JsonSchemaDescriptor {
@@ -80,15 +92,10 @@ export class JsonSchemaDescriptor implements PropertyDescriptor {
   }
 
   private resolveProperties(): { [propertyName: string]: JsonSchema } {
-    let schema: JsonSchema;
-    if (this.schema.type === 'array') {
-      schema = this.schema.items;
-    } else if (this.schema.type === 'object') {
-      schema = this.schema;
-    } else {
+    if (this.schema.type !== 'object') {
       return null;
     }
-    return this.resolveReference(schema).properties;
+    return this.resolveReference(this.schema).properties;
   }
 
   private resolveReference(schema: JsonSchema): JsonSchema {

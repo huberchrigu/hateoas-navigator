@@ -22,11 +22,14 @@ import {PropertyConfigBuilder} from '@hal-navigator/config/property-config-build
       itemConfigs: {
         meetingGroups: new PropertyConfigBuilder()
           .withProperty('preferences', new PropertyConfigBuilder()
-            .withProperty('timeSpan', new PropertyConfigBuilder()
-              .withProperty('from', {dateTimeType: DateTimeType.TIME})
-              .withProperty('to', {dateTimeType: DateTimeType.TIME})
+            .withArrayItems(new PropertyConfigBuilder()
+              .withProperty('timeSpan', new PropertyConfigBuilder()
+                .withProperty('from', {dateTimeType: DateTimeType.TIME})
+                .withProperty('to', {dateTimeType: DateTimeType.TIME})
+                .build())
               .build())
             .build())
+          .build()
       }
     }),
 

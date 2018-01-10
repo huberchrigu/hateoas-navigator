@@ -4,6 +4,9 @@ import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descript
 import {AssociatedDescriptor} from '@hal-navigator/descriptor/association/associated-descriptor';
 import 'rxjs/add/observable/combineLatest';
 
+/**
+ * Recursively visits all descriptors and resolves all its associations if any.
+ */
 export class AssociationResolver {
   constructor(private descriptorProvider: ResourceDescriptorProvider) {
   }
@@ -13,14 +16,22 @@ export class AssociationResolver {
       .flatMap(d => this.resolveAssociations(d));
   }
 
+  /**
+   * Resolves the associations of the descriptor itself, of its children and its array items. Then the resulting descriptors are merged
+   * into {@link AssociatedDescriptor}.
+   */
   private resolveAssociations(descriptor: PropertyDescriptor): Observable<AssociatedDescriptor> {
-    const children = descriptor.getChildren();
+    const children = descriptor.getChildrenDescriptors();
+    const arrayItems = descriptor.getArrayItemsDescriptor();
+
     const resolvedChildren: Observable<Array<AssociatedDescriptor>> = children.length > 0 ? Observable.forkJoin(children
       .map(d => this.resolveAssociations(d))) : Observable.of([]);
+    const resolvedArrayItem: Observable<AssociatedDescriptor> = arrayItems ? this.resolveAssociations(arrayItems) : Observable.of(null);
 
-    return Observable.combineLatest<AssociatedDescriptor, Array<AssociatedDescriptor>, AssociatedDescriptor>(
-      this.resolveAssociation(descriptor), resolvedChildren,
-      (associatedResource, associatedChildren) => new AssociatedDescriptor(descriptor, associatedResource, associatedChildren)
+    return Observable.combineLatest<AssociatedDescriptor, Array<AssociatedDescriptor>, AssociatedDescriptor, AssociatedDescriptor>(
+      this.resolveAssociation(descriptor), resolvedChildren, resolvedArrayItem,
+      (associatedResource, associatedChildren, associatedArrayItem) => new AssociatedDescriptor(descriptor, associatedResource,
+        associatedChildren, associatedArrayItem)
     );
   }
 

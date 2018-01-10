@@ -7,6 +7,7 @@ import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-a
 import {ResourceLink} from '@hal-navigator/link-object/resource-link';
 import {FormControlFactory} from '@hal-navigator/form/form-control-factory';
 import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
+import {SubFormField} from '@hal-navigator/form/sub-form-field';
 
 @Component({
   selector: 'app-new-resource',
@@ -27,7 +28,7 @@ export class ResourceFormComponent implements OnInit {
     this.route.data.subscribe((data: { resourceObject: VersionedResourceAdapter, resourceDescriptor: PropertyDescriptor }) => {
       const resourceObject = data.resourceObject;
       const descriptor = resourceObject ? resourceObject.getDescriptor() : data.resourceDescriptor;
-      this.fields = descriptor.toFormField().options.getSubFields();
+      this.fields = (descriptor.toFormFieldBuilder().build() as SubFormField).getSubFields();
       this.title = descriptor.getTitle();
       const controls = new FormControlFactory(resourceObject).getControls(this.fields);
       this.form = new FormGroup(controls);
