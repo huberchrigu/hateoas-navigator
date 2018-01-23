@@ -4,10 +4,10 @@ import {DisplayValueConverter} from 'app/hal-navigator/hal-resource/property/dis
 import {JsonType} from 'app/hal-navigator/hal-resource/hal-resource';
 import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 
-export abstract class AbstractProperty implements JsonProperty {
+export abstract class AbstractProperty<D extends PropertyDescriptor> implements JsonProperty {
   private displayValueConverter: DisplayValueConverter = new DisplayValueConverter();
 
-  constructor(private name: string, protected descriptor: PropertyDescriptor = undefined) {
+  constructor(private name: string, protected descriptor: D = undefined) {
   }
 
   getName() {
@@ -18,7 +18,7 @@ export abstract class AbstractProperty implements JsonProperty {
     return this.displayValueConverter.transform(this.toRawProperty());
   }
 
-  getDescriptor(): PropertyDescriptor {
+  getDescriptor(): D {
     if (!this.descriptor) {
       throw new Error('The resource descriptor must be resolved before it can be used');
     }
@@ -30,14 +30,14 @@ export abstract class AbstractProperty implements JsonProperty {
     if (typeof value !== 'object') {
       throw new Error(JSON.stringify(value) + ' is not an object!');
     }
-    return Object.keys(value).map(key => new ResourceProperty(key, value[key], this.getSubDescriptor(key)));
+    return Object.keys(value).map(key => new ResourceProperty(key, value[key], this.getSubPropertyDescriptor(key)));
   }
 
   abstract getFormValue(): any;
 
   protected abstract toRawProperty(): JsonType;
 
-  protected getSubDescriptor(fieldName: string) {
+  protected getSubPropertyDescriptor(fieldName: string) {
     if (!this.descriptor) {
       return this.descriptor;
     }

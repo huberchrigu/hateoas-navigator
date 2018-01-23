@@ -47,4 +47,12 @@ export class ResourceItemComponent implements OnInit {
       }
     });
   }
+
+  isEditEnabled() {
+    return this.resourceObject.getDescriptor().getActions().isUpdateEnabled();
+  }
+
+  isDeleteEnabled() {
+    return this.resourceObject.getDescriptor().getActions().isDeleteEnabled();
+  }
 }

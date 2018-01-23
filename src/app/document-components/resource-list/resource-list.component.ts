@@ -55,6 +55,10 @@ export class ResourceListComponent implements OnInit {
     return item.getPropertyAs(propertyName, d => d.getDisplayValue());
   }
 
+  isAddEnabled() {
+    return this.collection.getDescriptor().getActions().isCreateEnabled();
+  }
+
   private initTableMetadata(collection: CollectionAdapter) {
     this.collection = collection;
     this.propertyNames = this.collection.getPropertyNames();

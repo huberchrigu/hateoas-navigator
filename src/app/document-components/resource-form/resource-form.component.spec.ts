@@ -20,7 +20,7 @@ describe('ResourceFormComponent', () => {
         ['toFormFieldBuilder', 'getTitle']);
       const form = {
         getSubFields: () => []
-      } as FormField;
+      } as SubFormField as FormField;
       resourceDescriptor.toFormFieldBuilder.and.returnValue({
         build: () => form
       } as FormFieldBuilder);

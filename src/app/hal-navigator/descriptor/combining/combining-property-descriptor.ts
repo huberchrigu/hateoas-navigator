@@ -7,7 +7,7 @@ import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.
  * The first defined result is returned.
  */
-export class CombiningDescriptor implements PropertyDescriptor {
+export class CombiningPropertyDescriptor implements PropertyDescriptor {
   constructor(private priorityList: Array<PropertyDescriptor>) {
     if (priorityList.length === 0) {
       throw new Error('Invalid descriptor: No descriptors to combine');
@@ -34,22 +34,22 @@ export class CombiningDescriptor implements PropertyDescriptor {
   }
 
   getChildDescriptor(resourceName: string): PropertyDescriptor {
-    return new CombiningDescriptor(this.priorityList
+    return new CombiningPropertyDescriptor(this.priorityList
       .map(d => d.getChildDescriptor(resourceName))
       .filter(d => d));
   }
 
-  getChildrenDescriptors(): CombiningDescriptor[] {
+  getChildrenDescriptors(): CombiningPropertyDescriptor[] {
     return this.regroupAndMap(this.priorityList.map(d => d.getChildrenDescriptors()),
       d => d.getName(),
-      children => new CombiningDescriptor(children));
+      children => new CombiningPropertyDescriptor(children));
   }
 
-  getArrayItemsDescriptor(): CombiningDescriptor {
+  getArrayItemsDescriptor(): CombiningPropertyDescriptor {
     const formField = this.toFormFieldBuilder().build();
     if (formField && formField.getType() === FormFieldType.ARRAY) {
       const items = this.priorityList.map(d => d.getArrayItemsDescriptor()).filter((d => d));
-      return new CombiningDescriptor(items);
+      return new CombiningPropertyDescriptor(items);
     }
   }
 
@@ -62,7 +62,7 @@ export class CombiningDescriptor implements PropertyDescriptor {
     return this.getFirstResultIn(this.priorityList, f);
   }
 
-  private getFirstResultIn<S, T>(array: Array<S>, f: (d: S) => T, defaultValue: T = undefined): T {
+  protected getFirstResultIn<S, T>(array: Array<S>, f: (d: S) => T, defaultValue: T = undefined): T {
     for (const d of array) {
       const result = f(d);
       if (result !== undefined) {

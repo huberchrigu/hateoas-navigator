@@ -25,11 +25,13 @@ describe('DefaultDescriptorProvider', () => {
   schemaService.getJsonSchema.and.returnValue(Observable.of(schema));
   const alpsDescriptor = {
     descriptor: {
+      id: 'resource-representation',
       descriptors: []
     } as AlpsDescriptor
   } as AlpsDescriptorAdapter;
   schemaService.getAlps.and.returnValue(Observable.of({
-    getRepresentationDescriptor: () => alpsDescriptor
+    getRepresentationDescriptor: () => alpsDescriptor,
+    getAllDescriptors: () => [alpsDescriptor]
   } as AlpsDocumentAdapter));
 
   it('should resolve titles', async(() => {

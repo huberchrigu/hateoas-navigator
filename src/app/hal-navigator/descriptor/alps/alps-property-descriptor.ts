@@ -6,9 +6,14 @@ import {AbstractPropertyDescriptor} from '@hal-navigator/descriptor/abstract-pro
 import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
+  private static readonly REPRESENTATION_PREFIX = '-representation';
 
   constructor(private alps: AlpsDescriptor) {
-    super(alps.name);
+    super(alps.name ||
+      (alps.id.endsWith(AlpsPropertyDescriptor.REPRESENTATION_PREFIX) ?
+          alps.id.substring(0, alps.id.length - AlpsPropertyDescriptor.REPRESENTATION_PREFIX.length) :
+          undefined
+      ));
   }
 
   getTitle(): string {
@@ -23,7 +28,7 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
     if (!this.alps.descriptors) {
       return [];
     }
-    return this.alps.descriptors.map(d => this.resolveChild(d.name));
+    return this.alps.descriptors.map(d => this.toDescriptor(d));
   }
 
   /**
@@ -49,7 +54,7 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
       .withLinkedResource(this.getAssociatedResourceName());
   }
 
-  private resolveChild(resourceName: string) {
+  protected findDescriptor(childName: string): AlpsDescriptor {
     if (this.alps.rt) {
       LOGGER.warn(`The ALPS descriptor ${this.getName()} has a resource type attribute,` +
         `which might include a reference that was not resolved`);
@@ -57,10 +62,18 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
     if (!this.alps.descriptors) {
       return null;
     }
-    const descriptor = this.alps.descriptors.find(d => d.name === resourceName);
+    return this.alps.descriptors.find(d => d.name === childName);
+  }
+
+  private resolveChild(childName: string): AlpsPropertyDescriptor {
+    const descriptor = this.findDescriptor(childName);
     if (descriptor) {
-      return new AlpsPropertyDescriptor(descriptor);
+      return this.toDescriptor(descriptor);
     }
     return null;
+  }
+
+  private toDescriptor(descriptor: AlpsDescriptor) {
+    return new AlpsPropertyDescriptor(descriptor);
   }
 }

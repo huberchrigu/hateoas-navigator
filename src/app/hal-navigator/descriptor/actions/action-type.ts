@@ -1,0 +1,3 @@
+export enum ActionType {
+  GET_ITEM, UPDATE_ITEM, DELETE_ITEM, CREATE_ITEM, GET_COLLECTION
+}

@@ -9,29 +9,40 @@ import {Observable} from 'rxjs/Observable';
 import {VersionedResourceAdapter} from '@hal-navigator/item/versioned-resource-adapter';
 import {ResourceProperty} from '@hal-navigator/hal-resource/property/resource-property';
 import SpyObj = jasmine.SpyObj;
+import {ResourceActions} from '@hal-navigator/descriptor/actions/resource-actions';
+import {ResourceDescriptor} from '@hal-navigator/descriptor/resource-descriptor';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
   let fixture: ComponentFixture<ResourceItemComponent>;
   let versionedResourceObject: SpyObj<VersionedResourceAdapter>;
 
+  const actions = {
+    isDeleteEnabled: () => true,
+    isUpdateEnabled: () => true
+  } as ResourceActions;
+
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getPropertiesAndEmbeddedResourcesAsProperties', 'getDescriptor']);
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject',
+      ['getPropertiesAndEmbeddedResourcesAsProperties', 'getDescriptor']);
     versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties.and.returnValue([
       {} as ResourceProperty
     ]);
-    versionedResourceObject.getDescriptor.and.returnValue({getTitle: () => 'Test'});
+    versionedResourceObject.getDescriptor.and.returnValue({
+      getTitle: () => 'Test',
+      getActions: () => actions
+    } as ResourceDescriptor);
 
     TestBed.configureTestingModule({
       declarations: [ResourceItemComponent],
       providers: [
         {
           provide: ActivatedRoute, useValue: {
-          data: Observable.of(
-            {
-              resourceObject: versionedResourceObject
-            })
-        }
+            data: Observable.of(
+              {
+                resourceObject: versionedResourceObject
+              })
+          }
         },
         {provide: MatDialog, useValue: {}},
         {provide: Router, useValue: {}},

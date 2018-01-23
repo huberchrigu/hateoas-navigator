@@ -4,7 +4,7 @@ import {JsonType} from 'app/hal-navigator/hal-resource/hal-resource';
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {AbstractProperty} from 'app/hal-navigator/hal-resource/property/abstract-property';
 
-export class ResourceProperty extends AbstractProperty {
+export class ResourceProperty extends AbstractProperty<PropertyDescriptor> {
   private dateConverter = new DateConverter();
   private formValueConverter: ValueConverter<Date, Array<any>, Object> = new ValueConverter(
     (value: string) => this.dateConverter.parseToDate(value)

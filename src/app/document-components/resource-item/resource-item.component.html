@@ -10,8 +10,8 @@
     </mat-card-content>
     <mat-toolbar color="accent">
       <a mat-button routerLink=".." color="primary">Back to list</a>
-      <a mat-button routerLink="edit">Edit</a>
-      <button mat-button color="warn" (click)="onDelete()">Delete</button>
+      <a mat-button routerLink="edit" *ngIf="isEditEnabled()">Edit</a>
+      <button mat-button color="warn" (click)="onDelete()" *ngIf="isDeleteEnabled()">Delete</button>
     </mat-toolbar>
   </mat-card>
 </div>

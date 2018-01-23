@@ -1,7 +1,7 @@
 import {PropertyDescriptorMockBuilder} from '@hal-navigator/descriptor/combining/property-descriptor-mock-builder.spec';
 import {AssociationResolver} from '@hal-navigator/descriptor/association/association-resolver';
 import {ResourceDescriptorProvider} from '@hal-navigator/descriptor/provider/resource-descriptor-provider';
-import {AssociatedDescriptor} from '@hal-navigator/descriptor/association/associated-descriptor';
+import {AssociatedPropertyDescriptor} from '@hal-navigator/descriptor/association/associated-property-descriptor';
 import SpyObj = jasmine.SpyObj;
 import {Observable} from 'rxjs/Observable';
 
@@ -29,7 +29,7 @@ describe('AssociationResolver', () => {
 
     const testee = new AssociationResolver(descriptorProviderMock);
 
-    testee.fetchDescriptorWithAssociations('rootResource').subscribe((descriptor: AssociatedDescriptor) => {
+    testee.fetchDescriptorWithAssociations('rootResource').subscribe((descriptor: AssociatedPropertyDescriptor) => {
       expect(descriptorProviderMock.resolve).toHaveBeenCalledWith('associatedResource');
       expect(descriptor.getChildrenDescriptors().length).toBe(1);
       expect(descriptor.getChildrenDescriptors()[0].getAssociatedResourceName()).toEqual('associatedResource');

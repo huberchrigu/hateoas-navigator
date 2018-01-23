@@ -31,4 +31,8 @@ export class AlpsDescriptorAdapter {
     const indexOfHash = uriWithoutProfile.indexOf('#');
     return uriWithoutProfile.substring(0, indexOfHash);
   }
+
+  getId() {
+    return this.descriptor.id;
+  }
 }

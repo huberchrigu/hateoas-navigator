@@ -3,8 +3,8 @@ import SpyObj = jasmine.SpyObj;
 import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 export class PropertyDescriptorMockBuilder<T extends PropertyDescriptor> {
-  private mockedFunctions: string[] = [];
-  private returnValues: any = {};
+  protected mockedFunctions: string[] = [];
+  protected returnValues: any = {};
 
   withFormFieldBuilder(formField: FormFieldBuilder): PropertyDescriptorMockBuilder<T> {
     this.returnValues.toFormFieldBuilder = formField;

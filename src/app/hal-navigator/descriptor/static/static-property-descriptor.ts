@@ -4,7 +4,7 @@ import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
 export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
 
-  constructor(name: string, private config: PropertyConfig, private itemConfigs: { [resourceName: string]: PropertyConfig }) {
+  constructor(name: string, protected config: PropertyConfig, protected itemConfigs: { [resourceName: string]: PropertyConfig }) {
     super(name);
   }
 
@@ -13,14 +13,14 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
   }
 
   getChildDescriptor(resourceName: string): StaticPropertyDescriptor {
-    return this.config.properties && this.config.properties[resourceName] ? this.resolveChild(resourceName) : null;
+    return this.config.properties && this.config.properties[resourceName] ? this.toDescriptor(resourceName) : null;
   }
 
   getChildrenDescriptors(): Array<StaticPropertyDescriptor> {
     if (!this.config.properties) {
       return [];
     }
-    return Object.keys(this.config.properties).map(key => this.resolveChild(key));
+    return Object.keys(this.config.properties).map(key => this.toDescriptor(key));
   }
 
   getArrayItemsDescriptor(): StaticPropertyDescriptor {
@@ -31,17 +31,12 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
     return undefined;
   }
 
-  getPropertyConfig() {
-    return this.config;
-  }
-
   protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
-    const items = this.getPropertyConfig().items;
     formFieldBuilder
       .withDateTimeType(this.config.dateTimeType);
   }
 
-  private resolveChild(name: string) {
+  private toDescriptor(name: string) {
     return new StaticPropertyDescriptor(name, this.config.properties[name], this.itemConfigs);
   }
 }

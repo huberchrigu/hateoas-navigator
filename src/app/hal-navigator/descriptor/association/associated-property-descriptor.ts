@@ -1,9 +1,9 @@
 import {PropertyDescriptor} from '@hal-navigator/descriptor/property-descriptor';
 import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
-export class AssociatedDescriptor implements PropertyDescriptor {
-  constructor(private descriptor: PropertyDescriptor, private associatedResource: AssociatedDescriptor,
-              private associatedChildren: Array<AssociatedDescriptor>, private associatedArrayItems: AssociatedDescriptor) {
+export class AssociatedPropertyDescriptor implements PropertyDescriptor {
+  constructor(private descriptor: PropertyDescriptor, protected associatedResource: AssociatedPropertyDescriptor,
+              private associatedChildren: Array<AssociatedPropertyDescriptor>, private associatedArrayItems: AssociatedPropertyDescriptor) {
     if (!descriptor) {
       throw new Error('Descriptor must not be null');
     } else if (!Array.isArray(associatedChildren)) {
@@ -23,11 +23,11 @@ export class AssociatedDescriptor implements PropertyDescriptor {
     return this.descriptor.getName();
   }
 
-  getChildrenDescriptors(): Array<AssociatedDescriptor> {
+  getChildrenDescriptors(): Array<AssociatedPropertyDescriptor> {
     return this.associatedChildren;
   }
 
-  getArrayItemsDescriptor(): AssociatedDescriptor {
+  getArrayItemsDescriptor(): AssociatedPropertyDescriptor {
     return this.associatedArrayItems;
   }
 
@@ -35,7 +35,7 @@ export class AssociatedDescriptor implements PropertyDescriptor {
     return this.descriptor.toFormFieldBuilder();
   }
 
-  getChildDescriptor(resourceName: string): AssociatedDescriptor {
+  getChildDescriptor(resourceName: string): AssociatedPropertyDescriptor {
     if (this.associatedResource) {
       return this.associatedResource.getChildDescriptor(resourceName);
     } else {

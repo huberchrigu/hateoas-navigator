@@ -1,4 +1,4 @@
-import {CombiningDescriptor} from 'app/hal-navigator/descriptor/combining/combining-descriptor';
+import {CombiningPropertyDescriptor} from 'app/hal-navigator/descriptor/combining/combining-property-descriptor';
 import {PropertyDescriptor} from 'app/hal-navigator/descriptor/property-descriptor';
 import {AlpsPropertyDescriptor} from 'app/hal-navigator/descriptor/alps/alps-property-descriptor';
 import {JsonSchemaDescriptor} from 'app/hal-navigator/descriptor/json-schema/json-schema-descriptor';
@@ -15,9 +15,9 @@ import {ArrayField} from '@hal-navigator/form/array-field';
 import {LinkField} from '@hal-navigator/form/link-field';
 import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
-describe('CombiningDescriptor', () => {
+describe('CombiningPropertyDescriptor', () => {
   it('should group all children by name', () => {
-    const testee = new CombiningDescriptor([
+    const testee = new CombiningPropertyDescriptor([
       new PropertyDescriptorMockBuilder().withChildrenDescriptors([
         new PropertyDescriptorMockBuilder().withName('A').build(),
         new PropertyDescriptorMockBuilder().withName('B').build()
@@ -44,7 +44,7 @@ describe('CombiningDescriptor', () => {
     const jsonSchemaDescriptor = mockJsonSchemaDescriptorWithDatePickerChild();
     const alpsDescriptor = mockAlpsDescriptorWithoutChild();
 
-    const testee = new CombiningDescriptor([staticDescriptor, jsonSchemaDescriptor, alpsDescriptor]);
+    const testee = new CombiningPropertyDescriptor([staticDescriptor, jsonSchemaDescriptor, alpsDescriptor]);
     const result = testee.toFormFieldBuilder().build() as SubFormField;
 
     expectField(result, 'object', 'Object', FormFieldType.SUB_FORM, true, false);
@@ -86,7 +86,7 @@ describe('CombiningDescriptor', () => {
     let fields: FormField[];
 
     beforeAll(() => {
-      const testee = new CombiningDescriptor([
+      const testee = new CombiningPropertyDescriptor([
         new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions)),
         new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor)
       ]);

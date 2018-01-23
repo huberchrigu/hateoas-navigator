@@ -5,16 +5,10 @@ import {AbstractPropertyDescriptor} from '@hal-navigator/descriptor/abstract-pro
 import {getFormType} from '@hal-navigator/form/form-field-type';
 import {FormFieldBuilder} from '@hal-navigator/form/form-field-builder';
 
-/**
- * Resolved children needs to be cached, as a {@link JsonSchemaDescriptor} is not stateless ({@link #associatedSchema} is resolved
- * and later used).
- */
 export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
 
-  private associatedSchema: JsonSchemaDescriptor;
-
   constructor(name: string, private schema: JsonSchema, private parent: JsonSchemaDescriptor,
-              private schemaReferenceFactory: SchemaReferenceFactory) {
+              protected schemaReferenceFactory: SchemaReferenceFactory) {
     super(name);
     if (!this.schema) {
       throw new Error('A JsonSchema for ' + name + ' is expected');
@@ -25,20 +19,25 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
     return this.schema.title;
   }
 
-  getChildDescriptor(resourceName: string): PropertyDescriptor {
+  getChildDescriptor(propertyName: string): PropertyDescriptor {
     if (this.schema.format === 'uri') {
       throw new Error(`Property's association ${this.getName()} is not available`)
     }
-    return this.resolveChild(resourceName);
+    const child = this.getProperties()[propertyName];
+    if (child) {
+      return this.toDescriptor(propertyName, child);
+    } else {
+      return null;
+    }
   }
 
   getChildrenDescriptors(): Array<JsonSchemaDescriptor> {
-    const children = this.resolveProperties();
+    const children = this.getProperties();
     if (!children) {
       return [];
     }
     return Object.keys(children)
-      .map(propertyName => this.resolveChild(propertyName));
+      .map(propertyName => this.toDescriptor(propertyName, children[propertyName]));
   }
 
   getArrayItemsDescriptor(): JsonSchemaDescriptor {
@@ -82,16 +81,7 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
       .withOptions(this.getSchema().enum);
   }
 
-  private resolveChild(propertyName: string): JsonSchemaDescriptor {
-    const child = this.resolveProperties()[propertyName];
-    if (child) {
-      return new JsonSchemaDescriptor(propertyName, child, this, this.schemaReferenceFactory);
-    } else {
-      return null;
-    }
-  }
-
-  private resolveProperties(): { [propertyName: string]: JsonSchema } {
+  protected getProperties(): { [propertyName: string]: JsonSchema } {
     if (this.schema.type !== 'object') {
       return null;
     }
@@ -100,5 +90,9 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
 
   private resolveReference(schema: JsonSchema): JsonSchema {
     return schema.$ref ? this.schemaReferenceFactory.getReferencedSchema(schema) : schema;
+  }
+
+  private toDescriptor(propertyName: string, schema: JsonSchema) {
+    return new JsonSchemaDescriptor(propertyName, schema, this, this.schemaReferenceFactory);
   }
 }
