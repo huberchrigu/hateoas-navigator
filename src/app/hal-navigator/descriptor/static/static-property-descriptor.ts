@@ -28,12 +28,13 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
   }
 
   getAssociatedResourceName(): string {
-    return undefined;
+    return this.config.associatedResourceName;
   }
 
   protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
     formFieldBuilder
-      .withDateTimeType(this.config.dateTimeType);
+      .withDateTimeType(this.config.dateTimeType)
+      .withLinkedResource(this.config.associatedResourceName);
   }
 
   private toDescriptor(name: string) {

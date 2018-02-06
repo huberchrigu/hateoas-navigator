@@ -5,6 +5,7 @@ export interface ModuleConfiguration {
 }
 
 export interface PropertyConfig {
+  associatedResourceName?: string;
   properties?: { [propertyName: string]: PropertyConfig };
   items?: PropertyConfig;
 

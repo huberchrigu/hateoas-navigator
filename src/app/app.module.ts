@@ -29,6 +29,13 @@ import {PropertyConfigBuilder} from '@hal-navigator/config/property-config-build
                 .build())
               .build())
             .build())
+          .build(),
+        suggestions: new PropertyConfigBuilder()
+          .withProperty('userReactions', new PropertyConfigBuilder()
+            .withArrayItems(new PropertyConfigBuilder()
+              .withProperty('user', {associatedResourceName: 'users'})
+              .build())
+            .build())
           .build()
       }
     }),
