@@ -6,9 +6,17 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
               private associatedChildren: Array<AssociatedPropertyDescriptor>, private associatedArrayItems: AssociatedPropertyDescriptor) {
     if (!descriptor) {
       throw new Error('Descriptor must not be null');
-    } else if (!Array.isArray(associatedChildren)) {
-      throw new Error(this.descriptor.getName() + ' has non-empty children param: ' + JSON.stringify(associatedChildren));
+    } else {
+      this.assertArray(associatedChildren);
     }
+  }
+
+  update(associatedResource: AssociatedPropertyDescriptor, associatedChildren: AssociatedPropertyDescriptor[],
+         associatedArrayItems: AssociatedPropertyDescriptor): void {
+    this.assertArray(associatedChildren);
+    this.associatedResource = associatedResource;
+    this.associatedChildren = associatedChildren;
+    this.associatedArrayItems = associatedArrayItems;
   }
 
   getAssociatedResourceName(): string {
@@ -24,10 +32,12 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
   }
 
   getChildrenDescriptors(): Array<AssociatedPropertyDescriptor> {
+    AssociatedPropertyDescriptor.assertWasDefined(this.associatedChildren);
     return this.associatedChildren;
   }
 
   getArrayItemsDescriptor(): AssociatedPropertyDescriptor {
+    AssociatedPropertyDescriptor.assertWasDefined(this.associatedArrayItems);
     return this.associatedArrayItems;
   }
 
@@ -36,10 +46,23 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
   }
 
   getChildDescriptor(resourceName: string): AssociatedPropertyDescriptor {
+    AssociatedPropertyDescriptor.assertWasDefined(this.associatedResource);
     if (this.associatedResource) {
       return this.associatedResource.getChildDescriptor(resourceName);
     } else {
       return this.associatedChildren.find(c => c.getName() === resourceName);
+    }
+  }
+
+  private static assertWasDefined(value: any) {
+    if (value === undefined) {
+      throw new Error('Was not defined');
+    }
+  }
+
+  private assertArray(associatedChildren: AssociatedPropertyDescriptor[]) {
+    if (associatedChildren !== undefined && !Array.isArray(associatedChildren)) {
+      throw new Error(this.descriptor.getName() + ' has non-empty children param: ' + JSON.stringify(associatedChildren));
     }
   }
 }
