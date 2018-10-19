@@ -9,11 +9,14 @@ import {CollectionResolverService} from 'hateoas-navigator';
 
 export class GenericRoutes {
   public static get(): Routes {
-    return [{
-      path: ':' + RouteParams.RESOURCE_PARAM + '/new',
-      component: ResourceFormComponent,
-      resolve: {resourceDescriptor: ResourceDescriptorResolverService}
-    },
+    return [
+      {
+        path: ':' + RouteParams.RESOURCE_PARAM + '/new',
+        component: ResourceFormComponent,
+        resolve: {
+          resourceDescriptor: ResourceDescriptorResolverService
+        }
+      },
       {
         path: `:${RouteParams.RESOURCE_PARAM}/:${RouteParams.ID_PARAM}`,
         component: ResourceItemComponent,
@@ -34,6 +37,7 @@ export class GenericRoutes {
         resolve: {
           collectionAdapter: CollectionResolverService
         }
-      }];
+      }
+    ];
   }
 }
