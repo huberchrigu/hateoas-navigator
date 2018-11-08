@@ -5,5 +5,5 @@ export interface AlpsDocument {
 }
 
 export interface Alps {
-  descriptors: AlpsDescriptor[];
+  descriptor: AlpsDescriptor[];
 }

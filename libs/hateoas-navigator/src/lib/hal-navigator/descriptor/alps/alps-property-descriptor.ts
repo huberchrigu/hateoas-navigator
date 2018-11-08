@@ -25,10 +25,10 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
   }
 
   getChildrenDescriptors(): Array<AlpsPropertyDescriptor> {
-    if (!this.alps.descriptors) {
+    if (!this.alps.descriptor) {
       return [];
     }
-    return this.alps.descriptors.map(d => this.toDescriptor(d));
+    return this.alps.descriptor.map(d => this.toDescriptor(d));
   }
 
   /**
@@ -59,10 +59,10 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
       LOGGER.warn(`The ALPS descriptor ${this.getName()} has a resource type attribute,` +
         `which might include a reference that was not resolved`);
     }
-    if (!this.alps.descriptors) {
+    if (!this.alps.descriptor) {
       return null;
     }
-    return this.alps.descriptors.find(d => d.name === childName);
+    return this.alps.descriptor.find(d => d.name === childName);
   }
 
   private resolveChild(childName: string): AlpsPropertyDescriptor {

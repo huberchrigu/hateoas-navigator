@@ -13,7 +13,7 @@ export class AlpsDescriptorAdapter {
   }
 
   getDescriptors(): AlpsDescriptorAdapter[] {
-    const children = this.descriptor.descriptors;
+    const children = this.descriptor.descriptor;
     if (children) {
       return children.map(d => new AlpsDescriptorAdapter(d));
     } else {

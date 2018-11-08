@@ -4,7 +4,7 @@ import {AlpsDescriptorDoc} from './alps-descriptor-doc';
 export interface AlpsDescriptor {
   id: string;
   href: string;
-  descriptors: AlpsDescriptor[];
+  descriptor: AlpsDescriptor[];
   name: string;
   type: AlpsDescriptorType;
   rt: string;
