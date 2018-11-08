@@ -1,0 +1,9 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "description": "Installs and injects HATEOAS Navigator libraries",
+      "factory": "./ng-add/index#schematics"
+    }
+  }
+}
