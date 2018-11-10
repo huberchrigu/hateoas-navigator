@@ -27,7 +27,8 @@ function addPackageJsonDependencies() {
   return (host: Tree, context: SchematicContext) => {
     const dependencies = [
       {version: '^6.3.3', name: 'rxjs-compat'},
-      {version: '^0.0.29', name: 'md2'},
+      {version: '^1.0.0', name: '@coachcare/datepicker'},
+      {version: '^0.5.23', name: 'moment-timezone'},
       {version: '^2.22.2', name: 'moment'},
       {version: `~${hateoasNavigatorVersion}`, name: 'hateoas-navigator'},
       {version: `~${documentComponentsVersion}`, name: 'document-components'}

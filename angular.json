@@ -23,7 +23,8 @@
               "projects/demo/src/assets"
             ],
             "styles": [
-              "projects/demo/src/styles.sass"
+              "projects/demo/src/styles.sass",
+              "node_modules/@coachcare/datepicker/prebuilt-themes/indigo-pink.css"
             ],
             "scripts": []
           },

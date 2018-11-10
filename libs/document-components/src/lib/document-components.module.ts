@@ -16,11 +16,11 @@ import {DateTimeFieldComponent} from './resource-form/date-time-field/date-time-
 import {FormGroupComponent} from './resource-form/form-group/form-group.component';
 import {FormListComponent} from './resource-form/form-list/form-list.component';
 import {ItemPropertiesComponent} from './resource-item/item-properties/item-properties.component';
-import {Md2DatepickerModule, MdNativeDateModule} from 'md2';
 import {SelectFieldComponent} from './resource-form/select-field/select-field.component';
 import {AssociationFieldComponent} from './resource-form/association-field/association-field.component';
 import { FormFieldComponent } from './resource-form/form-field/form-field.component';
 import {RouterModule} from '@angular/router';
+import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 
 @NgModule({
   imports: [
@@ -37,11 +37,10 @@ import {RouterModule} from '@angular/router';
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
-    // MatDatepickerModule,
     MatNativeDateModule,
 
-    Md2DatepickerModule,
-    MdNativeDateModule
+    MatDatepickerModule,
+    MatMomentDateModule
   ],
   declarations: [
     NavigationComponent,

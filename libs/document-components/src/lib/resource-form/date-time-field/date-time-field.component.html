@@ -1,8 +1,5 @@
-<!--<mat-form-field [formGroup]="form" class="cmp-full-width">-->
-<!-- Angular Material currently only supports dates, therefore another library is used until this is supported -->
-<!--<input matInput [matDatepicker]="picker" [placeholder]="field.getTitle()" [formControlName]="field.name">-->
-<!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
-<!--<mat-datepicker #picker></mat-datepicker>-->
-<!--</mat-form-field>-->
-<md2-datepicker class="cmp-full-width" [type]="getType()" [required]="field.isRequired()" [placeholder]="field.getTitle()"
-                [formControl]="control"></md2-datepicker>
+<mat-form-field class="cmp-full-width">
+  <input matInput [matDatepicker]="picker" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker [type]="getType()" #picker></mat-datepicker>
+</mat-form-field>
