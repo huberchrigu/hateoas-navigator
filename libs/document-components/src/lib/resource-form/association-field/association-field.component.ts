@@ -10,7 +10,7 @@ import {startWith, map, combineLatest} from 'rxjs/operators';
  */
 @Component({
   selector: 'app-association-field',
-  templateUrl: './assocation-field.component.html',
+  templateUrl: './association-field.component.html',
   styleUrls: ['./association-field.component.sass', '../form-fields.sass']
 })
 export class AssociationFieldComponent implements OnInit {
@@ -21,6 +21,7 @@ export class AssociationFieldComponent implements OnInit {
   control: FormControl;
 
   filteredItems: Observable<Array<LinkItem>>;
+  private resolvedItems: Array<LinkItem> = [];
 
   constructor(private halDocumentService: HalDocumentService) {
   }
@@ -30,9 +31,22 @@ export class AssociationFieldComponent implements OnInit {
     this.filteredItems = this.control.valueChanges
       .pipe(
         startWith(null),
-        combineLatest(allItems, (value, items) => this.filterValues(value, items)));
+        combineLatest(allItems, (value, items) => this.filterValues(value, items))
+      );
+    this.initItems().subscribe(all => {
+      this.updateItems(all);
+    });
   }
 
+  toTitle(): (name: string) => string {
+    return name => {
+      if (name) {
+        const item = this.resolvedItems.find(item => item.name === name);
+        return item ? item.title : 'loading...';
+      }
+      return null;
+    }
+  }
   private filterValues(value: string, items: Array<LinkItem>): Array<LinkItem> {
     if (value) {
       return items.filter(item => item.title.toLowerCase().indexOf(value.toLowerCase()) > -1);
@@ -50,6 +64,14 @@ export class AssociationFieldComponent implements OnInit {
           title: '' + item.getDisplayValue()
         };
       })));
+  }
+
+  /**
+   * Set the value of the control again, so that change detection is triggered.
+   */
+  private updateItems(all) {
+    this.resolvedItems.push(...all);
+    this.control.setValue(this.control.value);
   }
 }
 
