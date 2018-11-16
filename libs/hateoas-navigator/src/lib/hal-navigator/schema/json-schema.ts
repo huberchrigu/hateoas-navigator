@@ -15,7 +15,7 @@ export interface JsonSchemaDocument extends JsonSchema {
   definitions?: JsonSchemaDefinitions;
 }
 
-export type PropertyType = 'string' | 'array' | 'object' | 'number' | 'integer';
+export type PropertyType = 'string' | 'array' | 'object' | 'number' | 'integer' | 'boolean';
 export type PropertyFormat = 'date-time' | 'uri';
 
 export interface JsonSchemaDefinitions {

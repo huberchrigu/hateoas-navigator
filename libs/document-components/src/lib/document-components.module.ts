@@ -8,7 +8,15 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {ResourceItemComponent} from './resource-item/resource-item.component';
 import {
   MatAutocompleteModule,
-  MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatInputModule, MatNativeDateModule, MatSelectModule, MatTableModule,
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatDialogModule,
+  MatIconModule,
+  MatInputModule,
+  MatNativeDateModule,
+  MatSelectModule,
+  MatTableModule,
   MatToolbarModule
 } from '@angular/material';
 import {InputFieldComponent} from './resource-form/input-field/input-field.component';
@@ -21,6 +29,7 @@ import {AssociationFieldComponent} from './resource-form/association-field/assoc
 import { FormFieldComponent } from './resource-form/form-field/form-field.component';
 import {RouterModule} from '@angular/router';
 import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
+import { CheckboxFieldComponent } from './resource-form/checkbox-field/checkbox-field.component';
 
 @NgModule({
   imports: [
@@ -36,6 +45,7 @@ import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
     MatAutocompleteModule,
     MatNativeDateModule,
 
@@ -55,7 +65,8 @@ import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
     FormListComponent,
     ItemPropertiesComponent,
     AssociationFieldComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    CheckboxFieldComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
   entryComponents: [ConfirmationDialogComponent]

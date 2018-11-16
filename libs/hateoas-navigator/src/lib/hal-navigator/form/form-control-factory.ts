@@ -6,7 +6,7 @@ import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
 
 export class FormControlFactory {
-  private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER,
+  private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER, FormFieldType.BOOLEAN,
     FormFieldType.NUMBER, FormFieldType.INTEGER, FormFieldType.SELECT, FormFieldType.LINK];
 
   constructor(private item?: VersionedResourceAdapter) {

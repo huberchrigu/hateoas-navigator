@@ -3,6 +3,7 @@
   <app-input-field *ngSwitchCase="'NUMBER'" [control]="control" [field]="field" type="number"></app-input-field>
   <app-input-field *ngSwitchCase="'INTEGER'" [control]="control" [field]="field" type="number"></app-input-field>
 
+  <app-checkbox-field *ngSwitchCase="'BOOLEAN'" [control]="control" [field]="field"></app-checkbox-field>
   <app-date-time-field *ngSwitchCase="'DATE_PICKER'" [control]="control" [field]="field"></app-date-time-field>
   <app-select-field *ngSwitchCase="'SELECT'" [control]="control" [field]="field"></app-select-field>
   <app-association-field *ngSwitchCase="'LINK'" [control]="control" [field]="field"></app-association-field>

@@ -18,10 +18,10 @@
     ],
     "paths": {
       "hateoas-navigator": [
-        "dist/hateoas-navigator"
+        "libs/hateoas-navigator/src/lib"
       ],
       "hateoas-navigator/*": [
-        "dist/hateoas-navigator/*"
+        "libs/hateoas-navigator/src/lib/*"
       ],
       "document-components": [
         "libs/document-components/src/lib"
