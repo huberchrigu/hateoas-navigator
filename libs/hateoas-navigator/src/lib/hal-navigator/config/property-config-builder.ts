@@ -2,10 +2,23 @@ import {PropertyConfig} from './module-configuration';
 
 export class PropertyConfigBuilder {
   properties: { [propertyName: string]: PropertyConfig } = {};
+  actionLinks: { [actionName: string]: PropertyConfig } = {};
+  private title: string;
+
   private items: PropertyConfig;
 
   withProperty(propertyName: string, config: PropertyConfig): PropertyConfigBuilder {
     this.properties[propertyName] = config;
+    return this;
+  }
+
+  withActionLink(actionName: string, config: PropertyConfig): PropertyConfigBuilder {
+    this.actionLinks[actionName] = config;
+    return this;
+  }
+
+  withTitle(title: string) {
+    this.title = title;
     return this;
   }
 
@@ -15,7 +28,7 @@ export class PropertyConfigBuilder {
   }
 
   /**
-   * The property can be an array or an object. In the first case, the array item configuration is consided,
+   * The property can be an array or an object. In the first case, the array item configuration is considered,
    * in the latter case the registered 'properties'.
    */
   build(): PropertyConfig {
@@ -25,7 +38,9 @@ export class PropertyConfigBuilder {
       };
     } else {
       return {
-        properties: this.properties
+        title: this.title,
+        properties: this.properties,
+        actionLinks: this.actionLinks
       };
     }
   }

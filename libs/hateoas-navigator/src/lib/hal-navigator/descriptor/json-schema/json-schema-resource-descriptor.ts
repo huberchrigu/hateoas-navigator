@@ -11,4 +11,8 @@ export class JsonSchemaResourceDescriptor extends JsonSchemaDescriptor implement
     const child = this.getProperties()[childResource];
     return child ? new JsonSchemaResourceDescriptor(childResource, child, this, this.schemaReferenceFactory) : null;
   }
+
+  getDescriptorForLink(uri: string): ResourceDescriptor {
+    return undefined;
+  }
 }

@@ -23,6 +23,10 @@ export class AlpsResourceDescriptor extends AlpsPropertyDescriptor implements Re
     return childDesc ? this.toResourceDesc(childDesc) : null;
   }
 
+  getDescriptorForLink(uri: string): ResourceDescriptor {
+    return undefined;
+  }
+
   private toResourceDesc(descriptor: AlpsDescriptor): AlpsResourceDescriptor {
     return new AlpsResourceDescriptor(descriptor, [descriptor]);
   }

@@ -35,7 +35,8 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
   protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
     formFieldBuilder
       .withDateTimeType(this.config.dateTimeType)
-      .withLinkedResource(this.config.associatedResourceName);
+      .withLinkedResource(this.config.associatedResourceName)
+      .withOptions(this.config.enumOptions);
   }
 
   private toDescriptor(name: string) {

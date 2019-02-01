@@ -46,6 +46,14 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
     }
   }
 
+  getEmbeddedResourceOrNull(linkRelationType: string): ResourceAdapter {
+    const resource = this.resourceObject._embedded[linkRelationType];
+    if (Array.isArray(resource)) {
+      return undefined;
+    }
+    return resource ? new ResourceAdapter(linkRelationType, resource, this.descriptorResolver, this.getSubResourceDescriptor(linkRelationType)) : undefined;
+  }
+
   /**
    * Returns the resource properties plus the embedded resources' properties.
    * Since {@link ResourceAdapter} does not work for arrays, we convert them to resource properties.
@@ -80,6 +88,10 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
 
   getSelfLink(): ResourceLink {
     return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
+  }
+
+  getOtherLinks(): ResourceLink[] {
+    return this.linkFactory.getAll().filter(link => link.getFullUriWithoutTemplatedPart() != this.getSelfLink().getFullUriWithoutTemplatedPart());
   }
 
   resolveDescriptor(): Observable<ResourceAdapter> {

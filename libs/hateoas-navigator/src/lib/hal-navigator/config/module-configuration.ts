@@ -5,12 +5,14 @@ export interface ModuleConfiguration {
 }
 
 export interface PropertyConfig {
+  actionLinks?: { [actionName: string]: PropertyConfig };
   associatedResourceName?: string;
   properties?: { [propertyName: string]: PropertyConfig };
   items?: PropertyConfig;
 
   title?: string;
   dateTimeType?: DateTimeType;
+  enumOptions?: string[]
 }
 
 export enum DateTimeType {DATE, DATE_TIME, TIME}

@@ -19,7 +19,15 @@ export class CombiningResourceDescriptor extends CombiningPropertyDescriptor imp
   }
 
   getChildResourceDesc(childResource: string): ResourceDescriptor {
-    const children = this.resourceDescriptors.map(d => d.getChildResourceDesc(childResource)).filter(d => d);
+    return this.extractDescriptor(d => d.getChildResourceDesc(childResource));
+  }
+
+  getDescriptorForLink(uri: string): ResourceDescriptor {
+    return this.extractDescriptor(d => d.getDescriptorForLink(uri));
+  }
+
+  private extractDescriptor(mappingFunction: (descriptor: ResourceDescriptor) => ResourceDescriptor) {
+    const children = this.resourceDescriptors.map(d => mappingFunction(d)).filter(d => d);
     return children.length > 0 ? new CombiningResourceDescriptor(children) : null;
   }
 }

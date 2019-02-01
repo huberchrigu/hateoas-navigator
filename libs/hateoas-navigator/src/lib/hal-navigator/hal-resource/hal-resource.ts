@@ -2,7 +2,7 @@ import {ResourceLinks} from './resource-links';
 import {EmbeddedResources} from './embedded-resources';
 
 export type HalResource = JsonObject & {
-  _embedded?: EmbeddedResources
+  _embedded?: EmbeddedResources // TODO: Every JSON object can have _embedded too (at least in Spring Data REST)
   _links: ResourceLinks
 };
 

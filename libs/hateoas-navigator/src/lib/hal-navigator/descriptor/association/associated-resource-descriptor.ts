@@ -19,4 +19,8 @@ export class AssociatedResourceDescriptor extends AssociatedPropertyDescriptor i
   getActions(): ResourceActions {
     return this.resourceDescriptor.getActions();
   }
+
+  getDescriptorForLink(uri: string): ResourceDescriptor {
+    return this.resourceDescriptor.getDescriptorForLink(uri);
+  }
 }

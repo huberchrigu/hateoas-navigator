@@ -51,28 +51,71 @@ export class HalDocumentService {
   @Validate
   deleteResource(@Required document: HalResource, version: string): Observable<HttpResponse<void>> {
     const resourceLink = ResourceLink.fromResourceObject(document, undefined).getRelativeUri();
-    return this.deleteFromApi(resourceLink, version).pipe(
-      map(response => this.resourceCacheService.removeFromResponse(resourceLink, response)));
+    return this.removeFromBackendAndCache(resourceLink, version);
   }
 
   @Validate
   create(@Required resourceName: string, object: any): Observable<VersionedResourceAdapter> {
-    return this.postToApi('/' + resourceName, object).pipe(
-      map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
+    return this.createAndCache(resourceName, '/' + resourceName, object);
   }
 
   @Validate
   update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceAdapter> {
-    return this.putToApi('/' + resourceName + '/' + id, object, version).pipe(
-      map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
+    return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version);
   }
 
   @Validate
   getItem(@Required resourceName: string, @Required id: string): Observable<VersionedResourceAdapter> {
-    return this.getResponseFromApi<HalResource>(`/${resourceName}/${id}`,
-      this.resourceCacheService.getRequestHeader(resourceName, id)).pipe(
-      map(response => this.resourceCacheService.getItemFromGetResponse(resourceName, response)),
-      catchError(response => this.resourceCacheService.getItemFromErroneousGetResponse(resourceName, id, response)));
+    return this.getItemFromResourceOrCache(resourceName, `/${resourceName}/${id}`, id);
+  }
+
+  @Cacheable()
+  @Validate
+  getOptionsForCustomUri(@Required uri: string): Observable<string[]> {
+    return this.httpClient.options(Api.PREFIX + uri, {observe: 'response'}).pipe(
+      map(response => response.headers.get('Allow').split(','))
+    );
+  }
+
+  @Validate
+  executeCustomAction(@Required uri: string, @Required actionOn: VersionedResourceAdapter, @Required method: string, body: object): Observable<VersionedResourceAdapter> {
+    const version = actionOn.getVersion();
+    const name = actionOn.getName();
+
+    switch (method) {
+      case 'POST':
+        return this.createAndCache(name, uri, body);
+      case 'PUT':
+        return this.updateItemAndCachedVersion(name, uri, body, version);
+      case 'GET':
+        return this.getItemFromResourceOrCache(name, uri, ResourceLink.extractIdFromUri(name, uri));
+      case 'DELETE':
+        return this.removeFromBackendAndCache(uri, version).pipe(map(() => actionOn)); // TODO: DELETE responses are always ignored yet
+      default:
+        throw new Error(method + ' not supported');
+    }
+  }
+
+  private createAndCache(resourceName: string, resourceUri: string, object: any) {
+    return this.postToApi(resourceUri, object).pipe(
+      map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
+  }
+
+  private removeFromBackendAndCache(resourceLink, version: string) {
+    return this.deleteFromApi(resourceLink, version).pipe(
+      map(response => this.resourceCacheService.removeFromResponse(resourceLink, response)));
+  }
+
+  private updateItemAndCachedVersion(resourceName: string, resourceUri: string, object: any, version: string) {
+    return this.putToApi(resourceUri, object, version).pipe(
+      map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
+  }
+
+  private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string) {
+    return this.getResponseFromApi<HalResource>(resourceUri, this.resourceCacheService.getRequestHeader(resourceName, id))
+      .pipe(
+        map(response => this.resourceCacheService.getItemFromGetResponse(resourceName, response)),
+        catchError(response => this.resourceCacheService.getItemFromErroneousGetResponse(resourceName, id, response)));
   }
 
   private getFromApi<T>(resourceUrl: string, headers?: HttpHeaders): Observable<T> {

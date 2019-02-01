@@ -5,8 +5,7 @@ import {Link} from './link';
 import {HalResource} from '../hal-resource/hal-resource';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
-import {Observable} from 'rxjs/index';
-import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
+import {Observable} from 'rxjs';
 import {PropertyDescriptor} from '../descriptor';
 
 export class ResourceLink extends Link {
@@ -16,6 +15,16 @@ export class ResourceLink extends Link {
 
   static relativeUriFromId(resource: string, id: string): string {
     return '/' + resource + '/' + id;
+  }
+
+  static extractIdFromUri(resource: string, uri: string) {
+    const resourcePrefix = '/' + resource + '/';
+    if (!uri.startsWith(resourcePrefix)) {
+      throw new Error(`Cannot extract ID from uri ${uri} and resource name ${resource}`);
+    }
+    const afterResource = uri.substring(resourcePrefix.length);
+    const indexSlash = afterResource.indexOf('/');
+    return indexSlash > -1 ? afterResource.substring(0, indexSlash) : afterResource;
   }
 
   constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
@@ -46,10 +55,6 @@ export class ResourceLink extends Link {
 
   getRelativeUriWithoutTemplatedPart() {
     return this.removeTemplatedPart(this.getRelativeUri());
-  }
-
-  getResource(): Observable<VersionedResourceAdapter> {
-    throw new Error('Not implemented yet');
   }
 
   getResourceDescriptor(): Observable<PropertyDescriptor> {
