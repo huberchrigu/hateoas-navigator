@@ -36,6 +36,11 @@ import {DocumentComponentsModule} from 'document-components';
               .withProperty('user', {associatedResourceName: 'users'})
               .build())
             .build())
+          .withActionLink('votes', new PropertyConfigBuilder()
+            .withProperty('user', {associatedResourceName: 'users', title: 'User'})
+            .withProperty('reactionType', {enumOptions: ['APPROVE', 'UNSURE', 'DENY'], title: 'Reaction'})
+            .withTitle('Vote')
+            .build())
           .build()
       }
     }),
