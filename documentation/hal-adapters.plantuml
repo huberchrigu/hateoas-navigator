@@ -1,0 +1,20 @@
+@startuml
+class ResourceAdapter #orange
+
+class NavigationFactory #yellow {
+    getItems()
+}
+class CollectionAdapter #yellow {
+    getItems()
+}
+NavigationFactory ..> ResourceAdapter
+CollectionAdapter ..> ResourceAdapter
+
+note left of ResourceAdapter {
+    Representation of a HAL resource object.
+    Provides many convenience methods for
+    - dealing with its links
+    - getting the resource state with or without the embedded resources' state
+    - retrieving the necessary form controls
+}
+@enduml

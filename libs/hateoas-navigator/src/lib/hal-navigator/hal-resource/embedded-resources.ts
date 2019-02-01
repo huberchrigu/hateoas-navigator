@@ -1,5 +1,5 @@
-import {HalResource} from './hal-resource';
+import {HalResourceObject} from './hal-resource-object';
 
 export class EmbeddedResources {
-  [linkRelationType: string]: HalResource | HalResource[]
+  [linkRelationType: string]: HalResourceObject | HalResourceObject[]
 }

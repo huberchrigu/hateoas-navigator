@@ -1,0 +1,18 @@
+@startuml
+class ResourceComponent
+
+class ResourceListComponent
+class ResourceItemComponent
+
+ResourceComponent <|-- ResourceListComponent
+ResourceComponent <|-- ResourceItemComponent
+
+class CollectionAdapter
+
+ResourceListComponent ..> CollectionAdapter
+ResourceItemComponent ..> VersionedResourceAdapter
+CollectionAdapter ..> VersionedResourceAdapter
+
+note right of ResourceComponent: Can display HAL resources.
+
+@enduml

@@ -1,1 +1,1 @@
-export {HalDocumentService} from './hal-document.service';
+export {ResourceService} from './resource.service';

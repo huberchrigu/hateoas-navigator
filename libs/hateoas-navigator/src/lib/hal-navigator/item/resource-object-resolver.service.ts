@@ -4,13 +4,13 @@ import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/rou
 import {Observable} from 'rxjs';
 import {LOGGER} from '../../logging/logger';
 import {VersionedResourceAdapter} from './versioned-resource-adapter';
-import {HalDocumentService} from '../resource-services/hal-document.service';
+import {ResourceService} from '../resource-services/resource.service';
 import {RouteParams} from '../routing/route-params';
 
 @Injectable()
 export class ResourceObjectResolverService implements Resolve<VersionedResourceAdapter> {
 
-  constructor(private halDocumentService: HalDocumentService) {
+  constructor(private halDocumentService: ResourceService) {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceAdapter> |

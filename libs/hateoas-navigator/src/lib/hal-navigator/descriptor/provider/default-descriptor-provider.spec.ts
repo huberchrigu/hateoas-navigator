@@ -1,5 +1,5 @@
 import {async} from '@angular/core/testing';
-import {SchemaService} from '../../resource-services/schema.service';
+import {ResourceSchemaService} from '../../resource-services/resource-schema.service';
 import {JsonSchema, JsonSchemaDocument} from '../../schema/json-schema';
 import {of} from 'rxjs/index';
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
@@ -9,7 +9,7 @@ import {DefaultDescriptorProvider} from './default-descriptor-provider';
 import {ModuleConfiguration} from '../../config';
 
 describe('DefaultDescriptorProvider', () => {
-  const schemaService = jasmine.createSpyObj<SchemaService>('schemaService', [
+  const schemaService = jasmine.createSpyObj<ResourceSchemaService>('schemaService', [
     'getJsonSchema', 'getAlps'
   ]);
   const schema = {

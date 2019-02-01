@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {NavigationItem} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import {flatMap} from 'rxjs/operators';
 export class NavigationComponent implements OnInit {
   items: Array<NavigationItem>;
 
-  constructor(private halDocumentService: HalDocumentService) {
+  constructor(private halDocumentService: ResourceService) {
 
   }
 

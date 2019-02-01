@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceLink, VersionedResourceAdapter} from 'hateoas-navigator';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material';
 import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
 import {SendDataDialogComponent} from "document-components/send-data-dialog/send-data-dialog.component";
@@ -19,7 +19,7 @@ export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
   resourceObject: VersionedResourceAdapter;
 
-  constructor(private route: ActivatedRoute, private halDocumentService: HalDocumentService, private dialog: MatDialog,
+  constructor(private route: ActivatedRoute, private halDocumentService: ResourceService, private dialog: MatDialog,
               private router: Router) {
   }
 

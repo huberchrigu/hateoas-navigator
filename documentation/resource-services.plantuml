@@ -1,0 +1,17 @@
+@startuml
+component UI {
+    component Component
+    component ResourceService #Yellow
+    component ResourceSchemaService #Yellow
+
+    Component ..> ResourceService : needs
+    ResourceService ..> ResourceSchemaService : fetch metadata
+}
+
+component Backend {
+    component Resource
+}
+
+ResourceService ..> Resource : call
+ResourceSchemaService ..> Resource
+@enduml

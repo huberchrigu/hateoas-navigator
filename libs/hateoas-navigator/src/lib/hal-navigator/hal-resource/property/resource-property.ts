@@ -1,7 +1,7 @@
 import {AbstractProperty} from './abstract-property';
 import {DateConverter} from './date-converter';
 import {ValueConverter} from './value-converter';
-import {JsonType} from '../hal-resource';
+import {JsonType} from '../hal-resource-object';
 import {PropertyDescriptor} from '../../descriptor';
 
 export class ResourceProperty extends AbstractProperty<PropertyDescriptor> {

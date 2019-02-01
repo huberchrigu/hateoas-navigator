@@ -32,6 +32,7 @@ import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
 import {SendDataDialogComponent} from "document-components/send-data-dialog/send-data-dialog.component";
 
+// TODO: Rename to ResourceComponentsModule, document is too specific for HAL
 @NgModule({
   imports: [
     CommonModule,

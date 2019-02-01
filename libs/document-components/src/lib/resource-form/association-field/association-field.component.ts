@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {Observable} from 'rxjs';
 import {LinkField} from 'hateoas-navigator';
 import {startWith, map, combineLatest} from 'rxjs/operators';
@@ -23,7 +23,7 @@ export class AssociationFieldComponent implements OnInit {
   filteredItems: Observable<Array<LinkItem>>;
   private resolvedItems: Array<LinkItem> = [];
 
-  constructor(private halDocumentService: HalDocumentService) {
+  constructor(private halDocumentService: ResourceService) {
   }
 
   ngOnInit() {

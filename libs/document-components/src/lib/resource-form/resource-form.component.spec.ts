@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceFormComponent} from './resource-form.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {PropertyDescriptor} from 'hateoas-navigator';
@@ -30,7 +30,7 @@ describe('ResourceFormComponent', () => {
         declarations: [ResourceFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
         providers: [
-          {provide: HalDocumentService, useValue: createSpyObj('halDocumentService', ['create', 'update'])},
+          {provide: ResourceService, useValue: createSpyObj('halDocumentService', ['create', 'update'])},
           {provide: Router, useValue: createSpyObj('router', ['navigateByUrl'])},
           {
             provide: ActivatedRoute,

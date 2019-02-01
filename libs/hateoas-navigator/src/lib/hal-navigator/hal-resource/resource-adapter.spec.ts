@@ -1,5 +1,5 @@
 import {ResourceAdapter} from './resource-adapter';
-import {HalResource} from './hal-resource';
+import {HalResourceObject} from './hal-resource-object';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {ResourceLinks} from './resource-links';
 
@@ -9,7 +9,7 @@ describe('ResourceAdapter', () => {
       _links: {
         self: {href: 'http://localhost:4200/resource/1'}
       }
-    } as HalResource, {} as ResourceDescriptorProvider);
+    } as HalResourceObject, {} as ResourceDescriptorProvider);
     expect(testee.getSelfLink().getRelativeUri()).toEqual('/resource/1');
   });
 
@@ -33,10 +33,10 @@ describe('ResourceAdapter', () => {
     return {self: {href: 'this should not be displayed'}};
   }
 
-  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource = {} as HalResource): HalResource {
-    const resource: HalResource = {
+  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource = {} as HalResourceObject): HalResourceObject {
+    const resource: HalResourceObject = {
       _links: dummyLinks()
-    } as HalResource;
+    } as HalResourceObject;
     if (propertyName) {
       resource[propertyName] = propertyValue;
     }

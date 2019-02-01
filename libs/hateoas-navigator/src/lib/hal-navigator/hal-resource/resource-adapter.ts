@@ -1,7 +1,7 @@
 import {AbstractProperty} from './property/abstract-property';
 import {ResourceDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
-import {HalResource, JsonObject} from './hal-resource';
+import {HalResourceObject, JsonObject} from './hal-resource-object';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {ResourceLink} from '../link-object/resource-link';
 import {ResourceProperty} from './property/resource-property';
@@ -20,7 +20,7 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
 
   private linkFactory: LinkFactory;
 
-  constructor(name: string, public resourceObject: HalResource, private descriptorResolver: ResourceDescriptorProvider,
+  constructor(name: string, public resourceObject: HalResourceObject, private descriptorResolver: ResourceDescriptorProvider,
               descriptor: ResourceDescriptor = null) {
     super(name, descriptor);
     if (Array.isArray(resourceObject) || !resourceObject._links) {
@@ -125,7 +125,7 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
   /**
    * Throws an error if embedded resource does not exist.
    */
-  private getEmbedded(linkRelationType: string): HalResource | HalResource[] {
+  private getEmbedded(linkRelationType: string): HalResourceObject | HalResourceObject[] {
     const embedded = this.resourceObject._embedded[linkRelationType];
     if (embedded) {
       return embedded;
@@ -156,7 +156,7 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
   /**
    * Transforms the resource(s) to an object or array property.
    */
-  private toResourceProperty(resourceName: string, resource: HalResource | HalResource[]): ResourceProperty {
+  private toResourceProperty(resourceName: string, resource: HalResourceObject | HalResourceObject[]): ResourceProperty {
     const rawValue = Array.isArray(resource) ? resource.map(r => this.getRawPropertiesOf(r)) : this.getRawPropertiesOf(resource);
     return new ResourceProperty(resourceName, rawValue, this.getSubPropertyDescriptor(resourceName));
   }
@@ -164,7 +164,7 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
   /**
    * Removes the HAL metadata from the resource.
    */
-  private getRawPropertiesOf(resourceObject: HalResource): JsonObject {
+  private getRawPropertiesOf(resourceObject: HalResourceObject): JsonObject {
     const properties = {};
     Object.keys(resourceObject)
       .filter(key => this.filterOutMetadata(key))

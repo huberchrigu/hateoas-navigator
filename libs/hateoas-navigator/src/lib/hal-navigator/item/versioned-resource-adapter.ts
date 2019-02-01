@@ -1,4 +1,4 @@
-import {HalResource} from '../hal-resource/hal-resource';
+import {HalResourceObject} from '../hal-resource/hal-resource-object';
 import {ResourceAdapter} from '../hal-resource/resource-adapter';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 
@@ -7,7 +7,7 @@ import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descri
  */
 export class VersionedResourceAdapter extends ResourceAdapter {
 
-  constructor(resourceName: string, resourceObject: HalResource, private version: string, descriptorResolver: ResourceDescriptorProvider) {
+  constructor(resourceName: string, resourceObject: HalResourceObject, private version: string, descriptorResolver: ResourceDescriptorProvider) {
     super(resourceName, resourceObject, descriptorResolver);
   }
 

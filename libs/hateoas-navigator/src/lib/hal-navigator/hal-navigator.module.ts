@@ -1,5 +1,5 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
-import {HalDocumentService} from './resource-services/hal-document.service';
+import {ResourceService} from './resource-services/resource.service';
 import {CollectionResolverService} from './collection/collection-resolver.service';
 import {ResourceObjectResolverService} from './item/resource-object-resolver.service';
 import {ItemCacheService} from './item/cache/item-cache.service';
@@ -7,7 +7,7 @@ import {MODULE_CONFIG, ModuleConfiguration} from './config/module-configuration'
 import {HttpClientModule} from '@angular/common/http';
 import {ResourceDescriptorProvider} from './descriptor/provider/resource-descriptor-provider';
 import {DefaultDescriptorProvider} from './descriptor/provider/default-descriptor-provider';
-import {SchemaService} from './resource-services/schema.service';
+import {ResourceSchemaService} from './resource-services/resource-schema.service';
 import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-descriptor-resolver.service';
 
 @NgModule({
@@ -15,12 +15,12 @@ import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-
     HttpClientModule
   ],
   providers: [
-    HalDocumentService,
+    ResourceService,
     CollectionResolverService,
     ResourceDescriptorResolverService,
     ResourceObjectResolverService,
     ItemCacheService,
-    SchemaService
+    ResourceSchemaService
   ]
 })
 export class HalNavigatorModule {
@@ -28,8 +28,8 @@ export class HalNavigatorModule {
                  descriptorResolverFactory?: () => ResourceDescriptorProvider,
                  descriptorResolverDeps?: any[]): ModuleWithProviders {
     const factory = descriptorResolverFactory ? descriptorResolverFactory :
-      (schemaService: SchemaService) => new DefaultDescriptorProvider(configuration, schemaService);
-    const deps = descriptorResolverDeps ? descriptorResolverDeps : [SchemaService];
+      (schemaService: ResourceSchemaService) => new DefaultDescriptorProvider(configuration, schemaService);
+    const deps = descriptorResolverDeps ? descriptorResolverDeps : [ResourceSchemaService];
     return {
       ngModule: HalNavigatorModule,
       providers: [{

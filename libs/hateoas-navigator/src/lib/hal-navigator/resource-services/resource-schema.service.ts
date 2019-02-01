@@ -12,7 +12,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 @Injectable()
-export class SchemaService {
+export class ResourceSchemaService {
   private static PROFILE_PREFIX = '/profile/';
 
   constructor(private httpClient: HttpClient, @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration) {
@@ -20,13 +20,13 @@ export class SchemaService {
 
   @Cacheable()
   getJsonSchema(resourceName: string): Observable<JsonSchemaDocument> {
-    return this.getFromApi<JsonSchemaDocument>(SchemaService.PROFILE_PREFIX + resourceName,
+    return this.getFromApi<JsonSchemaDocument>(ResourceSchemaService.PROFILE_PREFIX + resourceName,
       HeaderOptions.withAcceptHeader('application/schema+json'));
   }
 
   @Cacheable()
   getAlps(resourceName: string): Observable<AlpsDocumentAdapter> {
-    return this.getFromApi<AlpsDocument>(SchemaService.PROFILE_PREFIX + resourceName)
+    return this.getFromApi<AlpsDocument>(ResourceSchemaService.PROFILE_PREFIX + resourceName)
       .pipe(map(document => new AlpsDocumentAdapter(document)));
   }
 

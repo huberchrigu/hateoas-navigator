@@ -1,6 +1,6 @@
 import {JsonProperty} from './json-property';
 import {DisplayValueConverter} from './display-value-converter';
-import {JsonType} from '../hal-resource';
+import {JsonType} from '../hal-resource-object';
 import {PropertyDescriptor} from '../../descriptor';
 
 export abstract class AbstractProperty<D extends PropertyDescriptor> implements JsonProperty {

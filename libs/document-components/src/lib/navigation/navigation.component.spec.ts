@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {NavigationComponent} from './navigation.component';
-import {HalDocumentService, NavigationFactory} from 'hateoas-navigator';
+import {ResourceService, NavigationFactory} from 'hateoas-navigator';
 import {of} from 'rxjs/index';
 
 describe('NavigationComponent', () => {
@@ -12,14 +12,14 @@ describe('NavigationComponent', () => {
     getRootNavigation: () => of({
       getItems: () => of([])
     } as NavigationFactory)
-  } as HalDocumentService;
+  } as ResourceService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [NavigationComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        {provide: HalDocumentService, useValue: serviceMock}
+        {provide: ResourceService, useValue: serviceMock}
       ]
     })
       .compileComponents();

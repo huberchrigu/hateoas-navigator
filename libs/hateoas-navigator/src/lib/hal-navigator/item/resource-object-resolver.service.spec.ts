@@ -1,12 +1,12 @@
 import {TestBed, inject} from '@angular/core/testing';
 
 import {ResourceObjectResolverService} from './resource-object-resolver.service';
-import {HalDocumentService} from '../resource-services/hal-document.service';
+import {ResourceService} from '../resource-services/resource.service';
 
 describe('ResourceObjectResolverService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ResourceObjectResolverService, {provide: HalDocumentService, useValue: {}}]
+      providers: [ResourceObjectResolverService, {provide: ResourceService, useValue: {}}]
     });
   });
 

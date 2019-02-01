@@ -3,7 +3,7 @@ import {Inject, Injectable} from '@angular/core';
 
 import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-factory';
-import {HalResource} from '../hal-resource/hal-resource';
+import {HalResourceObject} from '../hal-resource/hal-resource-object';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Required, Validate} from '../../decorators/required';
 import {ItemCacheService} from '../item/cache/item-cache.service';
@@ -18,10 +18,10 @@ import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
 
 /**
- * This is the module's core service providing functionality to access HAL, ALPS and JsonSchema documents.
+ * This is the module's core service providing functionality to access resources (only HAL documents supported yet).
  */
 @Injectable()
-export class HalDocumentService {
+export class ResourceService {
   private static getOptions(headers?: HttpHeaders): { headers: HttpHeaders, observe: 'response' } {
     return {
       headers: headers,
@@ -36,20 +36,20 @@ export class HalDocumentService {
 
   @Cacheable()
   getRootNavigation(): Observable<NavigationFactory> {
-    return this.getFromApi<HalResource>('').pipe(
+    return this.getFromApi<HalResourceObject>('').pipe(
       map(rootHalDocument => new ResourceAdapter('', rootHalDocument, this.descriptorResolver)),
       map(root => new NavigationFactory(root)));
   }
 
   @Validate
   getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
-    return this.getFromApi<HalResource>('/' + resourceName).pipe(
+    return this.getFromApi<HalResourceObject>('/' + resourceName).pipe(
       map(collectionHalDocument => new ResourceAdapter(resourceName, collectionHalDocument, this.descriptorResolver)),
       map(resource => new CollectionAdapter(resource)));
   }
 
   @Validate
-  deleteResource(@Required document: HalResource, version: string): Observable<HttpResponse<void>> {
+  deleteResource(@Required document: HalResourceObject, version: string): Observable<HttpResponse<void>> {
     const resourceLink = ResourceLink.fromResourceObject(document, undefined).getRelativeUri();
     return this.removeFromBackendAndCache(resourceLink, version);
   }
@@ -112,7 +112,7 @@ export class HalDocumentService {
   }
 
   private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string) {
-    return this.getResponseFromApi<HalResource>(resourceUri, this.resourceCacheService.getRequestHeader(resourceName, id))
+    return this.getResponseFromApi<HalResourceObject>(resourceUri, this.resourceCacheService.getRequestHeader(resourceName, id))
       .pipe(
         map(response => this.resourceCacheService.getItemFromGetResponse(resourceName, response)),
         catchError(response => this.resourceCacheService.getItemFromErroneousGetResponse(resourceName, id, response)));
@@ -124,20 +124,20 @@ export class HalDocumentService {
 
   @Validate
   private getResponseFromApi<T>(@Required resourceUrl: string, headers: HttpHeaders): Observable<HttpResponse<T>> {
-    return this.httpClient.get<T>(Api.PREFIX + resourceUrl, HalDocumentService.getOptions(headers));
+    return this.httpClient.get<T>(Api.PREFIX + resourceUrl, ResourceService.getOptions(headers));
   }
 
   private deleteFromApi(resourceUrl: string, version: string): Observable<HttpResponse<void>> {
     return this.httpClient.delete<void>(Api.PREFIX + resourceUrl,
-      HalDocumentService.getOptions(HeaderOptions.withIfMatchHeader(version)));
+      ResourceService.getOptions(HeaderOptions.withIfMatchHeader(version)));
   }
 
-  private postToApi(resourceUrl: string, object: any): Observable<HttpResponse<HalResource>> {
-    return this.httpClient.post<HalResource>(Api.PREFIX + resourceUrl, object, HalDocumentService.getOptions());
+  private postToApi(resourceUrl: string, object: any): Observable<HttpResponse<HalResourceObject>> {
+    return this.httpClient.post<HalResourceObject>(Api.PREFIX + resourceUrl, object, ResourceService.getOptions());
   }
 
-  private putToApi(resourceUrl: string, object: any, version: string): Observable<HttpResponse<HalResource>> {
-    return this.httpClient.put<HalResource>(Api.PREFIX + resourceUrl, object,
-      HalDocumentService.getOptions(HeaderOptions.withIfMatchHeader(version)));
+  private putToApi(resourceUrl: string, object: any, version: string): Observable<HttpResponse<HalResourceObject>> {
+    return this.httpClient.put<HalResourceObject>(Api.PREFIX + resourceUrl, object,
+      ResourceService.getOptions(HeaderOptions.withIfMatchHeader(version)));
   }
 }

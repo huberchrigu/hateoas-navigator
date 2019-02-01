@@ -1,6 +1,6 @@
 import {ResourceDescriptorProvider} from './resource-descriptor-provider';
 import {ModuleConfiguration} from '../../config';
-import {SchemaService} from '../../resource-services/schema.service';
+import {ResourceSchemaService} from '../../resource-services/resource-schema.service';
 import {combineLatest, Observable} from 'rxjs/index';
 import {CombiningResourceDescriptor} from '../combining/combining-resource-descriptor';
 import {StaticResourceDescriptor} from '../static/static-resource-descriptor';
@@ -18,7 +18,7 @@ import {map} from 'rxjs/operators';
  */
 export class DefaultDescriptorProvider implements ResourceDescriptorProvider {
 
-  constructor(private config: ModuleConfiguration, private schemaService: SchemaService) {
+  constructor(private config: ModuleConfiguration, private schemaService: ResourceSchemaService) {
 
   }
 

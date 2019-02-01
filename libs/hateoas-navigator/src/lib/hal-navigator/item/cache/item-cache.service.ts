@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {VersionedResourceAdapter} from '../versioned-resource-adapter';
 import {ResourceDescriptorProvider} from '../../descriptor/provider/resource-descriptor-provider';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
-import {HalResource} from '../../hal-resource/hal-resource';
+import {HalResourceObject} from '../../hal-resource/hal-resource-object';
 import {Observable, ObservableInput, of} from 'rxjs/index';
 import {HeaderOptions} from '../../http/header-options';
 import {ResourceLink} from '../../link-object/resource-link';
@@ -21,16 +21,16 @@ export class ItemCacheService {
   constructor(private descriptorResolver: ResourceDescriptorProvider) {
   }
 
-  getItemFromModifyingResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
+  getItemFromModifyingResponse(resourceName: string, response: HttpResponse<HalResourceObject>): VersionedResourceAdapter {
     return this.handleOkResponse(resourceName, response);
   }
 
-  getItemFromGetResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
+  getItemFromGetResponse(resourceName: string, response: HttpResponse<HalResourceObject>): VersionedResourceAdapter {
     return this.handleOkResponse(resourceName, response);
   }
 
   getItemFromErroneousGetResponse(resource: string, id: string,
-                                  response: HttpResponse<HalResource>): ObservableInput<VersionedResourceAdapter> {
+                                  response: HttpResponse<HalResourceObject>): ObservableInput<VersionedResourceAdapter> {
     if (response.status === 304) {
       return this.handleNotModifiedResponse(resource, id);
     }
@@ -48,7 +48,7 @@ export class ItemCacheService {
     return HeaderOptions.withIfNoneMatchHeader(version);
   }
 
-  private handleOkResponse(resourceName: string, response: HttpResponse<HalResource>): VersionedResourceAdapter {
+  private handleOkResponse(resourceName: string, response: HttpResponse<HalResourceObject>): VersionedResourceAdapter {
     const version = response.headers.get(ItemCacheService.E_TAG_HEADER);
     const resourceObject = response.body;
     const item = new VersionedResourceAdapter(resourceName, resourceObject, version, this.descriptorResolver);

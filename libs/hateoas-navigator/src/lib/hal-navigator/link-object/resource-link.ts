@@ -2,14 +2,14 @@
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 import {Link} from './link';
-import {HalResource} from '../hal-resource/hal-resource';
+import {HalResourceObject} from '../hal-resource/hal-resource-object';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
 import {PropertyDescriptor} from '../descriptor';
 
 export class ResourceLink extends Link {
-  static fromResourceObject(resourceObject: HalResource, resourceDescriptorResolver: ResourceDescriptorProvider) {
+  static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 

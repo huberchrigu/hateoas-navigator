@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormField} from 'hateoas-navigator';
 import {FormGroup} from '@angular/forms';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceAdapter} from 'hateoas-navigator';
 import {ResourceLink} from 'hateoas-navigator';
 import {FormControlFactory} from 'hateoas-navigator';
@@ -22,7 +22,7 @@ export class ResourceFormComponent implements OnInit {
   private newItem: boolean;
   private version: string;
 
-  constructor(private route: ActivatedRoute, private router: Router, private halDocumentService: HalDocumentService) {
+  constructor(private route: ActivatedRoute, private router: Router, private halDocumentService: ResourceService) {
   }
 
   ngOnInit() {

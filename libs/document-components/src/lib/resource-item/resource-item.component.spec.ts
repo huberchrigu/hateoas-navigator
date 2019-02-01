@@ -4,7 +4,7 @@ import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
-import {HalDocumentService} from 'hateoas-navigator';
+import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceAdapter} from 'hateoas-navigator';
 import {ResourceProperty} from 'hateoas-navigator';
 import SpyObj = jasmine.SpyObj;
@@ -46,7 +46,7 @@ describe('ResourceItemComponent', () => {
         },
         {provide: MatDialog, useValue: {}},
         {provide: Router, useValue: {}},
-        {provide: HalDocumentService, useValue: {}}
+        {provide: ResourceService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })
