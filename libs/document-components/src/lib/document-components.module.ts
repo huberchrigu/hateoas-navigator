@@ -26,10 +26,11 @@ import {FormListComponent} from './resource-form/form-list/form-list.component';
 import {ItemPropertiesComponent} from './resource-item/item-properties/item-properties.component';
 import {SelectFieldComponent} from './resource-form/select-field/select-field.component';
 import {AssociationFieldComponent} from './resource-form/association-field/association-field.component';
-import { FormFieldComponent } from './resource-form/form-field/form-field.component';
+import {FormFieldComponent} from './resource-form/form-field/form-field.component';
 import {RouterModule} from '@angular/router';
 import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
-import { CheckboxFieldComponent } from './resource-form/checkbox-field/checkbox-field.component';
+import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
+import {SendDataDialogComponent} from "document-components/send-data-dialog/send-data-dialog.component";
 
 @NgModule({
   imports: [
@@ -56,6 +57,7 @@ import { CheckboxFieldComponent } from './resource-form/checkbox-field/checkbox-
     NavigationComponent,
     ResourceListComponent,
     ConfirmationDialogComponent,
+    SendDataDialogComponent,
     ResourceFormComponent,
     ResourceItemComponent,
     InputFieldComponent,
@@ -69,7 +71,7 @@ import { CheckboxFieldComponent } from './resource-form/checkbox-field/checkbox-
     CheckboxFieldComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
-  entryComponents: [ConfirmationDialogComponent]
+  entryComponents: [ConfirmationDialogComponent, SendDataDialogComponent]
 })
 export class DocumentComponentsModule {
 }

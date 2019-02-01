@@ -12,6 +12,7 @@
       <a mat-button routerLink=".." color="primary">Back to list</a>
       <a mat-button routerLink="edit" *ngIf="isEditEnabled()">Edit</a>
       <button mat-button color="warn" (click)="onDelete()" *ngIf="isDeleteEnabled()">Delete</button>
+      <button *ngFor="let link of specialLinks" mat-button (click)="clickLink(link)">{{link.getRelationType()}}</button>
     </mat-toolbar>
   </mat-card>
 </div>
