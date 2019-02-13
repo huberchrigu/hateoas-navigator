@@ -3,19 +3,19 @@ import {Inject, Injectable} from '@angular/core';
 
 import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-factory';
-import {HalResourceObject} from '../hal-resource/hal-resource-object';
+import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Required, Validate} from '../../decorators/required';
 import {ItemCacheService} from '../item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from '../config';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {Cacheable} from '../cache/cacheable';
-import {Observable} from 'rxjs/index';
-import {ResourceAdapter} from '../hal-resource/resource-adapter';
+import {Observable} from 'rxjs';
 import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
 import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
+import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
 
 /**
  * This is the module's core service providing functionality to access resources (only HAL documents supported yet).
@@ -31,21 +31,22 @@ export class ResourceService {
 
   constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
               @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration,
-              private descriptorResolver: ResourceDescriptorProvider) {
+              private descriptorResolver: ResourceDescriptorProvider,
+              private resourceFactory: ResourceAdapterFactoryService) {
   }
 
   @Cacheable()
   getRootNavigation(): Observable<NavigationFactory> {
     return this.getFromApi<HalResourceObject>('').pipe(
-      map(rootHalDocument => new ResourceAdapter('', rootHalDocument, this.descriptorResolver)),
+      map(rootHalDocument => this.resourceFactory.create('', rootHalDocument, undefined)),
       map(root => new NavigationFactory(root)));
   }
 
   @Validate
   getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
     return this.getFromApi<HalResourceObject>('/' + resourceName).pipe(
-      map(collectionHalDocument => new ResourceAdapter(resourceName, collectionHalDocument, this.descriptorResolver)),
-      map(resource => new CollectionAdapter(resource)));
+      map(collectionHalDocument => this.resourceFactory.create(resourceName, collectionHalDocument, undefined)),
+      map(resource => new CollectionAdapter(this.resourceFactory, resource)));
   }
 
   @Validate

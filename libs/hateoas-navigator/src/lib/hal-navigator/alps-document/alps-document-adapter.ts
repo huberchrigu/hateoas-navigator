@@ -1,6 +1,6 @@
 import {AlpsDocument} from './alps-document';
 import {AlpsDescriptorAdapter} from './alps-descriptor-adapter';
-import {AlpsDescriptor} from 'hateoas-navigator/hal-navigator/alps-document/alps-descriptor';
+import {AlpsDescriptor} from './alps-descriptor';
 
 export class AlpsDocumentAdapter {
   private static readonly REPRESENTATION_POSTFIX = '-representation';

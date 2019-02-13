@@ -1,11 +1,10 @@
-
 import {throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {VersionedResourceAdapter} from '../versioned-resource-adapter';
 import {ResourceDescriptorProvider} from '../../descriptor/provider/resource-descriptor-provider';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
-import {HalResourceObject} from '../../hal-resource/hal-resource-object';
-import {Observable, ObservableInput, of} from 'rxjs/index';
+import {HalResourceObject} from '../../hal-resource/value-type/hal-value-type';
+import {Observable, ObservableInput, of} from 'rxjs';
 import {HeaderOptions} from '../../http/header-options';
 import {ResourceLink} from '../../link-object/resource-link';
 
@@ -51,7 +50,7 @@ export class ItemCacheService {
   private handleOkResponse(resourceName: string, response: HttpResponse<HalResourceObject>): VersionedResourceAdapter {
     const version = response.headers.get(ItemCacheService.E_TAG_HEADER);
     const resourceObject = response.body;
-    const item = new VersionedResourceAdapter(resourceName, resourceObject, version, this.descriptorResolver);
+    const item = new VersionedResourceAdapter(version, resourceName, resourceObject, null, null, null, null);
     if (version && item) {
       this.addToCache(item);
     }

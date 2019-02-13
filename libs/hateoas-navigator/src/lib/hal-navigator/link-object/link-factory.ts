@@ -1,4 +1,4 @@
-import {ResourceLinks} from '../hal-resource/resource-links';
+import {ResourceLinks} from '../hal-resource/value-type/resource-links';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {ResourceLink} from './resource-link';
 
