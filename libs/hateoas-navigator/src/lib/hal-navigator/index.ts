@@ -9,4 +9,5 @@ export * from './resource-services';
 export * from './navigation';
 export * from './link-object';
 export * from './routing';
+export * from './json-property';
 export {HalNavigatorModule} from './hal-navigator.module';
