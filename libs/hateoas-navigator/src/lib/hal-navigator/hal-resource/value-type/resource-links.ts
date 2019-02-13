@@ -1,4 +1,4 @@
-import {LinkObject} from '../link-object/link-object';
+import {LinkObject} from '../../link-object/link-object';
 
 export interface ResourceLinks {
   self: LinkObject;
