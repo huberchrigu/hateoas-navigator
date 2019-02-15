@@ -1,15 +1,15 @@
-import {ResourceDescriptor} from '../resource-descriptor';
+import {DeprecatedResourceDescriptor} from '../deprecated-resource-descriptor';
 import {ResourceActions} from '../actions/resource-actions';
 import {CombiningPropertyDescriptor} from './combining-property-descriptor';
-import {PropertyDescriptor} from '../property-descriptor';
+import {DeprecatedPropertyDescriptor} from '../deprecated-property-descriptor';
 
-export class CombiningResourceDescriptor extends CombiningPropertyDescriptor implements ResourceDescriptor {
-  private resourceDescriptors: ResourceDescriptor[];
+export class CombiningResourceDescriptor extends CombiningPropertyDescriptor implements DeprecatedResourceDescriptor {
+  private resourceDescriptors: DeprecatedResourceDescriptor[];
 
-  constructor(priorityList: Array<PropertyDescriptor>) {
+  constructor(priorityList: Array<DeprecatedPropertyDescriptor>) {
     super(priorityList);
 
-    this.resourceDescriptors = priorityList.map(d => d as any as ResourceDescriptor).filter(d => d.getActions);
+    this.resourceDescriptors = priorityList.map(d => d as any as DeprecatedResourceDescriptor).filter(d => d.getActions);
   }
 
   getActions(): ResourceActions {
@@ -18,16 +18,7 @@ export class CombiningResourceDescriptor extends CombiningPropertyDescriptor imp
       .reduce((previous, current) => previous.include(current.getActions()), new ResourceActions([]));
   }
 
-  getChildResourceDesc(childResource: string): ResourceDescriptor {
-    return this.extractDescriptor(d => d.getChildResourceDesc(childResource));
-  }
-
-  getDescriptorForLink(uri: string): ResourceDescriptor {
-    return this.extractDescriptor(d => d.getDescriptorForLink(uri));
-  }
-
-  private extractDescriptor(mappingFunction: (descriptor: ResourceDescriptor) => ResourceDescriptor) {
-    const children = this.resourceDescriptors.map(d => mappingFunction(d)).filter(d => d);
-    return children.length > 0 ? new CombiningResourceDescriptor(children) : null;
+  getDescriptorForLink(uri: string): DeprecatedResourceDescriptor {
+    return this.extractDescriptor(this.resourceDescriptors, d => d.getDescriptorForLink(uri));
   }
 }

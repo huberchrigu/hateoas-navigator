@@ -1,40 +1,81 @@
 import SpyObj = jasmine.SpyObj;
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {PropertyDescriptor} from '../property-descriptor';
+import {ArrayPropertyDescriptor, DeprecatedPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../deprecated-property-descriptor';
+import SpyObjMethodNames = jasmine.SpyObjMethodNames;
+import {AssociatedPropertyDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/association/associated-property-descriptor';
 
-export class PropertyDescriptorMockBuilder<T extends PropertyDescriptor> {
-  protected mockedFunctions: string[] = [];
-  protected returnValues: any = {};
+export class DeprecatedPropertyDescriptorMockBuilder<T extends DeprecatedPropertyDescriptor> {
+  protected methodNames = {} as { [K in keyof T]: any };
 
-  withFormFieldBuilder(formField: FormFieldBuilder): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.toFormFieldBuilder = formField;
-    return this as PropertyDescriptorMockBuilder<T>;
+  withFormFieldBuilder(formField: FormFieldBuilder): DeprecatedPropertyDescriptorMockBuilder<T> {
+    this.methodNames.toFormFieldBuilder = formField;
+    return this as DeprecatedPropertyDescriptorMockBuilder<T>;
   }
 
-  withName(name: string): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.getName = name;
-    return this as PropertyDescriptorMockBuilder<T>;
+  withName(name: string): DeprecatedPropertyDescriptorMockBuilder<T> {
+    this.methodNames.getName = name;
+    return this as DeprecatedPropertyDescriptorMockBuilder<T>;
   }
 
-  withChildrenDescriptors(children: Array<PropertyDescriptor>): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.getChildrenDescriptors = children;
-    return this as PropertyDescriptorMockBuilder<T>;
+  withChildrenDescriptors(children: Array<DeprecatedPropertyDescriptor>): DeprecatedPropertyDescriptorMockBuilder<T> {
+    this.methodNames.getChildrenDescriptors = children;
+    return this as DeprecatedPropertyDescriptorMockBuilder<T>;
   }
 
-  withAssociatedResourceName(resolvedResourceName: string): PropertyDescriptorMockBuilder<T> {
-    this.returnValues.getAssociatedResourceName = resolvedResourceName;
-    return this as PropertyDescriptorMockBuilder<T>;
+  withAssociatedResourceName(resolvedResourceName: string): DeprecatedPropertyDescriptorMockBuilder<T> {
+    this.methodNames.getAssociatedResourceName = resolvedResourceName;
+    return this as DeprecatedPropertyDescriptorMockBuilder<T>;
   }
 
-  withArrayItemsDescriptor(arrayItem: PropertyDescriptor) {
-    this.returnValues.getArrayItemsDescriptor = arrayItem;
+  withArrayItemsDescriptor(arrayItem: DeprecatedPropertyDescriptor) {
+    this.methodNames.getArrayItemsDescriptor = arrayItem;
     return this;
   }
 
   build(): SpyObj<T> {
-    const methodNames = this.mockedFunctions.concat(Object.keys(this.returnValues));
-    const mock = jasmine.createSpyObj<T>('resourceDescriptor', methodNames);
-    Object.keys(this.returnValues).forEach(key => mock[key].and.returnValue(this.returnValues[key]));
-    return mock;
+    return jasmine.createSpyObj<T>('resourceDescriptor', this.methodNames as SpyObjMethodNames<T>);
+  }
+}
+
+export class PropertyDescriptorMockBuilder<T extends PropDescriptor> {
+  protected methodNames = {
+    toFormFieldBuilder: {} as FormFieldBuilder,
+    getTitle: undefined,
+    getName: undefined
+  } as { [K in keyof T]: any };
+
+  withFormFieldBuilder(formField: FormFieldBuilder): PropertyDescriptorMockBuilder<T> {
+    this.methodNames.toFormFieldBuilder = formField;
+    return this as PropertyDescriptorMockBuilder<T>;
+  }
+
+  withName(name: string): PropertyDescriptorMockBuilder<T> {
+    this.methodNames.getName = name;
+    return this as PropertyDescriptorMockBuilder<T>;
+  }
+
+  build(): SpyObj<T> {
+    return jasmine.createSpyObj<T>('resourceDescriptor', this.methodNames as SpyObjMethodNames<T>);
+  }
+}
+
+export class ObjectDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ObjectPropertyDescriptor> {
+  withChildrenDescriptors(children: Array<PropDescriptor>) {
+    this.methodNames.getChildDescriptors = children;
+    return this;
+  }
+}
+
+export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayPropertyDescriptor<PropDescriptor>> {
+  withArrayItemsDescriptor(arrayItem: PropDescriptor) {
+    this.methodNames.getItemsDescriptor = arrayItem;
+    return this;
+  }
+}
+
+export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuilder<AssociatedPropertyDescriptor> {
+  withAssociatedResourceName(resolvedResourceName: string) {
+    this.methodNames.getAssociatedResourceName = resolvedResourceName;
+    return this;
   }
 }

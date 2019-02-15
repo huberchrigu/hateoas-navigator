@@ -1,9 +1,9 @@
 import SpyObj = jasmine.SpyObj;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import {PropertyDescriptorMockBuilder} from '../combining/property-descriptor-mock-builder.spec';
+import {DeprecatedPropertyDescriptorMockBuilder} from '../combining/property-descriptor-mock-builder.spec';
 import {AssociationResolver} from './association-resolver';
 import {Observable, of} from 'rxjs';
-import {PropertyDescriptor} from 'hateoas-navigator';
+import {DeprecatedPropertyDescriptor} from '../deprecated-property-descriptor';
 import {fakeAsync} from '@angular/core/testing';
 
 describe('AssociationResolver', () => {
@@ -47,11 +47,11 @@ describe('AssociationResolver', () => {
     expect(wasCalled).toBeTruthy();
   }));
 
-  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<PropertyDescriptor> {
-    const rootResource = of(new PropertyDescriptorMockBuilder()
+  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<DeprecatedPropertyDescriptor> {
+    const rootResource = of(new DeprecatedPropertyDescriptorMockBuilder()
       .withName(resource)
       .withAssociatedResourceName(null)
-      .withChildrenDescriptors([new PropertyDescriptorMockBuilder()
+      .withChildrenDescriptors([new DeprecatedPropertyDescriptorMockBuilder()
         .withName(associationName)
         .withAssociatedResourceName(associationName)
         .withChildrenDescriptors([])
@@ -59,7 +59,7 @@ describe('AssociationResolver', () => {
         .build()])
       .withArrayItemsDescriptor(null)
       .build());
-    const linkedResource = of(new PropertyDescriptorMockBuilder()
+    const linkedResource = of(new DeprecatedPropertyDescriptorMockBuilder()
       .withName(associationName)
       .withChildrenDescriptors([])
       .withArrayItemsDescriptor(null)

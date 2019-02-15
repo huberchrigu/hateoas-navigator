@@ -1,14 +1,14 @@
 import {CombiningResourceDescriptor} from './combining-resource-descriptor';
-import {PropertyDescriptorMockBuilder} from './property-descriptor-mock-builder.spec';
-import {ResourceDescriptorMockBuilder} from './resource-descriptor-mock-builder.spec';
+import {DeprecatedPropertyDescriptorMockBuilder} from './property-descriptor-mock-builder.spec';
+import {DeprecatedResourceDescriptorMockBuilder} from './resource-descriptor-mock-builder.spec';
 import {ActionType} from '../actions/action-type';
 
 describe('CombiningResourceDescriptor', () => {
   it('should not contain "update" action', () => {
-    const property = new PropertyDescriptorMockBuilder().withName('property').build();
-    const resourceWithCreateAndDelete = new ResourceDescriptorMockBuilder()
+    const property = new DeprecatedPropertyDescriptorMockBuilder().withName('property').build();
+    const resourceWithCreateAndDelete = new DeprecatedResourceDescriptorMockBuilder()
       .withEnabledActions(ActionType.CREATE_ITEM, ActionType.DELETE_ITEM).build();
-    const resourceWithGets = new ResourceDescriptorMockBuilder()
+    const resourceWithGets = new DeprecatedResourceDescriptorMockBuilder()
       .withEnabledActions(ActionType.GET_COLLECTION, ActionType.GET_ITEM).build();
     const testee = new CombiningResourceDescriptor([property, resourceWithCreateAndDelete, resourceWithGets]);
 

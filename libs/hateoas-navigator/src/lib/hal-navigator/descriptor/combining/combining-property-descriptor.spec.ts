@@ -1,4 +1,4 @@
-import {PropertyDescriptorMockBuilder} from './property-descriptor-mock-builder.spec';
+import {DeprecatedPropertyDescriptorMockBuilder} from './property-descriptor-mock-builder.spec';
 import {CombiningPropertyDescriptor} from './combining-property-descriptor';
 import {SubFormField} from '../../form/sub-form-field';
 import {FormFieldType} from '../../form/form-field-type';
@@ -12,19 +12,19 @@ import {AlpsPropertyDescriptor} from '../alps/alps-property-descriptor';
 import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';
 import {ArrayField} from '../../form/array-field';
 import {LinkField} from '../../form/link-field';
-import {PropertyDescriptor} from '../property-descriptor';
+import {DeprecatedPropertyDescriptor} from '../deprecated-property-descriptor';
 import {alps, jsonSchema} from './sample-input.spec';
 
 describe('CombiningPropertyDescriptor', () => {
   it('should group all children by name', () => {
     const testee: CombiningPropertyDescriptor = new CombiningPropertyDescriptor([
-      new PropertyDescriptorMockBuilder().withChildrenDescriptors([
-        new PropertyDescriptorMockBuilder().withName('A').build(),
-        new PropertyDescriptorMockBuilder().withName('B').build()
+      new DeprecatedPropertyDescriptorMockBuilder().withChildrenDescriptors([
+        new DeprecatedPropertyDescriptorMockBuilder().withName('A').build(),
+        new DeprecatedPropertyDescriptorMockBuilder().withName('B').build()
       ]).build(),
-      new PropertyDescriptorMockBuilder().withChildrenDescriptors([
-        new PropertyDescriptorMockBuilder().withName('B').build(),
-        new PropertyDescriptorMockBuilder().withName('C').build()
+      new DeprecatedPropertyDescriptorMockBuilder().withChildrenDescriptors([
+        new DeprecatedPropertyDescriptorMockBuilder().withName('B').build(),
+        new DeprecatedPropertyDescriptorMockBuilder().withName('C').build()
       ]).build()
     ]);
     const result = testee.getChildrenDescriptors();
@@ -33,7 +33,7 @@ describe('CombiningPropertyDescriptor', () => {
     expectChild(result[1], 2, 'B');
     expectChild(result[2], 1, 'C');
 
-    function expectChild(descriptor: PropertyDescriptor, expectedListLength: number, expectedName: string) {
+    function expectChild(descriptor: DeprecatedPropertyDescriptor, expectedListLength: number, expectedName: string) {
       expect(descriptor['priorityList'].length).toBe(expectedListLength);
       expect(descriptor.getName()).toBe(expectedName);
     }
@@ -61,23 +61,23 @@ describe('CombiningPropertyDescriptor', () => {
       expect(actualValue.isReadOnly()).toBe(readOnly);
     }
 
-    function mockJsonSchemaDescriptorWithDatePickerChild(): PropertyDescriptor {
+    function mockJsonSchemaDescriptorWithDatePickerChild(): DeprecatedPropertyDescriptor {
       const children = [new FormFieldBuilder('time').withRequired(false).withReadOnly(false)
         .withTitle('Time')];
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(
+      return new DeprecatedPropertyDescriptorMockBuilder().withFormFieldBuilder(
         new FormFieldBuilder('object').withRequired(true).withReadOnly(false).withTitle('Object')
           .withSubFields(children)
       ).build();
     }
 
-    function mockStaticDescriptorWithTimeOptionChild(): PropertyDescriptor {
+    function mockStaticDescriptorWithTimeOptionChild(): DeprecatedPropertyDescriptor {
       const child = new FormFieldBuilder('time').withDateTimeType(DateTimeType.TIME);
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(new FormFieldBuilder('object').withSubFields([child]))
+      return new DeprecatedPropertyDescriptorMockBuilder().withFormFieldBuilder(new FormFieldBuilder('object').withSubFields([child]))
         .build();
     }
 
-    function mockAlpsDescriptorWithoutChild(): PropertyDescriptor {
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(
+    function mockAlpsDescriptorWithoutChild(): DeprecatedPropertyDescriptor {
+      return new DeprecatedPropertyDescriptorMockBuilder().withFormFieldBuilder(
         new FormFieldBuilder('object')).build();
     }
   });
@@ -88,7 +88,7 @@ describe('CombiningPropertyDescriptor', () => {
     beforeAll(() => {
       const testee = new CombiningPropertyDescriptor([
         new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions)),
-        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor)
+        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, [])
       ]);
 
       const meetingGroup = testee.toFormFieldBuilder().build() as SubFormField;

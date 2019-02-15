@@ -1,9 +1,11 @@
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {PropertyDescriptor} from '../property-descriptor';
+import {DeprecatedPropertyDescriptor} from '../deprecated-property-descriptor';
+import {AssociatedResourceDescriptor} from './associated-resource-descriptor';
+import {DeprecatedResourceDescriptor} from 'hateoas-navigator';
 
-export class AssociatedPropertyDescriptor implements PropertyDescriptor {
-  constructor(private descriptor: PropertyDescriptor, protected associatedResource: AssociatedPropertyDescriptor,
-              private associatedChildren: Array<AssociatedPropertyDescriptor>, private associatedArrayItems: AssociatedPropertyDescriptor) {
+export class AssociatedPropertyDescriptor implements DeprecatedPropertyDescriptor {
+  constructor(private descriptor: DeprecatedPropertyDescriptor, protected associatedResource: AssociatedResourceDescriptor,
+              private associatedChildren: Array<AssociatedResourceDescriptor>, private associatedArrayItems: AssociatedResourceDescriptor) {
     if (!descriptor) {
       throw new Error('Descriptor must not be null');
     } else {
@@ -11,8 +13,8 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
     }
   }
 
-  update(associatedResource: AssociatedPropertyDescriptor, associatedChildren: AssociatedPropertyDescriptor[],
-         associatedArrayItems: AssociatedPropertyDescriptor): void {
+  update(associatedResource: AssociatedResourceDescriptor, associatedChildren: AssociatedResourceDescriptor[],
+         associatedArrayItems: AssociatedResourceDescriptor): void {
     this.assertArray(associatedChildren);
     this.associatedResource = associatedResource;
     this.associatedChildren = associatedChildren;
@@ -31,12 +33,12 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
     return this.descriptor.getName();
   }
 
-  getChildrenDescriptors(): Array<AssociatedPropertyDescriptor> {
+  getChildrenDescriptors(): Array<AssociatedResourceDescriptor> {
     AssociatedPropertyDescriptor.assertWasDefined(this.associatedChildren);
     return this.associatedChildren;
   }
 
-  getArrayItemsDescriptor(): AssociatedPropertyDescriptor {
+  getArrayItemsDescriptor(): AssociatedResourceDescriptor {
     AssociatedPropertyDescriptor.assertWasDefined(this.associatedArrayItems);
     return this.associatedArrayItems;
   }
@@ -45,12 +47,20 @@ export class AssociatedPropertyDescriptor implements PropertyDescriptor {
     return this.descriptor.toFormFieldBuilder();
   }
 
-  getChildDescriptor(resourceName: string): AssociatedPropertyDescriptor {
+  getChildDescriptor(resourceName: string): AssociatedResourceDescriptor {
     AssociatedPropertyDescriptor.assertWasDefined(this.associatedResource);
     if (this.associatedResource) {
       return this.associatedResource.getChildDescriptor(resourceName);
     } else {
       return this.associatedChildren.find(c => c.getName() === resourceName);
+    }
+  }
+
+  getChildResourceDesc(childName: string): DeprecatedResourceDescriptor {
+    if (this.associatedResource) {
+      return this.associatedResource.getChildResourceDesc(childName);
+    } else {
+      return this.getChildDescriptor(childName);
     }
   }
 

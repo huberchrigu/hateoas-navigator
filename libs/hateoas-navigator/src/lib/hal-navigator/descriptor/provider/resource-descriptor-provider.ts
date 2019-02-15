@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {DeprecatedResourceDescriptor} from '../deprecated-resource-descriptor';
 
 export abstract class ResourceDescriptorProvider {
-  abstract resolve(resourceName: string): Observable<ResourceDescriptor>;
+  abstract resolve(resourceName: string): Observable<DeprecatedResourceDescriptor>;
 }

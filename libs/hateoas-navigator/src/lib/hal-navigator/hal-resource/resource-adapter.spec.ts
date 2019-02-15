@@ -1,22 +1,26 @@
 import {ResourceAdapter} from './resource-adapter';
-import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
+import {HalResourceObject} from './value-type/hal-value-type';
 import {ResourceLinks} from './value-type/resource-links';
-import {PropertyFactory} from '../json-property/factory/property-factory';
-import {HalResourceFactory} from './factory/hal-resource-factory';
 import {LinkFactory} from '../link-object/link-factory';
+import {HalPropertyFactory} from './factory/hal-property-factory';
+import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
+import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 
 describe('ResourceAdapter', () => {
-  const propertyFactory = {} as PropertyFactory<HalValueType>;
-  const resourceFactory = {} as HalResourceFactory;
-  const linkFactory = {} as LinkFactory;
 
+  // TODO: Should all be mocked, and tests moved to according factory
+  const linkFactory = {} as LinkFactory;
+  const resourceDescriptorProvider = {} as ResourceDescriptorProvider;
+  const resourceFactory = new ResourceAdapterFactoryService(resourceDescriptorProvider);
+  const propertyFactory = new HalPropertyFactory(resourceFactory);
 
   it('should get the relative link to this resource', () => {
+    const links = {
+      self: {href: 'http://localhost:4200/resource/1'}
+    };
     const testee = createTestee('resource', {
-      _links: {
-        self: {href: 'http://localhost:4200/resource/1'}
-      }
-    } as HalResourceObject);
+      _links: links
+    } as HalResourceObject, new LinkFactory(links, resourceDescriptorProvider));
     expect(testee.getSelfLink().getRelativeUri()).toEqual('/resource/1');
   });
 
@@ -55,7 +59,7 @@ describe('ResourceAdapter', () => {
     return resource;
   }
 
-  function createTestee(name: string, halResourceObject: HalResourceObject) {
-    return new ResourceAdapter(name, halResourceObject, propertyFactory, resourceFactory, linkFactory);
+  function createTestee(name: string, halResourceObject: HalResourceObject, lf = linkFactory) {
+    return new ResourceAdapter(name, halResourceObject, propertyFactory, resourceFactory, lf);
   }
 });

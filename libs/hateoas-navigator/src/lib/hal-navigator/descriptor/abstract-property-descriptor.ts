@@ -1,7 +1,8 @@
 import {FormFieldBuilder} from '../form/form-field-builder';
-import {PropertyDescriptor} from './property-descriptor';
+import {DeprecatedPropertyDescriptor} from './deprecated-property-descriptor';
+import {DeprecatedResourceDescriptor} from './deprecated-resource-descriptor';
 
-export abstract class AbstractPropertyDescriptor implements PropertyDescriptor {
+export abstract class AbstractPropertyDescriptor implements DeprecatedPropertyDescriptor {
   protected constructor(private name: string) {
   }
 
@@ -11,7 +12,7 @@ export abstract class AbstractPropertyDescriptor implements PropertyDescriptor {
 
   /**
    * Prepares a form field builder with all children's and array items' field builders. Descriptor-dependent configurations can be added
-   * in {@link #addFormDeatils()}.
+   * in {@link addFormFieldDetails}.
    */
   toFormFieldBuilder(): FormFieldBuilder {
     const builder = new FormFieldBuilder(this.getName())
@@ -27,14 +28,16 @@ export abstract class AbstractPropertyDescriptor implements PropertyDescriptor {
 
   abstract getTitle(): string;
 
-  abstract getChildDescriptor(resourceName: string): PropertyDescriptor;
+  abstract getChildDescriptor(resourceName: string): DeprecatedResourceDescriptor;
 
-  abstract getChildrenDescriptors(): Array<PropertyDescriptor>;
+  abstract getChildrenDescriptors(): Array<DeprecatedResourceDescriptor>;
 
-  abstract getArrayItemsDescriptor(): PropertyDescriptor;
+  abstract getArrayItemsDescriptor(): DeprecatedResourceDescriptor;
 
   abstract getAssociatedResourceName(): string;
 
   protected abstract addFormFieldDetails(formFieldBuilder: FormFieldBuilder);
+
+  abstract getChildResourceDesc(childResource: string): DeprecatedResourceDescriptor;
 
 }

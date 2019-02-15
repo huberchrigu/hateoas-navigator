@@ -1,7 +1,8 @@
 import {PropertyConfig} from '../../config';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {AbstractPropertyDescriptor} from '../abstract-property-descriptor';
-
+import {StaticResourceDescriptor} from './static-resource-descriptor';
+import {DeprecatedResourceDescriptor} from 'hateoas-navigator';
 
 export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
 
@@ -13,19 +14,23 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
     return this.config.title;
   }
 
-  getChildDescriptor(resourceName: string): StaticPropertyDescriptor {
+  getChildDescriptor(resourceName: string): StaticResourceDescriptor {
     return this.config.properties && this.config.properties[resourceName] ? this.toDescriptor(resourceName) : null;
   }
 
-  getChildrenDescriptors(): Array<StaticPropertyDescriptor> {
+  getChildResourceDesc(childResource: string): DeprecatedResourceDescriptor {
+    return this.config.properties && this.config.properties[childResource] ? this.toResourceDesc(childResource) : null;
+  }
+
+  getChildrenDescriptors(): Array<StaticResourceDescriptor> {
     if (!this.config.properties) {
       return [];
     }
     return Object.keys(this.config.properties).map(key => this.toDescriptor(key));
   }
 
-  getArrayItemsDescriptor(): StaticPropertyDescriptor {
-    return this.config.items ? new StaticPropertyDescriptor(null, this.config.items, this.itemConfigs) : null;
+  getArrayItemsDescriptor(): StaticResourceDescriptor {
+    return this.config.items ? new StaticResourceDescriptor(null, this.config.items, this.itemConfigs) : null;
   }
 
   getAssociatedResourceName(): string {
@@ -40,6 +45,10 @@ export class StaticPropertyDescriptor extends AbstractPropertyDescriptor {
   }
 
   private toDescriptor(name: string) {
-    return new StaticPropertyDescriptor(name, this.config.properties[name], this.itemConfigs);
+    return new StaticResourceDescriptor(name, this.config.properties[name], this.itemConfigs);
+  }
+
+  private toResourceDesc(name: string): StaticResourceDescriptor {
+    return new StaticResourceDescriptor(name, this.config.properties[name], this.itemConfigs);
   }
 }

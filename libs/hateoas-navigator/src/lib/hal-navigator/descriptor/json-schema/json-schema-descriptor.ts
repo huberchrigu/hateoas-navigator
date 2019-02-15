@@ -3,7 +3,9 @@ import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {getFormType} from '../../form/form-field-type';
-import {PropertyDescriptor} from '../property-descriptor';
+import {JsonSchemaResourceDescriptor} from './json-schema-resource-descriptor';
+import {DeprecatedResourceDescriptor} from '../deprecated-resource-descriptor';
+import {LOGGER} from 'hateoas-navigator/logging/logger';
 
 export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
 
@@ -19,7 +21,7 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
     return this.schema.title;
   }
 
-  getChildDescriptor(propertyName: string): PropertyDescriptor {
+  getChildDescriptor(propertyName: string): JsonSchemaResourceDescriptor {
     if (this.schema.format === 'uri') {
       throw new Error(`Property's association ${this.getName()} is not available`)
     }
@@ -31,7 +33,17 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
     }
   }
 
-  getChildrenDescriptors(): Array<JsonSchemaDescriptor> {
+  getChildResourceDesc(childResource: string): DeprecatedResourceDescriptor {
+    const properties = this.getProperties();
+    if (!properties) {
+      LOGGER.warn('Descriptor has no child properties: ' + JSON.stringify(this));
+      return null;
+    }
+    const child = properties[childResource];
+    return child ? new JsonSchemaResourceDescriptor(childResource, child, this, this.schemaReferenceFactory) : null;
+  }
+
+  getChildrenDescriptors(): Array<JsonSchemaResourceDescriptor> {
     const children = this.getProperties();
     if (!children) {
       return [];
@@ -40,11 +52,11 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
       .map(propertyName => this.toDescriptor(propertyName, children[propertyName]));
   }
 
-  getArrayItemsDescriptor(): JsonSchemaDescriptor {
+  getArrayItemsDescriptor(): JsonSchemaResourceDescriptor {
     if (!this.schema.items) {
       return null;
     }
-    return new JsonSchemaDescriptor(null, this.resolveReference(this.schema.items), null, this.getReferenceFactory());
+    return new JsonSchemaResourceDescriptor(null, this.resolveReference(this.schema.items), null, this.getReferenceFactory());
   }
 
   getSchema() {
@@ -93,6 +105,6 @@ export class JsonSchemaDescriptor extends AbstractPropertyDescriptor {
   }
 
   private toDescriptor(propertyName: string, schema: JsonSchema) {
-    return new JsonSchemaDescriptor(propertyName, schema, this, this.schemaReferenceFactory);
+    return new JsonSchemaResourceDescriptor(propertyName, schema, this, this.schemaReferenceFactory);
   }
 }

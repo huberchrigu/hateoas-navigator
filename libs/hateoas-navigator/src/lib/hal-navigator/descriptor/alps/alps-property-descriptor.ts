@@ -3,12 +3,12 @@ import {AbstractPropertyDescriptor} from '../abstract-property-descriptor';
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from '../../alps-document/alps-descriptor-adapter';
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {PropertyDescriptor} from '../property-descriptor';
+import {AlpsResourceDescriptor} from './alps-resource-descriptor';
 
 export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
   private static readonly REPRESENTATION_PREFIX = '-representation';
 
-  constructor(private alps: AlpsDescriptor) {
+  constructor(private alps: AlpsDescriptor, private allDescriptors: AlpsDescriptor[]) {
     super(alps.name ||
       (alps.id.endsWith(AlpsPropertyDescriptor.REPRESENTATION_PREFIX) ?
           alps.id.substring(0, alps.id.length - AlpsPropertyDescriptor.REPRESENTATION_PREFIX.length) :
@@ -20,11 +20,16 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
     return undefined;
   }
 
-  getChildDescriptor(resourceName: string): PropertyDescriptor {
+  getChildDescriptor(resourceName: string): AlpsResourceDescriptor {
     return this.resolveChild(resourceName);
   }
 
-  getChildrenDescriptors(): Array<AlpsPropertyDescriptor> {
+  getChildResourceDesc(childName: string) {
+    const childDesc = this.findDescriptor(childName);
+    return childDesc ? this.toResourceDesc(childDesc) : null;
+  }
+
+  getChildrenDescriptors(): Array<AlpsResourceDescriptor> {
     if (!this.alps.descriptor) {
       return [];
     }
@@ -38,8 +43,8 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
    * That is why the {@link FormFieldBuilder} cannot resolve the array descriptors immediately, otherwise this would
    * end in an endless loop.
    */
-  getArrayItemsDescriptor(): AbstractPropertyDescriptor {
-    return this;
+  getArrayItemsDescriptor(): AlpsResourceDescriptor {
+    return new AlpsResourceDescriptor(this.alps, this.allDescriptors);
   }
 
   getAssociatedResourceName(): string {
@@ -65,7 +70,7 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
     return this.alps.descriptor.find(d => d.name === childName);
   }
 
-  private resolveChild(childName: string): AlpsPropertyDescriptor {
+  private resolveChild(childName: string): AlpsResourceDescriptor {
     const descriptor = this.findDescriptor(childName);
     if (descriptor) {
       return this.toDescriptor(descriptor);
@@ -74,6 +79,10 @@ export class AlpsPropertyDescriptor extends AbstractPropertyDescriptor {
   }
 
   private toDescriptor(descriptor: AlpsDescriptor) {
-    return new AlpsPropertyDescriptor(descriptor);
+    return new AlpsResourceDescriptor(descriptor, this.allDescriptors);
+  }
+
+  private toResourceDesc(descriptor: AlpsDescriptor): AlpsResourceDescriptor {
+    return new AlpsResourceDescriptor(descriptor, [descriptor]);
   }
 }

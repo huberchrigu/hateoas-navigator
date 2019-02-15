@@ -1,16 +1,16 @@
 import {Required, Validate} from '../../../decorators/required';
 import {AlpsPropertyDescriptor} from './alps-property-descriptor';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {DeprecatedResourceDescriptor} from '../deprecated-resource-descriptor';
 import {ResourceActions} from '../actions/resource-actions';
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {ResourceAction} from '../actions/resource-action';
 import {ActionType} from '../actions/action-type';
 
-export class AlpsResourceDescriptor extends AlpsPropertyDescriptor implements ResourceDescriptor {
-  private actions: ResourceActions;
+export class AlpsResourceDescriptor extends AlpsPropertyDescriptor implements DeprecatedResourceDescriptor {
+  private readonly actions: ResourceActions;
 
   constructor(representation: AlpsDescriptor, allDescriptors: AlpsDescriptor[]) {
-    super(representation);
+    super(representation, allDescriptors);
     this.actions = this.toActions(allDescriptors);
   }
 
@@ -18,17 +18,8 @@ export class AlpsResourceDescriptor extends AlpsPropertyDescriptor implements Re
     return this.actions;
   }
 
-  getChildResourceDesc(childName: string) {
-    const childDesc = this.findDescriptor(childName);
-    return childDesc ? this.toResourceDesc(childDesc) : null;
-  }
-
-  getDescriptorForLink(uri: string): ResourceDescriptor {
+  getDescriptorForLink(uri: string): DeprecatedResourceDescriptor {
     return undefined;
-  }
-
-  private toResourceDesc(descriptor: AlpsDescriptor): AlpsResourceDescriptor {
-    return new AlpsResourceDescriptor(descriptor, [descriptor]);
   }
 
   private toActions(descriptors: AlpsDescriptor[]) {
