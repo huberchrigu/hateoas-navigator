@@ -1,15 +1,19 @@
 import {ResourceActions} from '../actions/resource-actions';
 import {DescriptorMapper} from './descriptor-mapper';
 import {
-  ArrayPropertyDescriptor, AssociationPropertyDescriptor,
-  ObjectPropertyDescriptor,
-  PropDescriptor
-} from '../deprecated-property-descriptor';
+  ArrayFunc, ArrayPropertyDescriptor, AssociationPropertyDescriptor,
+  ObjectPropertyDescriptor, PropDescriptor, ToFunction
+} from '../prop-descriptor';
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/deprecated-resource-descriptor';
+import {ResourceDescriptor} from '../resource-descriptor';
+import {Observable} from 'rxjs';
+import {NotNull} from '../../../decorators/not-null';
+import {tap} from 'rxjs/operators';
+import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
 import apply = Reflect.apply;
+import {LOGGER} from 'hateoas-navigator/logging/logger';
 
-type FieldProcessor = (fieldBuilder: FormFieldBuilder) => FormFieldBuilder;
+export type FieldProcessor = (fieldBuilder: FormFieldBuilder) => FormFieldBuilder;
 
 class PropertyDescriptorImpl implements PropDescriptor {
   /**
@@ -33,11 +37,19 @@ class PropertyDescriptorImpl implements PropDescriptor {
     return this.fieldProcessor(new FormFieldBuilder(this.getName()));
   }
 
-  orNull<T extends PropDescriptor, R>(fct: (d: T) => R, ...args): R {
+  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
     try {
-      return apply(fct, this, args);
+      return apply(fct(this), this, args);
     } catch (e) {
       return null;
+    }
+  }
+
+  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
+    try {
+      return apply(fct(this), this, []);
+    } catch (e) {
+      return [];
     }
   }
 }
@@ -83,6 +95,8 @@ class ObjectDescriptorImpl extends PropertyDescriptorImpl implements ObjectPrope
 }
 
 class AssociationDescriptorImpl extends PropertyDescriptorImpl implements AssociationPropertyDescriptor {
+  private resolvedResource: ResourceDescriptor;
+
   constructor(name: string, title: string, private association: string, fieldProcessor: FieldProcessor) {
     super(name, title, fieldProcessor);
     if (!association) {
@@ -97,6 +111,17 @@ class AssociationDescriptorImpl extends PropertyDescriptorImpl implements Associ
   toFormFieldBuilder(): FormFieldBuilder {
     return super.toFormFieldBuilder()
       .withLinkedResource(this.getAssociatedResourceName());
+  }
+
+  @NotNull(() => 'Association must be resolved before')
+  getResource(): ResourceDescriptor {
+    return this.resolvedResource;
+  }
+
+  resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceDescriptor> {
+    return descriptorProvider.resolve(this.getAssociatedResourceName()).pipe(
+      tap(d => this.resolvedResource = d)
+    );
   }
 }
 
@@ -121,16 +146,33 @@ class ResourceDescriptorImpl extends ObjectDescriptorImpl implements ResourceDes
   }
 }
 
+export type DescriptorType = 'primitive' | 'object' | 'resource' | 'array' | 'association';
+
+/**
+ * A builder does not only simplify building a new [PropertyDescriptor],
+ * it also provides an intermediate state of know-how about a property. E.g. based on ALPS the type of the
+ * described property cannot be determined. The descriptor therefore adds details for arrays as well as associations.
+ * Combined with other know-how, this will accomplish the required information later.
+ */
 export class DescriptorBuilder<T> {
-  private name: string;
-  private title: string;
-  private actions: ResourceActions;
-  private children: Array<T>;
-  private arrayItems: T;
-  private association: string;
-  private linkFunction: (uri: string) => T;
-  private builderFunction: (value: T) => DescriptorMapper<T>;
-  private fieldProcessor: FieldProcessor = processor => processor;
+  public name: string;
+  public title: string;
+  public actions: ResourceActions;
+  public children: Array<T>;
+  public arrayItems: T;
+  public association: string;
+  public linkFunction: (uri: string) => T;
+  public builderFunction: (value: T) => DescriptorMapper<T>;
+  public type?: DescriptorType;
+  public fieldProcessor: FieldProcessor = processor => processor;
+
+  constructor(public mapperName: string) {
+  }
+
+  withType(type: DescriptorType) {
+    this.type = type;
+    return this;
+  }
 
   withName(name: string) {
     this.name = name;
@@ -167,59 +209,6 @@ export class DescriptorBuilder<T> {
     return this;
   }
 
-  toDescriptor(): PropDescriptor {
-    let descriptor: PropDescriptor;
-    if (this.arrayItems) {
-      this.assertNoObject();
-      this.assertNoResource();
-      this.assertNoAssociation();
-      descriptor = new ArrayDescriptorImpl(this.name, this.title, this.buildDescriptor(this.arrayItems), this.fieldProcessor);
-    } else if (this.children) {
-      this.assertNoAssociation();
-      const children = this.buildDescriptors(this.children);
-      if (this.actions || this.linkFunction) {
-        descriptor = new ResourceDescriptorImpl(this.name, this.title, children, this.actions,
-          (uri: string) => this.buildDescriptor(this.linkFunction(uri)) as ResourceDescriptor, this.fieldProcessor);
-      } else {
-        this.assertNoResource();
-        descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor);
-      }
-    } else if (this.association) {
-      this.assertNoResource();
-      descriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor);
-    } else {
-      this.assertNoResource();
-      descriptor = new PropertyDescriptorImpl(this.name, this.title, this.fieldProcessor);
-    }
-    return descriptor;
-  }
-
-  private buildDescriptor(value: T): PropDescriptor {
-    return this.builderFunction(value).toDescriptor();
-  }
-
-  private buildDescriptors(children: Array<T>): PropDescriptor[] {
-    return children.map(c => this.buildDescriptor(c));
-  }
-
-  private assertNoResource() {
-    if (this.linkFunction || this.actions) {
-      throw new Error(`This descriptor should not describe a resource, but has linkFunction or actions`);
-    }
-  }
-
-  private assertNoAssociation() {
-    if (this.association) {
-      throw new Error(`This descriptor should not describe an association, but was ${this.association}`);
-    }
-  }
-
-  private assertNoObject() {
-    if (this.children) {
-      throw new Error(`This descriptor should not describe an object, but has children ${this.children}`);
-    }
-  }
-
   withLinkFunction(linkFunction: (uri: string) => T) {
     this.linkFunction = linkFunction;
     return this;
@@ -228,5 +217,61 @@ export class DescriptorBuilder<T> {
   withFieldProcessor(fieldProcessor: FieldProcessor) {
     this.fieldProcessor = fieldProcessor;
     return this;
+  }
+
+  /**
+   * If the {@link DescriptorType} was explicitly set, such a descriptor will be created. Otherwise the descriptor type is guessed
+   * based on the set properties.
+   * An resource is handled like a sub-type of an object, i.e. it has children or the object/resource type, plus the resource type or a
+   * resource property like actions or link functions.
+   */
+  toDescriptor(): PropDescriptor {
+    let descriptor: PropDescriptor;
+    if (this.isType('array', !!this.arrayItems)) {
+      descriptor = new ArrayDescriptorImpl(this.name, this.title, this.buildDescriptor(this.arrayItems), this.fieldProcessor);
+    } else if (this.isType('object', !!this.children) || this.isType('resource')) {
+      const children = this.buildDescriptors(this.children);
+      if (this.isType('resource') || this.actions || this.linkFunction) {
+        if (!this.actions || !this.linkFunction) {
+          LOGGER.warn(`The resource descriptor for ${this.mapperName} does not provide either actions (value set: ${!!this.actions})
+           or a link action (value set: ${!!this.linkFunction})`);
+        }
+        descriptor = new ResourceDescriptorImpl(this.name, this.title, children, this.actions,
+          (uri: string) => this.buildDescriptor(this.linkFunction(uri)) as ResourceDescriptor, this.fieldProcessor);
+      } else {
+        descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor);
+      }
+    } else if (this.isType('association', !!this.association)) {
+      descriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor);
+    } else {
+      if (this.type !== 'primitive') {
+        LOGGER.warn(`Type 'primitive' was auto-guessed in ${this.mapperName}. Try to set type explicitly.`);
+      }
+      descriptor = new PropertyDescriptorImpl(this.name, this.title, this.fieldProcessor);
+    }
+    return descriptor;
+  }
+
+  private isType(type: DescriptorType, guess?: boolean) {
+    if (this.type) {
+      if (guess === false) {
+        LOGGER.warn(`The auto-guess for type ${type} is not as expected in ${this.mapperName}.
+        Try to provide all properties of this type.`);
+      }
+      return this.type === type;
+    }
+    if (guess) {
+      LOGGER.warn(`Type ${type} was auto-guessed in ${this.mapperName}. Try to set type explicitly.`);
+      return true;
+    }
+    return false;
+  }
+
+  private buildDescriptor(value: T): PropDescriptor {
+    return this.builderFunction(value).toDescriptor();
+  }
+
+  private buildDescriptors(children: Array<T>): PropDescriptor[] {
+    return children.map(c => this.buildDescriptor(c));
   }
 }
