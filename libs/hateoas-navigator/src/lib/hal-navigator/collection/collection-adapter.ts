@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {DeprecatedResourceDescriptor} from '../descriptor';
+import {ResourceDescriptor} from '../descriptor';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
 import {JsonResourceObject} from '../hal-resource/resource-object';
 
@@ -16,7 +16,7 @@ export class CollectionAdapter {
     return this.resourceObject.getName();
   }
 
-  getDescriptor(): DeprecatedResourceDescriptor {
+  getDescriptor(): ResourceDescriptor {
     return this.resourceObject.getDescriptor();
   }
 

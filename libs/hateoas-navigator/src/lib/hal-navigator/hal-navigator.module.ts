@@ -6,7 +6,7 @@ import {ItemCacheService} from './item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from './config/module-configuration';
 import {HttpClientModule} from '@angular/common/http';
 import {ResourceDescriptorProvider} from './descriptor/provider/resource-descriptor-provider';
-import {DeprecatedDescriptorProvider} from './descriptor/provider/deprecated-descriptor-provider';
+import {DefaultDescriptorProvider} from './descriptor/provider/default-descriptor-provider';
 import {ResourceSchemaService} from './resource-services/resource-schema.service';
 import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-descriptor-resolver.service';
 import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
@@ -30,7 +30,7 @@ export class HalNavigatorModule {
                  descriptorResolverFactory?: () => ResourceDescriptorProvider,
                  descriptorResolverDeps?: any[]): ModuleWithProviders {
     const factory = descriptorResolverFactory ? descriptorResolverFactory :
-      (schemaService: ResourceSchemaService) => new DeprecatedDescriptorProvider(configuration, schemaService);
+      (schemaService: ResourceSchemaService) => new DefaultDescriptorProvider(configuration, schemaService);
     const deps = descriptorResolverDeps ? descriptorResolverDeps : [ResourceSchemaService];
     return {
       ngModule: HalNavigatorModule,

@@ -6,7 +6,7 @@ import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
-import {DeprecatedPropertyDescriptor} from '../descriptor';
+import {PropDescriptor} from '../descriptor';
 
 export class ResourceLink extends Link {
   static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
@@ -57,7 +57,7 @@ export class ResourceLink extends Link {
     return this.removeTemplatedPart(this.getRelativeUri());
   }
 
-  getResourceDescriptor(): Observable<DeprecatedPropertyDescriptor> {
+  getResourceDescriptor(): Observable<PropDescriptor> {
     return this.resourceDescriptorResolver.resolve(this.extractResourceName());
   }
 

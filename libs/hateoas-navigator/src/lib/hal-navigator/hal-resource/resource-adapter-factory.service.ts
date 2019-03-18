@@ -2,7 +2,7 @@ import {HalResourceFactory} from './factory/hal-resource-factory';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {HalResourceObject} from './value-type/hal-value-type';
 import {ResourceAdapter} from './resource-adapter';
-import {DeprecatedResourceDescriptor} from '../descriptor/deprecated-resource-descriptor';
+import {ResourceDescriptor} from '../descriptor/resource-descriptor';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {LinkFactory} from '../link-object/link-factory';
 import {Observable} from 'rxjs';
@@ -17,7 +17,7 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
   constructor(private descriptorResolver: ResourceDescriptorProvider) {
   }
 
-  create(name: string, resourceObject: HalResourceObject, descriptor: DeprecatedResourceDescriptor): JsonResourceObject {
+  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject {
     ResourceAdapterFactoryService.assertObj(resourceObject);
     return new ResourceAdapter(name, resourceObject, this.getPropertyFactory(), this, this.getLinkFactory(resourceObject), descriptor);
   }
@@ -39,7 +39,7 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
       }));
   }
 
-  private createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: DeprecatedResourceDescriptor, version: string): VersionedJsonResourceObject {
+  private createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor, version: string): VersionedJsonResourceObject {
     ResourceAdapterFactoryService.assertObj(resourceObject);
     return new VersionedResourceAdapter(version, name, resourceObject, this.getPropertyFactory(), this, this.getLinkFactory(resourceObject), descriptor);
   }

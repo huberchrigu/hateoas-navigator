@@ -1,8 +1,8 @@
-import {DeprecatedResourceDescriptor} from '../descriptor';
+import {ResourceDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {JsonProperty, JsonRawObjectProperty} from '../json-property/json-property';
-import {DeprecatedPropertyDescriptor} from '../descriptor/deprecated-property-descriptor';
+import {ObjectPropertyDescriptor, PropDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 import {JsonObjectPropertyImpl} from '../json-property/json-object-property-impl';
 import {JsonResourceObject} from './resource-object';
@@ -15,13 +15,14 @@ import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/f
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
  */
-export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, DeprecatedResourceDescriptor> implements JsonResourceObject {
+export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject {
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
   private static METADATA_PROPERTIES = [ResourceAdapter.LINKS_PROPERTY, ResourceAdapter.EMBEDDED_PROPERTY];
 
-  constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>, private resourceFactory: HalResourceFactory,
-              private linkFactory: LinkFactory, descriptor: DeprecatedResourceDescriptor = null) {
+  constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
+              private resourceFactory: HalResourceFactory,
+              private linkFactory: LinkFactory, descriptor: ResourceDescriptor = null) {
     super(name, resourceObject, descriptor, propertyFactory);
   }
 
@@ -32,7 +33,8 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Deprec
   getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
-      return embedded.map(e => this.resourceFactory.create(linkRelationType, e, useMainDescriptor ? this.getDescriptorIfAny() : this.getSubResourceDescriptor(linkRelationType)));
+      return embedded.map(e => this.resourceFactory.create(linkRelationType, e, useMainDescriptor ?
+        this.getDescriptorIfAny() : this.getSubResourceDescriptor(linkRelationType)));
     } else {
       throw new Error('Embedded object ' + linkRelationType + ' was not an array as expected');
     }
@@ -72,7 +74,8 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Deprec
    * {@link getLinks All links} minus the ones {@link getSelfLink pointing to itself}.
    */
   getOtherLinks(): ResourceLink[] {
-    return this.linkFactory.getAll().filter(link => link.getFullUriWithoutTemplatedPart() != this.getSelfLink().getFullUriWithoutTemplatedPart());
+    return this.linkFactory.getAll()
+      .filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
   }
 
   /**
@@ -103,7 +106,8 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Deprec
   }
 
   toRawObject(): JsonRawObjectProperty {
-    return new JsonObjectPropertyImpl<JsonValueType, DeprecatedPropertyDescriptor>(name, this.toObj(property => this.toValueWithRawInnerDataOnly(property)),
+    return new JsonObjectPropertyImpl<JsonValueType, PropDescriptor>(name, this.toObj(property =>
+        this.toValueWithRawInnerDataOnly(property)),
       this.getDescriptorIfAny(), this.getPropertyFactory() as PropertyFactory<JsonValueType>);
   }
 
@@ -133,8 +137,9 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Deprec
     return !ResourceAdapter.METADATA_PROPERTIES.some(p => p === key);
   }
 
-  private getSubResourceDescriptor(embeddedRelationType: string): DeprecatedResourceDescriptor {
-    return this.getDescriptorIfAny() ? this.getDescriptor().getChildResourceDesc(embeddedRelationType) as DeprecatedResourceDescriptor : undefined;
+  private getSubResourceDescriptor(embeddedRelationType: string): ResourceDescriptor {
+    return this.getDescriptorIfAny() ? this.getDescriptor().orNull<ObjectPropertyDescriptor, 'getChildDescriptor'>(d =>
+      d.getChildDescriptor, embeddedRelationType) as ResourceDescriptor : undefined;
   }
 
   private toValueWithRawInnerDataOnly(property: JsonProperty<HalValueType>): JsonValueType {

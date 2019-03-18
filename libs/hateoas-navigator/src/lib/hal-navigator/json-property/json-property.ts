@@ -1,4 +1,4 @@
-import {DeprecatedPropertyDescriptor} from '../descriptor';
+import {PropDescriptor} from '../descriptor';
 import {GenericArrayValueType, GenericObjectValueType, JsonValueType} from "./value-type/json-value-type";
 
 export interface JsonProperty<V> {
@@ -6,7 +6,7 @@ export interface JsonProperty<V> {
 
   getFormValue(): JsonValueType;
 
-  getDescriptor(): DeprecatedPropertyDescriptor;
+  getDescriptor(): PropDescriptor;
 
   getName(): string;
 

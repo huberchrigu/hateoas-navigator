@@ -1,11 +1,11 @@
 import {JsonObjectProperty, JsonProperty, JsonRawObjectProperty} from '../../hal-navigator/json-property/json-property';
 import {HalValueType} from '../../hal-navigator/hal-resource/value-type/hal-value-type';
 import {JsonValueType} from '../json-property/value-type/json-value-type';
-import {DeprecatedResourceDescriptor} from '../descriptor/deprecated-resource-descriptor';
+import {ResourceDescriptor} from '../descriptor/resource-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 
 export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
-  toRawObject(): JsonRawObjectProperty
+  toRawObject(): JsonRawObjectProperty;
 
   /**
    * Use this function to retrieve all resource objects of a collection resource.
@@ -17,20 +17,20 @@ export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
    *
    * @throws an error if not an array
    */
-  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[]
+  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[];
 
   /**
    * @return The resource state plus the embedded resources' state.
    */
-  getPropertiesAndEmbeddedResourcesAsProperties(): JsonProperty<JsonValueType>[]
+  getPropertiesAndEmbeddedResourcesAsProperties(): JsonProperty<JsonValueType>[];
 
-  getDescriptor(): DeprecatedResourceDescriptor
+  getDescriptor(): ResourceDescriptor;
 
-  getLinks(): ResourceLink[]
+  getLinks(): ResourceLink[];
 
-  getSelfLink(): ResourceLink
+  getSelfLink(): ResourceLink;
 }
 
 export interface VersionedJsonResourceObject extends JsonResourceObject {
-  getVersion(): string
+  getVersion(): string;
 }

@@ -1,5 +1,5 @@
 import {HalResourceObject} from '../value-type/hal-value-type';
-import {DeprecatedResourceDescriptor} from '../../descriptor/deprecated-resource-descriptor';
+import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
 import {JsonResourceObject} from '../resource-object';
 import {Observable} from 'rxjs';
 
@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
  * Creates new {@link JsonResourceObject}s.
  */
 export interface HalResourceFactory {
-  create(name: string, obj: HalResourceObject, descriptor: DeprecatedResourceDescriptor): JsonResourceObject;
+  create(name: string, obj: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject;
 
   /**
    * @throws an error if no descriptor can be found the resource object's name.

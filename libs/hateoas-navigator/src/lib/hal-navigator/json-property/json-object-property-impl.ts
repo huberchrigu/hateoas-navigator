@@ -1,10 +1,10 @@
 import {GenericObjectValueType, JsonValueType} from './value-type/json-value-type';
-import {DeprecatedPropertyDescriptor} from '../descriptor';
+import {PropDescriptor} from '../descriptor';
 import {AbstractProperty} from './abstract-property';
 import {JsonObjectProperty, JsonProperty} from './json-property';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 
-export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends DeprecatedPropertyDescriptor> extends AbstractProperty<GenericObjectValueType<CHILDREN>, D>
+export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends PropDescriptor> extends AbstractProperty<GenericObjectValueType<CHILDREN>, D>
   implements JsonObjectProperty<CHILDREN> {
 
   constructor(name: string, value: GenericObjectValueType<CHILDREN>, descriptor: D, private propertyFactory: PropertyFactory<CHILDREN>) {
