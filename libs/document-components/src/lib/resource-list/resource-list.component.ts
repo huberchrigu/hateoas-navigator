@@ -3,9 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
 import {ResourceDescriptor, VersionedResourceAdapter} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
-import {ResourceAdapter} from 'hateoas-navigator';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
 
 @Component({
   selector: 'app-resource-list',
@@ -17,7 +17,7 @@ export class ResourceListComponent implements OnInit {
   collection: CollectionAdapter;
   propertyNames: Array<string>;
 
-  dataSource: DataSource<ResourceAdapter>;
+  dataSource: DataSource<JsonResourceObject>;
 
   constructor(private router: Router, private route: ActivatedRoute) {
   }
@@ -53,7 +53,7 @@ export class ResourceListComponent implements OnInit {
    * @deprecated
    */
   getDisplayValue(item: VersionedResourceAdapter, propertyName: string) {
-    return item.getPropertyAs(propertyName, d => d.getDisplayValue());
+    return item.getChildProperty(propertyName).getDisplayValue();
   }
 
   isAddEnabled() {

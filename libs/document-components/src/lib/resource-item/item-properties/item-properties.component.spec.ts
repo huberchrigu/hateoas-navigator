@@ -1,14 +1,16 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
-import {ResourceProperty} from 'hateoas-navigator';
 import {By} from '@angular/platform-browser';
-import SpyObj = jasmine.SpyObj;
+import {JsonArrayProperty} from 'hateoas-navigator/hal-navigator/json-property/json-property';
+import {JsonValueType} from 'hateoas-navigator/hal-navigator/json-property/value-type/json-value-type';
+import {JsonArrayPropertyImpl} from 'hateoas-navigator/hal-navigator/json-property/json-array-property-impl';
+import {PropDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
 
 describe('ItemPropertiesComponent', () => {
   let component: ItemPropertiesComponent;
   let fixture: ComponentFixture<ItemPropertiesComponent>;
-  let arrayProperty: SpyObj<ResourceProperty>;
+  let arrayProperty: JsonArrayProperty<JsonValueType>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -25,15 +27,15 @@ describe('ItemPropertiesComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should show sub-properties', () => {
-    expect(fixture.debugElement.query(By.css('app-item-properties'))).toBeTruthy();
+  it(`should show the array property's title`, () => {
+    const titleElement: Element = fixture.debugElement.query(By.css('h2.mat-h2')).nativeElement;
+    expect(titleElement.textContent).toEqual('Array');
   });
 
+  /**
+   * Jasmine mock cannot be used due to `instanceof` usage.
+   */
   function initArrayProperty() {
-    arrayProperty = jasmine.createSpyObj('arrayProperty', ['isArray', 'getArrayItems', 'getName', 'getDescriptor']);
-    arrayProperty.isArray.and.returnValue(true);
-    arrayProperty.getName.and.returnValue('array');
-    arrayProperty.getArrayItems.and.returnValue([{getObjectProperties: () => []}]);
-    arrayProperty.getDescriptor.and.returnValue({getTitle: () => 'Array'});
+    arrayProperty = new JsonArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as PropDescriptor, null);
   }
 });

@@ -1,12 +1,12 @@
 <div *ngFor="let property of properties" class="cmp-property">
-  <div *ngIf="!property.isArray()">
+  <div *ngIf="!isArray(property)">
     <div class="cmp-property-title">{{property.getDescriptor().getTitle()}}</div>
     <div class="cmp-property-value">{{property.getDisplayValue()}}</div>
   </div>
-  <div class="cmp-sub-object" *ngIf="property.isArray()">
+  <div class="cmp-sub-object" *ngIf="isArray(property)">
     <h2 class="mat-h2">{{property.getDescriptor().getTitle()}}</h2>
-      <div class="cmp-array-item" *ngFor="let child of property.getArrayItems()">
-        <app-item-properties [properties]="child.getObjectProperties()"></app-item-properties>
+      <div class="cmp-array-item" *ngFor="let child of getArrayItems(property)">
+        <app-item-properties [properties]="getChildProperties(child)"></app-item-properties>
       </div>
   </div>
 </div>

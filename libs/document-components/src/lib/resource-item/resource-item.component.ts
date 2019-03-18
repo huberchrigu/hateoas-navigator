@@ -6,9 +6,9 @@ import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material';
 import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
-import {SendDataDialogComponent} from "document-components/send-data-dialog/send-data-dialog.component";
-import {SendDataDialogData} from "document-components/send-data-dialog/send-data-dialog-data";
-import {SendDataDialogResult} from "document-components/send-data-dialog/send-data-dialog-result";
+import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
+import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
+import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
 
 @Component({
   selector: 'app-resource-item',
@@ -43,7 +43,7 @@ export class ResourceItemComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ConfirmationDialogResult) => {
       if (result && result.confirmed) {
-        this.halDocumentService.deleteResource(this.resourceObject.resourceObject, this.resourceObject.getVersion())
+        this.halDocumentService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
           .subscribe(() => {
             return this.router.navigate(['..'], {relativeTo: this.route});
           });
