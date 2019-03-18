@@ -1,7 +1,7 @@
 import {DateTimeType, PropertyConfig} from '../../config';
 import {DatePickerField} from '../../form/date-picker-field';
 import {StaticDescriptorMapper} from './static-descriptor-mapper';
-import {ObjectPropertyDescriptor} from '../deprecated-property-descriptor';
+import {ObjectPropertyDescriptor} from '../prop-descriptor';
 
 describe('StaticDescriptorMapper', () => {
   it('should return time option', () => {

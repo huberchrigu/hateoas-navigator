@@ -1,73 +1,70 @@
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from '../../alps-document/alps-descriptor-adapter';
-import {FormFieldBuilder} from '../../form/form-field-builder';
 import {ResourceActions} from '../actions/resource-actions';
 import {ResourceAction} from '../actions/resource-action';
 import {Required, Validate} from '../../../decorators/required';
 import {ActionType} from '../actions/action-type';
-import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
-import {DescriptorBuilder} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
+import {DescriptorMapper} from '../mapper/descriptor-mapper';
+import {DescriptorBuilder, DescriptorType} from '../mapper/descriptor-builder';
 
 export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
   private static readonly REPRESENTATION_PREFIX = '-representation';
 
-  private readonly actions: ResourceActions;
   private readonly name: string;
 
+  /**
+   * Only root resource has actions, therefore _allDescriptors_ should be empty for all children.
+   */
   constructor(private alps: AlpsDescriptor, private allDescriptors: AlpsDescriptor[]) {
     super();
-    this.name = AlpsDescriptorMapper.extractName(alps);
-    this.actions = this.toActions(allDescriptors);
+    this.name = this.extractName();
   }
 
   map(builder: DescriptorBuilder<AlpsDescriptor>) {
+    const children = this.getChildren();
+    const actions = this.toActions();
+    const associatedResourceName = this.getAssociatedResourceName();
     builder.withName(this.name)
-      .withActions(this.actions)
-      .withChildren(this.getChildren())
+      .withType(this.guessType(children, actions, associatedResourceName))
+      .withActions(actions)
+      .withChildren(children)
       .withArrayItems(this.getArrayItems())
-      .withAssociation(this.getAssociatedResourceName())
-      .withBuilder(alps => new AlpsDescriptorMapper(alps, this.allDescriptors));
+      .withAssociation(associatedResourceName)
+      .withBuilder(alps => new AlpsDescriptorMapper(alps, []));
   }
 
-  getChildren(): Array<AlpsDescriptor> {
+  private extractName() {
+    return this.alps.name ||
+      (this.alps.id.endsWith(AlpsDescriptorMapper.REPRESENTATION_PREFIX) ?
+          this.alps.id.substring(0, this.alps.id.length - AlpsDescriptorMapper.REPRESENTATION_PREFIX.length) :
+          undefined
+      );
+  }
+
+  private getChildren(): Array<AlpsDescriptor> {
     return this.alps.descriptor;
   }
 
   /**
-   * Example:
-   * {name: 'members', rt: 'http://...'} can be the output for a field 'members' that is actually an array.
+   * ALPS does not consider arrays, therefore a descriptor might also be the descriptor of the array's items.
    *
-   * That is why the {@link FormFieldBuilder} cannot resolve the array descriptors immediately, otherwise this would
-   * end in an endless loop.
+   * *This can lead to infinite loops, if the ALPS descriptor mapper is used without any other mapper.*
    */
-  getArrayItems(): AlpsDescriptor {
-    // return this.alps; // TODO
-    return undefined;
+  private getArrayItems(): AlpsDescriptor {
+    return this.alps; // TODO: E.g. 'version'
   }
 
-  getAssociatedResourceName(): string {
+  private getAssociatedResourceName(): string {
     if (this.alps.rt) {
       return new AlpsDescriptorAdapter(this.alps).getCollectionResourceName();
     }
     return null;
   }
 
-  getActions(): ResourceActions {
-    return this.actions;
-  }
-
-  private static extractName(alps: AlpsDescriptor) {
-    return alps.name ||
-      (alps.id.endsWith(AlpsDescriptorMapper.REPRESENTATION_PREFIX) ?
-          alps.id.substring(0, alps.id.length - AlpsDescriptorMapper.REPRESENTATION_PREFIX.length) :
-          undefined
-      );
-  }
-
-  private toActions(descriptors: AlpsDescriptor[]) {
+  private toActions() {
     const actions: Array<ResourceAction> = [];
     const resourceName = this.name;
-    const descriptorIds = descriptors.map(d => d.id);
+    const descriptorIds = this.allDescriptors.map(d => d.id);
     descriptorIds
       .filter(id => id)
       .forEach(id => {
@@ -76,7 +73,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
           actions.push(action);
         }
       });
-    return new ResourceActions(actions);
+    return actions.length > 0 ? new ResourceActions(actions) : null;
   }
 
   @Validate
@@ -96,5 +93,18 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
       return new ResourceAction(ActionType.CREATE_ITEM, true);
     }
     return null;
+  }
+
+  private guessType(children: Array<AlpsDescriptor>, actions: ResourceActions, associatedResourceName: string): DescriptorType {
+    if (associatedResourceName) {
+      return 'association';
+    } else if (children) {
+      if (actions) {
+        return 'resource';
+      } else {
+        return 'object';
+      }
+    }
+    return undefined;
   }
 }

@@ -1,7 +1,7 @@
 import {PropertyConfig} from '../../config';
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
-import {DescriptorBuilder} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
+import {DescriptorMapper} from '../mapper/descriptor-mapper';
+import {DescriptorBuilder} from '../mapper/descriptor-builder';
 
 export class StaticDescriptorMapper extends DescriptorMapper<NamedConfig> {
 

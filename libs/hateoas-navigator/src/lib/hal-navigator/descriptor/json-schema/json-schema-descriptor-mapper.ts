@@ -3,7 +3,8 @@ import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {getFormType} from '../../form/form-field-type';
 import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
-import {DescriptorBuilder} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
+import {DescriptorBuilder, DescriptorType} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
+import {LOGGER} from 'hateoas-navigator/logging/logger';
 
 export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema> {
 
@@ -17,6 +18,7 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
 
   map(builder: DescriptorBuilder<NamedJsonSchema>) {
     builder.withName(this.name)
+      .withType(this.getType())
       .withTitle(this.getTitle())
       .withChildren(this.getChildrenDescriptors())
       .withArrayItems(this.getArrayItemsDescriptor())
@@ -25,11 +27,11 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
         this.getRequiredProperties().some(p => p === this.name)));
   }
 
-  getTitle(): string {
+  private getTitle(): string {
     return this.schema.title;
   }
 
-  getChildrenDescriptors(): Array<NamedJsonSchema> {
+  private getChildrenDescriptors(): Array<NamedJsonSchema> {
     const children = this.getProperties();
     if (!children) {
       return null;
@@ -38,35 +40,52 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
       .map(propertyName => new NamedJsonSchema(propertyName, children[propertyName]));
   }
 
-  getArrayItemsDescriptor(): NamedJsonSchema {
+  /**
+   * Keep the array property's name.
+   */
+  private getArrayItemsDescriptor(): NamedJsonSchema {
     if (!this.schema.items) {
       return null;
     }
-    return new NamedJsonSchema(null, this.resolveReference(this.schema.items));
+    return new NamedJsonSchema(this.name, this.resolveReference(this.schema.items));
   }
 
-  getSchema() {
-    return this.schema;
+  private getType(): DescriptorType {
+    switch (this.schema.type) {
+      case 'boolean':
+      case 'integer':
+      case'number':
+        return 'primitive';
+      case 'array':
+        return 'array';
+      case 'object':
+        return 'object';
+      case 'string':
+        return this.schema.format === 'uri' ? 'association' : 'primitive';
+      default:
+        LOGGER.warn('Unknown type ' + this.schema.type);
+        return undefined;
+    }
   }
 
   /**
    * Never null/undefined.
    */
-  getRequiredProperties(): Array<string> {
+  private getRequiredProperties(): Array<string> {
     const result = this.resolveReference(this.schema).requiredProperties;
     return result ? result : [];
   }
 
-  protected addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
+  private addFormFieldDetails(formFieldBuilder: FormFieldBuilder) {
     return formFieldBuilder
-      .withType(getFormType(this.getSchema()))
+      .withType(getFormType(this.schema))
       .withRequired(this.required)
-      .withReadOnly(this.getSchema().readOnly)
+      .withReadOnly(this.schema.readOnly)
       .withTitle(this.getTitle())
-      .withOptions(this.getSchema().enum);
+      .withOptions(this.schema.enum);
   }
 
-  protected getProperties(): { [propertyName: string]: JsonSchema } {
+  private getProperties(): { [propertyName: string]: JsonSchema } {
     if (this.schema.type !== 'object') {
       return null;
     }

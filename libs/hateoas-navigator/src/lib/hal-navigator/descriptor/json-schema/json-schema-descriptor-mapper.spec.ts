@@ -1,10 +1,11 @@
 import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
-import {JsonSchemaDescriptor} from './json-schema-descriptor';
-import {FormFieldBuilder} from '../../form/form-field-builder';
-import {FormFieldType} from '../../form/form-field-type';
 import {JsonSchemaDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/json-schema/json-schema-descriptor-mapper';
-import {ArrayPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/deprecated-property-descriptor';
+import {
+  ArrayPropertyDescriptor,
+  ObjectPropertyDescriptor,
+  PropDescriptor
+} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
 
 describe('JsonSchemaDescriptorMapper', () => {
   it('should get referenced child', () => {
@@ -27,7 +28,8 @@ describe('JsonSchemaDescriptorMapper', () => {
     const referenceFactoryMock = jasmine.createSpyObj<SchemaReferenceFactory>('schemaReferenceFactory', ['getReferencedSchema']);
     referenceFactoryMock.getReferencedSchema.and.returnValue(referencedSchema);
 
-    const testee = new JsonSchemaDescriptorMapper('testee', array, referenceFactoryMock).toDescriptor() as ArrayPropertyDescriptor<PropDescriptor>;
+    const testee = new JsonSchemaDescriptorMapper('testee', array, referenceFactoryMock)
+      .toDescriptor() as ArrayPropertyDescriptor<PropDescriptor>;
 
     const objDescriptor = testee.getItemsDescriptor() as ObjectPropertyDescriptor;
     expect(objDescriptor.getChildDescriptor('child').getTitle()).toEqual('Child');
@@ -42,10 +44,10 @@ describe('JsonSchemaDescriptorMapper', () => {
         format: 'uri'
       }
     };
-    const testee = new JsonSchemaDescriptor('testee', array, null, {} as SchemaReferenceFactory);
-    const builder: FormFieldBuilder = testee.toFormFieldBuilder();
+    const testee = new JsonSchemaDescriptorMapper('testee', array, {} as SchemaReferenceFactory);
+    const builder = testee.toBuilder();
 
-    expect(builder['type']).toEqual(FormFieldType.ARRAY);
-    expect(builder['arraySpecProviders'][0]()['type']).toEqual(FormFieldType.LINK);
+    expect(builder.type).toEqual('array');
+    expect(builder.arrayItems.schema.format).toEqual('uri');
   });
 });

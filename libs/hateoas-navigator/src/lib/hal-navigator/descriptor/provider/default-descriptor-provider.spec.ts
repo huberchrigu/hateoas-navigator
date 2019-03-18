@@ -5,7 +5,7 @@ import {of} from 'rxjs';
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from '../../alps-document/alps-descriptor-adapter';
 import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';
-import {DefaultDescriptorProvider} from './deprecated-descriptor-provider';
+import {DefaultDescriptorProvider} from './default-descriptor-provider';
 import {ModuleConfiguration} from '../../config';
 
 describe('DefaultDescriptorProvider', () => {
