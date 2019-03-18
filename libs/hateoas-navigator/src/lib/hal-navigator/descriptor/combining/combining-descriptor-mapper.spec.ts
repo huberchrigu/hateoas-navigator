@@ -1,28 +1,44 @@
 import {ActionType} from '../actions/action-type';
 import {CombiningDescriptorMapper} from './combining-descriptor-mapper';
-import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/deprecated-resource-descriptor';
-import {ArrayField, DatePickerField, DateTimeType, FormField, FormFieldBuilder, FormFieldType, LinkField, SubFormField} from 'hateoas-navigator';
-import {JsonSchemaDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/json-schema/json-schema-descriptor';
+import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/resource-descriptor';
+import {
+  ArrayField,
+  DatePickerField,
+  DateTimeType,
+  FormField,
+  FormFieldBuilder,
+  FormFieldType,
+  LinkField,
+  ResourceActions,
+  SubFormField
+} from 'hateoas-navigator';
 import {alps, jsonSchema} from 'hateoas-navigator/hal-navigator/descriptor/combining/sample-input.spec';
 import {SchemaReferenceFactory} from 'hateoas-navigator/hal-navigator/schema/schema-reference-factory';
-import {AlpsPropertyDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/alps/alps-property-descriptor';
 import {AlpsDocumentAdapter} from 'hateoas-navigator/hal-navigator/alps-document/alps-document-adapter';
-import {ObjectPropertyDescriptor, PropDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/deprecated-property-descriptor';
-import {
-  ObjectDescriptorMockBuilder,
-  PropertyDescriptorMockBuilder
-} from './property-descriptor-mock-builder.spec';
-import {ResourceDescriptorMockBuilder} from 'hateoas-navigator/hal-navigator/descriptor/combining/resource-descriptor-mock-builder.spec';
+import {ObjectPropertyDescriptor, PropDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
+import {JsonSchemaDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/json-schema/json-schema-descriptor-mapper';
+import {AlpsDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/alps/alps-descriptor-mapper';
+import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
+import {DescriptorBuilder, FieldProcessor} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
+import {DefaultMapperConfigs} from 'hateoas-navigator/hal-navigator/descriptor/combining/mapper-config';
 
 describe('CombiningDescriptorMapper', () => {
   it('should not contain "update" action', () => {
-    const property = new PropertyDescriptorMockBuilder().withName('property').build();
-    const resourceWithCreateAndDelete = new ResourceDescriptorMockBuilder()
-      .withEnabledActions(ActionType.CREATE_ITEM, ActionType.DELETE_ITEM).build();
-    const resourceWithGets = new ResourceDescriptorMockBuilder()
-      .withEnabledActions(ActionType.GET_COLLECTION, ActionType.GET_ITEM).build();
-    const testee = new CombiningDescriptorMapper([property, resourceWithCreateAndDelete, resourceWithGets]).toDescriptor() as ResourceDescriptor;
-
+    const property = descriptorMapper({name: 'property'} as DescriptorBuilder<any>);
+    const resourceWithCreateAndDelete = descriptorMapper({
+      actions: toActions(ActionType.CREATE_ITEM, ActionType.DELETE_ITEM),
+      children: [descriptorMapper({name: 'child'} as DescriptorBuilder<DescriptorMapper<any>>)]
+    } as DescriptorBuilder<any>);
+    const resourceWithGets = descriptorMapper({
+      actions: toActions(ActionType.GET_COLLECTION, ActionType.GET_ITEM)
+    } as DescriptorBuilder<any>);
+    let testee;
+    try {
+      testee = new CombiningDescriptorMapper([property, resourceWithCreateAndDelete, resourceWithGets], {})
+        .toDescriptor() as ResourceDescriptor;
+    } catch (e) {
+      console.error(e);
+    }
     expect(testee.getActions().isUpdateEnabled()).toBeFalsy();
     expect(testee.getActions().isCreateEnabled()).toBeTruthy();
     expect(testee.getActions().isDeleteEnabled()).toBeTruthy();
@@ -32,15 +48,19 @@ describe('CombiningDescriptorMapper', () => {
 
   it('should group all children by name', () => {
     const testee = new CombiningDescriptorMapper([
-      new ObjectDescriptorMockBuilder().withChildrenDescriptors([
-        new PropertyDescriptorMockBuilder().withName('A').build(),
-        new PropertyDescriptorMockBuilder().withName('B').build()
-      ]).build(),
-      new ObjectDescriptorMockBuilder().withChildrenDescriptors([
-        new PropertyDescriptorMockBuilder().withName('B').build(),
-        new PropertyDescriptorMockBuilder().withName('C').build()
-      ]).build()
-    ]).toDescriptor() as ObjectPropertyDescriptor;
+      descriptorMapper({
+        children: [
+          descriptorMapper({name: 'A'} as DescriptorBuilder<any>),
+          descriptorMapper({name: 'B'} as DescriptorBuilder<any>)
+        ]
+      } as DescriptorBuilder<any>),
+      descriptorMapper({
+        children: [
+          descriptorMapper({name: 'B'} as DescriptorBuilder<any>),
+          descriptorMapper({name: 'C'} as DescriptorBuilder<any>)
+        ]
+      } as DescriptorBuilder<any>)
+    ], {}).toDescriptor() as ObjectPropertyDescriptor;
     const result = testee.getChildDescriptors();
     expect(result.length).toBe(3);
     expectChild(result[0], 'A');
@@ -57,7 +77,7 @@ describe('CombiningDescriptorMapper', () => {
     const jsonSchemaDescriptor = mockJsonSchemaDescriptorWithDatePickerChild();
     const alpsDescriptor = mockAlpsDescriptorWithoutChild();
 
-    const testee = new CombiningDescriptorMapper([staticDescriptor, jsonSchemaDescriptor, alpsDescriptor]).toDescriptor();
+    const testee = new CombiningDescriptorMapper([staticDescriptor, jsonSchemaDescriptor, alpsDescriptor], {}).toDescriptor();
     const result = testee.toFormFieldBuilder().build() as SubFormField;
 
     expectField(result, 'object', 'Object', FormFieldType.SUB_FORM, true, false);
@@ -74,24 +94,34 @@ describe('CombiningDescriptorMapper', () => {
       expect(actualValue.isReadOnly()).toBe(readOnly);
     }
 
-    function mockJsonSchemaDescriptorWithDatePickerChild(): PropDescriptor {
-      const children = [new FormFieldBuilder('time').withRequired(false).withReadOnly(false)
-        .withTitle('Time')];
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(
-        new FormFieldBuilder('object').withRequired(true).withReadOnly(false).withTitle('Object')
-          .withSubFields(children)
-      ).build();
+    function mockStaticDescriptorWithTimeOptionChild(): DescriptorMapper<any> {
+      return descriptorMapper({
+        name: 'object',
+        children: [descriptorMapper({
+          name: 'time',
+          fieldProcessor: builder => builder.withDateTimeType(DateTimeType.TIME)
+        } as DescriptorBuilder<any>)]
+      } as DescriptorBuilder<any>);
     }
 
-    function mockStaticDescriptorWithTimeOptionChild(): PropDescriptor {
-      const child = new FormFieldBuilder('time').withDateTimeType(DateTimeType.TIME);
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(new FormFieldBuilder('object').withSubFields([child]))
-        .build();
+    function mockJsonSchemaDescriptorWithDatePickerChild(): DescriptorMapper<any> {
+      const children = [descriptorMapper({
+        name: 'time',
+        fieldProcessor: builder => builder.withRequired(false).withReadOnly(false)
+          .withTitle('Time')
+      } as DescriptorBuilder<any>)];
+      const fieldProcessor: FieldProcessor = (fieldBuilder: FormFieldBuilder) => fieldBuilder.withRequired(true)
+        .withReadOnly(false)
+        .withTitle('Object');
+      return descriptorMapper({
+        name: 'object',
+        fieldProcessor: fieldProcessor,
+        children: children
+      } as DescriptorBuilder<any>);
     }
 
-    function mockAlpsDescriptorWithoutChild(): PropDescriptor {
-      return new PropertyDescriptorMockBuilder().withFormFieldBuilder(
-        new FormFieldBuilder('object')).build();
+    function mockAlpsDescriptorWithoutChild(): DescriptorMapper<any> {
+      return descriptorMapper({name: 'object'} as DescriptorBuilder<any>);
     }
   });
 
@@ -99,13 +129,16 @@ describe('CombiningDescriptorMapper', () => {
     let fields: FormField[];
 
     beforeAll(() => {
-      const testee = new CombiningDescriptorMapper([
-        new JsonSchemaDescriptor('meetingGroups', jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions)),
-        new AlpsPropertyDescriptor(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, [])
-      ]);
-
-      const meetingGroup = testee.toFormFieldBuilder().build() as SubFormField;
-      fields = meetingGroup.getSubFields();
+      try {
+        const testee = new CombiningDescriptorMapper([
+          new JsonSchemaDescriptorMapper('meetingGroups', jsonSchema, new SchemaReferenceFactory(jsonSchema.definitions)),
+          new AlpsDescriptorMapper(new AlpsDocumentAdapter(alps).getRepresentationDescriptor().descriptor, [])
+        ], DefaultMapperConfigs.ignoreChildrenFromAlps()).toDescriptor();
+        const meetingGroup = testee.toFormFieldBuilder().build() as SubFormField;
+        fields = meetingGroup.getSubFields();
+      } catch (e) {
+        console.error(e);
+      }
     });
 
     it('should have five form elements of different types', () => {
@@ -136,3 +169,25 @@ describe('CombiningDescriptorMapper', () => {
     });
   });
 });
+
+/**
+ * Adds the default fieldProcessor property and creates a mock.
+ */
+function descriptorMapper(builderProperties: DescriptorBuilder<DescriptorMapper<any>>): DescriptorMapper<any> {
+  if (!builderProperties.fieldProcessor) {
+    builderProperties.fieldProcessor = builder => builder;
+  }
+  if (!builderProperties.builderFunction) {
+    builderProperties.builderFunction = obj => obj;
+  }
+  return jasmine.createSpyObj('mapper with builder: ' + JSON.stringify(builderProperties), {
+    toBuilder: builderProperties,
+    getMapperName: 'mapper mock'
+  });
+}
+
+function toActions(...types: ActionType[]): ResourceActions {
+  return new ResourceActions(types.map(type => jasmine.createSpyObj('ResourceAction', {
+    getType: type
+  })));
+}
