@@ -10,6 +10,8 @@ import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.comp
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
 import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
+import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
+import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-resource-item',
@@ -21,7 +23,7 @@ export class ResourceItemComponent implements OnInit {
   resourceObject: VersionedJsonResourceObject;
 
   constructor(private route: ActivatedRoute, private halDocumentService: ResourceService, private dialog: MatDialog,
-              private router: Router) {
+              private router: Router, private resourceFactory: ResourceAdapterFactoryService) {
   }
 
   ngOnInit() {
@@ -86,7 +88,11 @@ export class ResourceItemComponent implements OnInit {
         return;
       }
       return this.halDocumentService.executeCustomAction(uri, this.resourceObject, result.method, result.body)
-        .subscribe(resource => this.initResource(resource));
+        .pipe(
+          flatMap(resource => this.resourceFactory
+            .resolveDescriptorAndAssociations(resource.getName(), resource.getValue(),
+              'unknown')) // TODO: Version should be known - or else do not use versioned resources
+        ).subscribe(resource => this.initResource(resource));
     });
   }
 }
