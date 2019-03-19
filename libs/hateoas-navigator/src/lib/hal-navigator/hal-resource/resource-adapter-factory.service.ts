@@ -17,9 +17,16 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
   constructor(private descriptorResolver: ResourceDescriptorProvider) {
   }
 
+  private static assertObj(resourceObject: HalResourceObject) {
+    if (Array.isArray(resourceObject)) {
+      throw new Error('This is not a valid resource object: ' + JSON.stringify(resourceObject));
+    }
+  }
+
   create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject {
     ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new ResourceAdapter(name, resourceObject, this.getPropertyFactory(), this, this.getLinkFactory(resourceObject), descriptor);
+    return new ResourceAdapter(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
+      descriptor);
   }
 
   resolveDescriptor(name: string, resourceObject: HalResourceObject): Observable<JsonResourceObject> {
@@ -28,33 +35,30 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
         if (!descriptor) {
           throw new Error('The descriptor resolver should return a descriptor');
         }
-        return this.create(name, resourceObject, descriptor)
+        return this.create(name, resourceObject, descriptor);
       }));
   }
 
-  resolveDescriptorAndAssociations(name: string, resourceObject: HalResourceObject, version: string): Observable<VersionedJsonResourceObject> {
+  resolveDescriptorAndAssociations(name: string, resourceObject: HalResourceObject,
+                                   version: string): Observable<VersionedJsonResourceObject> {
     return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(name).pipe(
       map(descriptor => {
         return this.createWithVersion(name, resourceObject, descriptor, version);
       }));
   }
 
-  private createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor, version: string): VersionedJsonResourceObject {
+  createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor, version: string):
+    VersionedJsonResourceObject {
     ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new VersionedResourceAdapter(version, name, resourceObject, this.getPropertyFactory(), this, this.getLinkFactory(resourceObject), descriptor);
+    return new VersionedResourceAdapter(version, name, resourceObject, this.getPropertyFactory(descriptor), this,
+      this.getLinkFactory(resourceObject), descriptor);
   }
 
   private getLinkFactory(resourceObject: HalResourceObject) {
     return new LinkFactory(resourceObject._links, this.descriptorResolver);
   }
 
-  private static assertObj(resourceObject: HalResourceObject) {
-    if (Array.isArray(resourceObject)) {
-      throw new Error('This is not a valid resource object: ' + JSON.stringify(resourceObject));
-    }
-  }
-
-  private getPropertyFactory() {
-    return new HalPropertyFactory(this);
+  private getPropertyFactory(descriptor: ResourceDescriptor) {
+    return new HalPropertyFactory(this, descriptor);
   }
 }
