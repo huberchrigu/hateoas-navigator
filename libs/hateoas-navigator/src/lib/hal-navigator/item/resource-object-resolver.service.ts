@@ -22,7 +22,8 @@ export class ResourceObjectResolverService implements Resolve<VersionedJsonResou
       .getItem(resourceName, route.params[RouteParams.ID_PARAM])
       .pipe(
         tap(() => LOGGER.debug(`${resourceName} successfully loaded, now resolving descriptors...`)),
-        mergeMap(resource => this.resourceFactory.resolveDescriptorAndAssociations(resource.getName(), resource.getValue(), resource.getVersion())),
+        mergeMap(resource => this.resourceFactory.resolveDescriptorAndAssociations(resource.getName(), resource.getValue(),
+          resource.getVersion())),
         tap(resource => LOGGER.debug(`Descriptor ${resource.getDescriptor().getName()} successfully resolved`))
       );
   }

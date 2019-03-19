@@ -10,8 +10,8 @@ import {VersionedJsonResourceObject} from '../hal-resource/resource-object';
  * This is a resource object with a version.
  */
 export class VersionedResourceAdapter extends ResourceAdapter implements VersionedJsonResourceObject {
-  constructor(private version: string, name: string, resourceObject: HalResourceObject, propertyFactory: HalPropertyFactory, resourceFactory: HalResourceFactory, linkFactory: LinkFactory,
-              descriptor: ResourceDescriptor) {
+  constructor(private version: string, name: string, resourceObject: HalResourceObject, propertyFactory: HalPropertyFactory,
+              resourceFactory: HalResourceFactory, linkFactory: LinkFactory, descriptor: ResourceDescriptor) {
     super(name, resourceObject, propertyFactory, resourceFactory, linkFactory, descriptor);
   }
 

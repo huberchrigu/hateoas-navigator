@@ -9,6 +9,7 @@ import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dial
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
+import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
 
 @Component({
   selector: 'app-resource-item',
@@ -17,7 +18,7 @@ import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result'
 })
 export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
-  resourceObject: VersionedResourceAdapter;
+  resourceObject: VersionedJsonResourceObject;
 
   constructor(private route: ActivatedRoute, private halDocumentService: ResourceService, private dialog: MatDialog,
               private router: Router) {
@@ -64,13 +65,13 @@ export class ResourceItemComponent implements OnInit {
     if (resource) {
       return this.router.navigate([resource.getSelfLink().getRelativeUriWithoutTemplatedPart()]);
     } else {
-      let uri = link.getRelativeUriWithoutTemplatedPart();
+      const uri = link.getRelativeUriWithoutTemplatedPart();
       const options = this.halDocumentService.getOptionsForCustomUri(uri);
-      options.subscribe(options => this.openDialogForCustomLink(uri, options));
+      options.subscribe(o => this.openDialogForCustomLink(uri, o));
     }
   }
 
-  private initResource(resourceObject: VersionedResourceAdapter) {
+  private initResource(resourceObject: VersionedJsonResourceObject) {
     this.resourceObject = resourceObject;
     this.specialLinks.splice(0, this.specialLinks.length, ...this.resourceObject.getOtherLinks());
   }
@@ -84,7 +85,8 @@ export class ResourceItemComponent implements OnInit {
       if (!result || result.isCancelled()) {
         return;
       }
-      return this.halDocumentService.executeCustomAction(uri, this.resourceObject, result.method, result.body).subscribe(resource => this.initResource(resource));
+      return this.halDocumentService.executeCustomAction(uri, this.resourceObject, result.method, result.body)
+        .subscribe(resource => this.initResource(resource));
     });
   }
 }

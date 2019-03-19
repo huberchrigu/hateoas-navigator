@@ -18,7 +18,7 @@ export abstract class AbstractProperty<V, D extends PropDescriptor> implements J
 
   getValue(): V {
     return this.value;
-  };
+  }
 
   /**
    * Use this internally if null/undefined values are ok.

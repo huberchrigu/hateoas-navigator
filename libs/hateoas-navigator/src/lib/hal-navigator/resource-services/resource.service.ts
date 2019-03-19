@@ -11,11 +11,11 @@ import {MODULE_CONFIG, ModuleConfiguration} from '../config';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {Cacheable} from '../cache/cacheable';
 import {Observable} from 'rxjs';
-import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
 import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
 import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
+import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
 
 /**
  * This is the module's core service providing functionality to access resources (only HAL documents supported yet).
@@ -56,17 +56,17 @@ export class ResourceService {
   }
 
   @Validate
-  create(@Required resourceName: string, object: any): Observable<VersionedResourceAdapter> {
+  create(@Required resourceName: string, object: any): Observable<VersionedJsonResourceObject> {
     return this.createAndCache(resourceName, '/' + resourceName, object);
   }
 
   @Validate
-  update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceAdapter> {
+  update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedJsonResourceObject> {
     return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version);
   }
 
   @Validate
-  getItem(@Required resourceName: string, @Required id: string): Observable<VersionedResourceAdapter> {
+  getItem(@Required resourceName: string, @Required id: string): Observable<VersionedJsonResourceObject> {
     return this.getItemFromResourceOrCache(resourceName, `/${resourceName}/${id}`, id);
   }
 
@@ -79,7 +79,8 @@ export class ResourceService {
   }
 
   @Validate
-  executeCustomAction(@Required uri: string, @Required actionOn: VersionedResourceAdapter, @Required method: string, body: object): Observable<VersionedResourceAdapter> {
+  executeCustomAction(@Required uri: string, @Required actionOn: VersionedJsonResourceObject, @Required method: string, body: object):
+    Observable<VersionedJsonResourceObject> {
     const version = actionOn.getVersion();
     const name = actionOn.getName();
 
