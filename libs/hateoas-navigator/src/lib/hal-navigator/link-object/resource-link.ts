@@ -2,11 +2,11 @@
  * Represents a link to a resource and provides various functions to get information from this link.
  */
 import {Link} from './link';
-import {HalResourceObject} from '../hal-resource/hal-resource-object';
+import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
-import {PropertyDescriptor} from '../descriptor';
+import {PropDescriptor} from '../descriptor';
 
 export class ResourceLink extends Link {
   static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
@@ -57,7 +57,7 @@ export class ResourceLink extends Link {
     return this.removeTemplatedPart(this.getRelativeUri());
   }
 
-  getResourceDescriptor(): Observable<PropertyDescriptor> {
+  getResourceDescriptor(): Observable<PropDescriptor> {
     return this.resourceDescriptorResolver.resolve(this.extractResourceName());
   }
 

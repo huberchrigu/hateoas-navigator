@@ -1,87 +1,60 @@
-import {AbstractProperty} from './property/abstract-property';
 import {ResourceDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
-import {HalResourceObject, JsonObject} from './hal-resource-object';
-import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
+import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
+import {JsonProperty, JsonRawObjectProperty} from '../json-property/json-property';
+import {ObjectPropertyDescriptor, PropDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
-import {ResourceProperty} from './property/resource-property';
-import {JsonProperty} from './property/json-property';
-import {Observable} from 'rxjs/index';
-import {map} from 'rxjs/operators';
-import {AssociationResolver} from '../descriptor/association/association-resolver';
+import {JsonObjectPropertyImpl} from '../json-property/json-object-property-impl';
+import {JsonResourceObject} from './resource-object';
+import {JsonValueType} from '../json-property/value-type/json-value-type';
+import {PropertyFactory} from '../json-property/factory/property-factory';
+import {NotNull} from 'hateoas-navigator/decorators/not-null';
+import {JsonArrayPropertyImpl} from '../json-property/json-array-property-impl';
+import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
  */
-export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
+export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject {
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
   private static METADATA_PROPERTIES = [ResourceAdapter.LINKS_PROPERTY, ResourceAdapter.EMBEDDED_PROPERTY];
 
-  private linkFactory: LinkFactory;
-
-  constructor(name: string, public resourceObject: HalResourceObject, private descriptorResolver: ResourceDescriptorProvider,
-              descriptor: ResourceDescriptor = null) {
-    super(name, descriptor);
-    if (Array.isArray(resourceObject) || !resourceObject._links) {
-      throw new Error('This is not a valid resource object: ' + JSON.stringify(resourceObject));
-    }
-    this.linkFactory = new LinkFactory(resourceObject._links, descriptorResolver);
+  constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
+              private resourceFactory: HalResourceFactory,
+              private linkFactory: LinkFactory, descriptor: ResourceDescriptor = null) {
+    super(name, resourceObject, descriptor, propertyFactory);
   }
 
   getLinks(): ResourceLink[] {
     return this.linkFactory.getAll();
   }
 
-  /**
-   * Expects the embedded resources, i.e. it must be an array!
-   */
-  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceAdapter[] {
+  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
-      return embedded.map(e => new ResourceAdapter(linkRelationType, e, this.descriptorResolver,
-        useMainDescriptor ? this.descriptor : this.getSubResourceDescriptor(linkRelationType)));
+      return embedded.map(e => this.resourceFactory.create(linkRelationType, e, useMainDescriptor ?
+        this.getDescriptorIfAny() : this.getSubResourceDescriptor(linkRelationType)));
     } else {
       throw new Error('Embedded object ' + linkRelationType + ' was not an array as expected');
     }
   }
 
-  getEmbeddedResourceOrNull(linkRelationType: string): ResourceAdapter {
-    const resource = this.resourceObject._embedded[linkRelationType];
+  getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject {
+    const resource = this.getValue()._embedded[linkRelationType];
     if (Array.isArray(resource)) {
-      return undefined;
+      return null;
     }
-    return resource ? new ResourceAdapter(linkRelationType, resource, this.descriptorResolver, this.getSubResourceDescriptor(linkRelationType)) : undefined;
+    return resource ? this.resourceFactory.create(linkRelationType, resource, this.getSubResourceDescriptor(linkRelationType)) : undefined;
+  }
+
+  getPropertiesAndEmbeddedResourcesAsProperties(): JsonProperty<JsonValueType>[] {
+    return this.toRawObject().getChildProperties();
   }
 
   /**
-   * Returns the resource properties plus the embedded resources' properties.
-   * Since {@link ResourceAdapter} does not work for arrays, we convert them to resource properties.
+   * A resource object is always represented as its unique link.
    */
-  getPropertiesAndEmbeddedResourcesAsProperties(): ResourceProperty[] {
-    return this.getObjectProperties()
-      .concat(this.getEmbeddedResourcesAsProperties());
-  }
-
-  /**
-   * This can either be a property or an embedded object. If the property matches multiple embedded objects, the function is applied to all
-   * objects.
-   */
-  getPropertyAs<T>(propertyName: string, applyFunction: (property: JsonProperty) => T): T | T[] {
-    const value = this.resourceObject[propertyName];
-    if (!value && this.resourceObject._embedded) {
-      const embedded = this.resourceObject._embedded[propertyName];
-      if (embedded) {
-        return Array.isArray(embedded) ? embedded
-            .map(e => new ResourceAdapter(propertyName, e, this.descriptorResolver, this.getSubResourceDescriptor(propertyName)))
-            .map(e => applyFunction(e))
-          : applyFunction(new ResourceAdapter(propertyName, embedded, this.descriptorResolver,
-            this.getSubResourceDescriptor(propertyName)));
-      }
-    }
-    return applyFunction(new ResourceProperty(propertyName, value, this.getSubPropertyDescriptor(propertyName)));
-  }
-
   getFormValue(): string {
     return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE).getFullUriWithoutTemplatedPart();
   }
@@ -91,88 +64,81 @@ export class ResourceAdapter extends AbstractProperty<ResourceDescriptor> {
   }
 
   getOtherLinks(): ResourceLink[] {
-    return this.linkFactory.getAll().filter(link => link.getFullUriWithoutTemplatedPart() != this.getSelfLink().getFullUriWithoutTemplatedPart());
-  }
-
-  resolveDescriptor(): Observable<ResourceAdapter> {
-    return this.descriptorResolver.resolve(this.getName()).pipe(
-      map(descriptor => {
-        if (!descriptor) {
-          throw new Error('The descriptor resolver should return a descriptor');
-        }
-        this.descriptor = descriptor;
-        return this;
-      }));
-  }
-
-  resolveDescriptorAndAssociations(): Observable<ResourceAdapter> {
-    return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(this.getName()).pipe(
-      map(descriptor => {
-        this.descriptor = descriptor;
-        return this;
-      }));
-  }
-
-  // TODO: Duplicate of ResourceProperty#getObjectProperties to avoid cyclic dependency
-  getObjectProperties(): ResourceProperty[] {
-    const value = this.toRawProperty();
-    if (typeof value !== 'object') {
-      throw new Error(JSON.stringify(value) + ' is not an object!');
-    }
-    return Object.keys(value).map(key => new ResourceProperty(key, value[key], this.getSubPropertyDescriptor(key)));
+    return this.linkFactory.getAll()
+      .filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
   }
 
   /**
-   * Throws an error if embedded resource does not exist.
+   * Overrides {@link JsonObjectPropertyImpl}'s implementation to also return the embedded resource objects.
    */
+  getChildProperties(): JsonProperty<HalValueType>[] {
+    const stateKeys = this.getStateKeys();
+
+    const embedded = this.getValue()._embedded;
+    const embeddedKeys = embedded ? Object.keys(embedded) : [];
+
+    return stateKeys.map(k => this.getPropertyFactory().create(k, this.getValue()[k])).concat(
+      embeddedKeys.map(k => this.getPropertyFactory().create(k, embedded[k]))
+    );
+  }
+
+  /**
+   * Overrides {@link JsonObjectPropertyImpl}'s implementation to also consider embedded resource objects.
+   */
+  getChildProperty(propertyName: string): JsonProperty<HalValueType> {
+    if (this.getStateKeys().some(k => k === propertyName)) {
+      return super.getChildProperty(propertyName);
+    }
+    const embedded = this.getValue()._embedded;
+    if (embedded && embedded[propertyName]) {
+      return this.getPropertyFactory().create(propertyName, embedded[propertyName]);
+    }
+  }
+
+  toRawObject(): JsonRawObjectProperty {
+    return new JsonObjectPropertyImpl<JsonValueType, PropDescriptor>(name, this.toObj(property =>
+        this.toValueWithRawInnerDataOnly(property)),
+      this.getDescriptorIfAny(), this.getPropertyFactory() as PropertyFactory<JsonValueType>);
+  }
+
+  getDisplayValue(): string | number {
+    return this.extractStateObject().getDisplayValue();
+  }
+
+  private getStateKeys() {
+    return Object.keys(this.getValue()).filter(key => this.filterOutMetadata(key));
+  }
+
+  /**
+   * @throws an error if embedded resource does not exist.
+   */
+  @NotNull((obj, args) => `Embedded object ${args[0]} does not exist.`)
   private getEmbedded(linkRelationType: string): HalResourceObject | HalResourceObject[] {
-    const embedded = this.resourceObject._embedded[linkRelationType];
-    if (embedded) {
-      return embedded;
-    } else {
-      throw new Error(`Embedded object ${linkRelationType} does not exist.`);
-    }
+    return this.getValue()._embedded[linkRelationType];
   }
 
-  /**
-   * Returns an empty list if there are no embedded resources.
-   */
-  private getEmbeddedResourcesAsProperties(): ResourceProperty[] {
-    const embedded = this.resourceObject._embedded;
-    if (!embedded) {
-      return [];
-    }
-    return Object.keys(embedded).map(key => this.toResourceProperty(key, embedded[key]));
+  private extractStateObject() {
+    const obj = {};
+    Object.keys(this.getValue()).filter(k => this.filterOutMetadata(k)).forEach(k => obj[k] = this.getValue()[k]);
+    return new JsonObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny(), this.getPropertyFactory());
   }
 
   private filterOutMetadata(key: string): boolean {
     return !ResourceAdapter.METADATA_PROPERTIES.some(p => p === key);
   }
 
-  protected toRawProperty(): JsonObject {
-    return this.getRawPropertiesOf(this.resourceObject);
-  }
-
-  /**
-   * Transforms the resource(s) to an object or array property.
-   */
-  private toResourceProperty(resourceName: string, resource: HalResourceObject | HalResourceObject[]): ResourceProperty {
-    const rawValue = Array.isArray(resource) ? resource.map(r => this.getRawPropertiesOf(r)) : this.getRawPropertiesOf(resource);
-    return new ResourceProperty(resourceName, rawValue, this.getSubPropertyDescriptor(resourceName));
-  }
-
-  /**
-   * Removes the HAL metadata from the resource.
-   */
-  private getRawPropertiesOf(resourceObject: HalResourceObject): JsonObject {
-    const properties = {};
-    Object.keys(resourceObject)
-      .filter(key => this.filterOutMetadata(key))
-      .forEach(key => properties[key] = resourceObject[key]);
-    return properties;
-  }
-
   private getSubResourceDescriptor(embeddedRelationType: string): ResourceDescriptor {
-    return this.descriptor ? this.descriptor.getChildResourceDesc(embeddedRelationType) : undefined;
+    return this.getDescriptorIfAny() ? this.getDescriptor().orNull<ObjectPropertyDescriptor, 'getChildDescriptor'>(d =>
+      d.getChildDescriptor, embeddedRelationType) as ResourceDescriptor : undefined;
+  }
+
+  private toValueWithRawInnerDataOnly(property: JsonProperty<HalValueType>): JsonValueType {
+    if (property instanceof JsonObjectPropertyImpl) {
+      return property.toObj(p => this.toValueWithRawInnerDataOnly(p));
+    } else if (property instanceof JsonArrayPropertyImpl) {
+      return property.getArrayItems().map(item => this.toValueWithRawInnerDataOnly(item));
+    } else {
+      return property.getValue();
+    }
   }
 }

@@ -6,11 +6,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceAdapter} from 'hateoas-navigator';
-import {ResourceProperty} from 'hateoas-navigator';
 import SpyObj = jasmine.SpyObj;
 import {ResourceActions} from 'hateoas-navigator';
 import {ResourceDescriptor} from 'hateoas-navigator';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
+import {PrimitiveOrEmptyProperty} from 'hateoas-navigator/hal-navigator/json-property/primitive-or-empty-property';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
@@ -26,7 +26,7 @@ describe('ResourceItemComponent', () => {
     versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject',
       ['getPropertiesAndEmbeddedResourcesAsProperties', 'getDescriptor']);
     versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties.and.returnValue([
-      {} as ResourceProperty
+      {} as PrimitiveOrEmptyProperty
     ]);
     versionedResourceObject.getDescriptor.and.returnValue({
       getTitle: () => 'Test',

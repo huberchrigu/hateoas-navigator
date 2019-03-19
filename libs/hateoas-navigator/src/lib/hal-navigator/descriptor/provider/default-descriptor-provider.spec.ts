@@ -1,7 +1,7 @@
 import {async} from '@angular/core/testing';
 import {ResourceSchemaService} from '../../resource-services/resource-schema.service';
 import {JsonSchema, JsonSchemaDocument} from '../../schema/json-schema';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from '../../alps-document/alps-descriptor-adapter';
 import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';

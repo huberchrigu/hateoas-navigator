@@ -6,7 +6,7 @@ import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceAdapter} from 'hateoas-navigator';
 import {ResourceLink} from 'hateoas-navigator';
 import {FormControlFactory} from 'hateoas-navigator';
-import {PropertyDescriptor} from 'hateoas-navigator';
+import {PropDescriptor} from 'hateoas-navigator';
 import {SubFormField} from 'hateoas-navigator';
 import {Subscription} from 'rxjs/Rx';
 
@@ -26,7 +26,7 @@ export class ResourceFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: { resourceObject: VersionedResourceAdapter, resourceDescriptor: PropertyDescriptor }) => {
+    this.route.data.subscribe((data: { resourceObject: VersionedResourceAdapter, resourceDescriptor: PropDescriptor }) => {
       const resourceObject = data.resourceObject;
       const descriptor = resourceObject ? resourceObject.getDescriptor() : data.resourceDescriptor;
       this.fields = (descriptor.toFormFieldBuilder().build() as SubFormField).getSubFields();
@@ -45,7 +45,7 @@ export class ResourceFormComponent implements OnInit {
       (resourceName, object) => this.halDocumentService.create(resourceName, object) :
       (resourceName, object) => this.halDocumentService.update(resourceName, this.route.snapshot.url[1].path, object, this.version);
     return submitFunction(this.route.snapshot.url[0].path, this.form.value).subscribe((item: VersionedResourceAdapter) => {
-      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.resourceObject, undefined).getRelativeUri());
+      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue(), undefined).getRelativeUri());
     });
   }
 }

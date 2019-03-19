@@ -1,43 +1,42 @@
-import {ResourceDescriptorProvider} from './resource-descriptor-provider';
 import {ModuleConfiguration} from '../../config';
 import {ResourceSchemaService} from '../../resource-services/resource-schema.service';
-import {combineLatest, Observable} from 'rxjs/index';
-import {CombiningResourceDescriptor} from '../combining/combining-resource-descriptor';
-import {StaticResourceDescriptor} from '../static/static-resource-descriptor';
-import {JsonSchemaResourceDescriptor} from '../json-schema/json-schema-resource-descriptor';
+import {combineLatest, Observable} from 'rxjs';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
-import {AlpsResourceDescriptor} from '../alps/alps-resource-descriptor';
 import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';
 import {JsonSchemaDocument} from '../../schema/json-schema';
-import {PropertyDescriptor} from '../property-descriptor';
 import {map} from 'rxjs/operators';
+import {AlpsDescriptorMapper} from '../alps/alps-descriptor-mapper';
+import {DescriptorMapper} from '../mapper/descriptor-mapper';
+import {CombiningDescriptorMapper} from '../combining/combining-descriptor-mapper';
+import {StaticDescriptorMapper} from '../static/static-descriptor-mapper';
+import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
+import {ResourceDescriptor} from '../resource-descriptor';
+import {DefaultMapperConfigs} from 'hateoas-navigator/hal-navigator/descriptor/combining/mapper-config';
 
-/**
- * Combines {@link StaticResourceDescriptor static configuration}, {@link JsonSchemaResourceDescriptor JsonSchema} and {@link AlpsResourceDescriptor ALPS}
- * to describe a resource.
- */
-export class DefaultDescriptorProvider implements ResourceDescriptorProvider {
+export class DefaultDescriptorProvider {
 
   constructor(private config: ModuleConfiguration, private schemaService: ResourceSchemaService) {
 
   }
 
-  resolve(resourceName: string): Observable<CombiningResourceDescriptor> {
+  resolve(resourceName: string): Observable<ResourceDescriptor> {
     return combineLatest(this.schemaService.getJsonSchema(resourceName), this.schemaService.getAlps(resourceName))
       .pipe(
-        map(([jsonSchema, alps]) => this.assembleDescriptors(resourceName, jsonSchema, alps)),
-        map(descriptors => new CombiningResourceDescriptor(descriptors))
+        map(([jsonSchema, alps]) => this.assembleDescriptorBuilders(resourceName, jsonSchema, alps)),
+        map(descriptorMappers => new CombiningDescriptorMapper(descriptorMappers, DefaultMapperConfigs.ignoreChildrenFromAlps())
+          .toDescriptor() as ResourceDescriptor)
       );
   }
 
-  private assembleDescriptors(resourceName: string, jsonSchema: JsonSchemaDocument, alps: AlpsDocumentAdapter): PropertyDescriptor[] {
-    const descriptors: PropertyDescriptor[] = [];
+  private assembleDescriptorBuilders(resourceName: string, jsonSchema: JsonSchemaDocument,
+                                     alps: AlpsDocumentAdapter): DescriptorMapper<any>[] {
+    const descriptors: DescriptorMapper<any>[] = [];
     if (this.isStaticConfigurationAvailable(resourceName)) {
-      descriptors.push(new StaticResourceDescriptor(resourceName, this.config.itemConfigs[resourceName], this.config.itemConfigs));
+      descriptors.push(new StaticDescriptorMapper(resourceName, this.config.itemConfigs[resourceName], this.config.itemConfigs));
     }
     descriptors.push(
-      new JsonSchemaResourceDescriptor(resourceName, jsonSchema, null, new SchemaReferenceFactory(jsonSchema.definitions)),
-      new AlpsResourceDescriptor(alps.getRepresentationDescriptor().descriptor, alps.getAllDescriptors().map(d => d.descriptor))
+      new JsonSchemaDescriptorMapper(resourceName, jsonSchema, new SchemaReferenceFactory(jsonSchema.definitions)),
+      new AlpsDescriptorMapper(alps.getRepresentationDescriptor().descriptor, alps.getAllDescriptors().map(d => d.descriptor))
     );
     return descriptors;
   }

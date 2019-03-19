@@ -95,10 +95,10 @@ export const alps: AlpsDocument = JSON.parse(`
 {
   "alps" : {
     "version" : "1.0",
-    "descriptors" : [ {
+    "descriptor" : [ {
       "id" : "meetingGroup-representation",
       "href" : "http://localhost:4200/profile/meetingGroups",
-      "descriptors" : [ {
+      "descriptor" : [ {
         "name" : "preferences",
         "type" : "SEMANTIC"
       }, {
@@ -123,7 +123,7 @@ export const alps: AlpsDocument = JSON.parse(`
       "name" : "meetingGroups",
       "type" : "SAFE",
       "rt" : "#meetingGroup-representation",
-      "descriptors" : [ {
+      "descriptor" : [ {
         "name" : "page",
         "doc" : {
           "value" : "The page to return.",

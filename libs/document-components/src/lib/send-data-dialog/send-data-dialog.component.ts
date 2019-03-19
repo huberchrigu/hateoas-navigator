@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {SendDataDialogData} from "document-components/send-data-dialog/send-data-dialog-data";
-import {SendDataDialogResult} from "document-components/send-data-dialog/send-data-dialog-result";
+import {SendDataDialogData} from './send-data-dialog-data';
+import {SendDataDialogResult} from './send-data-dialog-result';
 import {FormGroup} from "@angular/forms";
 import {FormControlFactory, FormField, SubFormField} from "hateoas-navigator";
 

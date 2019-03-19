@@ -2,21 +2,20 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceFormComponent} from './resource-form.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ResourceService} from 'hateoas-navigator';
+import {PropDescriptor, ResourceService} from 'hateoas-navigator';
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
-import {PropertyDescriptor} from 'hateoas-navigator';
 import {SubFormField} from 'hateoas-navigator';
 import {FormFieldBuilder} from 'hateoas-navigator';
 import {FormField} from 'hateoas-navigator';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 
 describe('ResourceFormComponent', () => {
   let component: ResourceFormComponent;
   let fixture: ComponentFixture<ResourceFormComponent>;
 
   beforeEach(async(() => {
-      const resourceDescriptor = jasmine.createSpyObj<PropertyDescriptor>('resourceDescriptor',
+      const resourceDescriptor = jasmine.createSpyObj<PropDescriptor>('resourceDescriptor',
         ['toFormFieldBuilder', 'getTitle']);
       const form = {
         getSubFields: () => []

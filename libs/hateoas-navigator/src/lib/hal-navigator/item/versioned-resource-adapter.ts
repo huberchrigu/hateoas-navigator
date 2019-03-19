@@ -1,14 +1,18 @@
-import {HalResourceObject} from '../hal-resource/hal-resource-object';
 import {ResourceAdapter} from '../hal-resource/resource-adapter';
-import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
+import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
+import {HalPropertyFactory} from '../hal-resource/factory/hal-property-factory';
+import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
+import {LinkFactory} from '../link-object/link-factory';
+import {ResourceDescriptor} from '../descriptor/resource-descriptor';
+import {VersionedJsonResourceObject} from '../hal-resource/resource-object';
 
 /**
  * This is a resource object with a version.
  */
-export class VersionedResourceAdapter extends ResourceAdapter {
-
-  constructor(resourceName: string, resourceObject: HalResourceObject, private version: string, descriptorResolver: ResourceDescriptorProvider) {
-    super(resourceName, resourceObject, descriptorResolver);
+export class VersionedResourceAdapter extends ResourceAdapter implements VersionedJsonResourceObject {
+  constructor(private version: string, name: string, resourceObject: HalResourceObject, propertyFactory: HalPropertyFactory,
+              resourceFactory: HalResourceFactory, linkFactory: LinkFactory, descriptor: ResourceDescriptor) {
+    super(name, resourceObject, propertyFactory, resourceFactory, linkFactory, descriptor);
   }
 
   getVersion() {

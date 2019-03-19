@@ -60,7 +60,7 @@ export class FormFieldBuilder {
     return this;
   }
 
-  withSubFields(subFields: FormFieldBuilder[]) {
+  withSubFields(subFields: FormFieldBuilder[]): this {
     if (subFields && subFields.length > 0) {
       this.subFields = subFields;
     }

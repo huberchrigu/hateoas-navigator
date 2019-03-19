@@ -9,6 +9,7 @@ import {ResourceDescriptorProvider} from './descriptor/provider/resource-descrip
 import {DefaultDescriptorProvider} from './descriptor/provider/default-descriptor-provider';
 import {ResourceSchemaService} from './resource-services/resource-schema.service';
 import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-descriptor-resolver.service';
+import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-
     ResourceDescriptorResolverService,
     ResourceObjectResolverService,
     ItemCacheService,
-    ResourceSchemaService
+    ResourceSchemaService,
+    ResourceAdapterFactoryService
   ]
 })
 export class HalNavigatorModule {

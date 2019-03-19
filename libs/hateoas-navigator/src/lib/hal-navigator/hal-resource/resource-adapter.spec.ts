@@ -1,39 +1,50 @@
 import {ResourceAdapter} from './resource-adapter';
-import {HalResourceObject} from './hal-resource-object';
+import {HalResourceObject} from './value-type/hal-value-type';
+import {ResourceLinks} from './value-type/resource-links';
+import {LinkFactory} from '../link-object/link-factory';
+import {HalPropertyFactory} from './factory/hal-property-factory';
+import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
-import {ResourceLinks} from './resource-links';
 
 describe('ResourceAdapter', () => {
+
+  // TODO: Should all be mocked, and tests moved to according factory
+  const linkFactory = {} as LinkFactory;
+  const resourceDescriptorProvider = {} as ResourceDescriptorProvider;
+  const resourceFactory = new ResourceAdapterFactoryService(resourceDescriptorProvider);
+  const propertyFactory = new HalPropertyFactory(resourceFactory);
+
   it('should get the relative link to this resource', () => {
-    const testee = new ResourceAdapter('resource', {
-      _links: {
-        self: {href: 'http://localhost:4200/resource/1'}
-      }
-    } as HalResourceObject, {} as ResourceDescriptorProvider);
+    const links = {
+      self: {href: 'http://localhost:4200/resource/1'}
+    };
+    const testee = createTestee('resource', {
+      _links: links
+    } as HalResourceObject, new LinkFactory(links, resourceDescriptorProvider));
     expect(testee.getSelfLink().getRelativeUri()).toEqual('/resource/1');
   });
 
   it('should transform an array property to a display value', () => {
-    const testee = new ResourceAdapter('property', dummyResource('property', 'test', dummyResource()),
-      {} as ResourceDescriptorProvider);
+    const testee = createTestee('property', dummyResource('property', 'test', dummyResource()));
 
     expect(testee.getDisplayValue()).toEqual('property: test');
   });
 
   it('should combine embedded and state properties', () => {
-    const testee = new ResourceAdapter('resource', dummyResource('property', 'value',
-      dummyResource('nestedProperty', 'nestedValue')), {} as ResourceDescriptorProvider);
+
+    const testee = createTestee('resource', dummyResource('property', 'value',
+      dummyResource('nestedProperty', 'nestedValue')));
     const result = testee.getPropertiesAndEmbeddedResourcesAsProperties();
 
     expect(result.map(p => p.getName())).toEqual(['property', 'resource']);
-    expect(result[1].getObjectProperties().map(p => p.getName())).toEqual(['nestedProperty']);
+    expect((result[1] as ResourceAdapter).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
   });
 
   function dummyLinks(): ResourceLinks {
     return {self: {href: 'this should not be displayed'}};
   }
 
-  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource = {} as HalResourceObject): HalResourceObject {
+  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource = undefined): HalResourceObject {
     const resource: HalResourceObject = {
       _links: dummyLinks()
     } as HalResourceObject;
@@ -46,5 +57,9 @@ describe('ResourceAdapter', () => {
       };
     }
     return resource;
+  }
+
+  function createTestee(name: string, halResourceObject: HalResourceObject, lf = linkFactory) {
+    return new ResourceAdapter(name, halResourceObject, propertyFactory, resourceFactory, lf);
   }
 });

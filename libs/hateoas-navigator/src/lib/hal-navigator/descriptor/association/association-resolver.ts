@@ -1,9 +1,9 @@
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
 import {combineLatest, forkJoin, Observable, of} from 'rxjs';
-import {AssociatedResourceDescriptor} from './associated-resource-descriptor';
-import {AssociatedPropertyDescriptor} from './associated-property-descriptor';
-import {PropertyDescriptor} from '../property-descriptor';
+import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import {map, flatMap, tap} from 'rxjs/operators';
+import {LOGGER} from 'hateoas-navigator/logging/logger';
+import {ResourceDescriptor} from 'hateoas-navigator';
 
 /**
  * Recursively visits all descriptors and resolves all its associations if any.
@@ -12,53 +12,48 @@ import {map, flatMap, tap} from 'rxjs/operators';
  * </p>
  */
 export class AssociationResolver {
-  private cache: { [resourceName: string]: AssociatedResourceDescriptor } = {};
+  private cache: { [resourceName: string]: ResourceDescriptor } = {};
 
   constructor(private descriptorProvider: ResourceDescriptorProvider) {
   }
 
-  fetchDescriptorWithAssociations(resourceName: string): Observable<AssociatedResourceDescriptor> {
+  fetchDescriptorWithAssociations(resourceName: string): Observable<ResourceDescriptor> {
+    LOGGER.debug('Resolving ' + resourceName);
     const cached = this.cache[resourceName];
     if (cached) {
       return of(cached);
     }
     return this.descriptorProvider.resolve(resourceName).pipe(
       flatMap(desc => {
-        this.cache[resourceName] = new AssociatedResourceDescriptor(desc, undefined, undefined, undefined);
-        return this.resolveAssociations(desc, this.cache[resourceName]);
-      }));
+        this.cache[resourceName] = desc;
+        return this.resolveAssociations(desc);
+      }),
+      tap(() => LOGGER.debug(resourceName + ' resolved'))
+    );
   }
 
   /**
-   * Resolves the associations of the descriptor itself, of its children and its array items. Then the resulting descriptors are merged
-   * into {@link AssociatedPropertyDescriptor}.
+   * Resolves the associations of the descriptor itself (if any), of its children and its array items.
    */
-  private resolveAssociations<T extends PropertyDescriptor, D extends AssociatedPropertyDescriptor>(originalDescriptor: T, newDescriptor: D): Observable<D> {
-    const children = originalDescriptor.getChildrenDescriptors();
-    const arrayItems = originalDescriptor.getArrayItemsDescriptor();
+  private resolveAssociations<T extends PropDescriptor>(descriptor: T): Observable<T> {
+    const children = descriptor.orEmpty<ObjectPropertyDescriptor>(d => d.getChildDescriptors);
+    const arrayItems = descriptor.orNull<ArrayPropertyDescriptor<PropDescriptor>, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
 
-    const resolvedChildren: Observable<AssociatedPropertyDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
-    const resolvedArrayItem: Observable<AssociatedPropertyDescriptor> = arrayItems ?
-      this.resolveAssociations(arrayItems, new AssociatedPropertyDescriptor(arrayItems, undefined, undefined, undefined)) :
+    const resolvedChildren: Observable<PropDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
+    const resolvedArrayItem: Observable<PropDescriptor> = arrayItems ?
+      this.resolveAssociations(arrayItems) :
       of(null);
 
-    return combineLatest(this.resolveAssociation(originalDescriptor), resolvedChildren, resolvedArrayItem)
-      .pipe(tap(([associatedResource, associatedChildren, associatedArrayItem]) => newDescriptor.update(associatedResource, associatedChildren, associatedArrayItem)),
-        map(() => newDescriptor));
+    return combineLatest(this.resolveAssociation(descriptor), resolvedChildren, resolvedArrayItem)
+      .pipe(map(() => descriptor));
   }
 
-  private resolveAssociation(descriptor: PropertyDescriptor): Observable<AssociatedResourceDescriptor> {
-    const associatedResourceName = descriptor.getAssociatedResourceName();
-    if (associatedResourceName) {
-      return this.fetchDescriptorWithAssociations(associatedResourceName);
-    } else {
-      return of(null);
-    }
+  private resolveAssociation(descriptor: PropDescriptor): Observable<ResourceDescriptor> {
+    const observable = descriptor.orNull<AssociationPropertyDescriptor, 'resolveResource'>(d => d.resolveResource, this.descriptorProvider);
+    return observable ? observable : of(null);
   }
 
-  private resolveAll(descriptors: Array<PropertyDescriptor>): Observable<AssociatedPropertyDescriptor[]> {
-    return forkJoin(descriptors.map(d => this.resolveAssociations(d,
-      new AssociatedPropertyDescriptor(d, undefined, undefined, undefined)
-    )));
+  private resolveAll(descriptors: Array<PropDescriptor>): Observable<PropDescriptor[]> {
+    return forkJoin(descriptors.map(d => this.resolveAssociations(d)));
   }
 }

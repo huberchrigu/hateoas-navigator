@@ -1,9 +1,12 @@
 import SpyObj = jasmine.SpyObj;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import {PropertyDescriptorMockBuilder} from '../combining/property-descriptor-mock-builder.spec';
+import {
+  AssociationDescriptorMockBuilder,
+  ObjectDescriptorMockBuilder
+} from '../combining/property-descriptor-mock-builder.spec';
 import {AssociationResolver} from './association-resolver';
 import {Observable, of} from 'rxjs';
-import {PropertyDescriptor} from 'hateoas-navigator';
+import {AssociationPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import {fakeAsync} from '@angular/core/testing';
 
 describe('AssociationResolver', () => {
@@ -25,8 +28,10 @@ describe('AssociationResolver', () => {
     let wasCalled = false;
     testee.fetchDescriptorWithAssociations('rootResource').subscribe(descriptor => {
       expect(descriptorProviderMock.resolve).toHaveBeenCalledWith('associatedResource');
-      expect(descriptor.getChildrenDescriptors().length).toBe(1);
-      expect(descriptor.getChildrenDescriptors()[0].getAssociatedResourceName()).toEqual('associatedResource');
+      expect(descriptor.getChildDescriptors().length).toBe(1);
+      expect(descriptor.getChildDescriptors()[0]
+        .orNull<AssociationPropertyDescriptor, 'getAssociatedResourceName'>(d => d.getAssociatedResourceName))
+        .toEqual('associatedResource');
       wasCalled = true;
     });
     jasmine.clock().tick(1000);
@@ -38,32 +43,26 @@ describe('AssociationResolver', () => {
 
     let wasCalled = false;
     testee.fetchDescriptorWithAssociations('rootResource').subscribe(descriptor => {
-      expect(descriptor.getChildrenDescriptors().length).toBe(1);
-      expect(descriptor.getChildrenDescriptors()[0].getAssociatedResourceName()).toEqual('rootResource');
-      expect(descriptor.getChildrenDescriptors()[0].getChildDescriptor('rootResource')).toEqual(descriptor.getChildrenDescriptors()[0]);
+      expect(descriptor.getChildDescriptors().length).toBe(1);
+      expect(descriptor.getChildDescriptors()[0].orNull(d => d.getAssociatedResourceName)).toEqual('rootResource');
+      // expect(descriptor.getChildDescriptors()[0].orNull(d => d.getChildDescriptor, 'rootResource')).toEqual(descriptor.orNull(d => d.getChildrenDescriptors)[0]); // TODO: What is the consequence, that an association has no child descriptors
       wasCalled = true;
     });
     jasmine.clock().tick(1000);
     expect(wasCalled).toBeTruthy();
   }));
 
-  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<PropertyDescriptor> {
-    const rootResource = of(new PropertyDescriptorMockBuilder()
-      .withName(resource)
-      .withAssociatedResourceName(null)
-      .withChildrenDescriptors([new PropertyDescriptorMockBuilder()
-        .withName(associationName)
+  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<PropDescriptor> {
+    const rootResource = of(new ObjectDescriptorMockBuilder()
+      .withChildrenDescriptors([new AssociationDescriptorMockBuilder()
         .withAssociatedResourceName(associationName)
-        .withChildrenDescriptors([])
-        .withArrayItemsDescriptor(null)
+        .withName(associationName)
         .build()])
-      .withArrayItemsDescriptor(null)
+      .withName(resource)
       .build());
-    const linkedResource = of(new PropertyDescriptorMockBuilder()
-      .withName(associationName)
+    const linkedResource = of(new ObjectDescriptorMockBuilder()
       .withChildrenDescriptors([])
-      .withArrayItemsDescriptor(null)
-      .withAssociatedResourceName(null)
+      .withName(associationName)
       .build());
     return resource === 'rootResource' ? rootResource : linkedResource;
   }
