@@ -1,9 +1,9 @@
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {DescriptorBuilder, FieldProcessor} from '../mapper/descriptor-builder';
-import {PropertyCombiner} from 'hateoas-navigator/hal-navigator/descriptor/mapper/property-combiner';
+import {PropertyCombiner} from '../mapper/property-combiner';
 import {ResourceActions} from 'hateoas-navigator';
 import {TwoArrays} from 'hateoas-navigator/js/two-any';
-import {MapperConfig} from 'hateoas-navigator/hal-navigator/descriptor/combining/mapper-config';
+import {MapperConfigs} from './mapper-config';
 
 /**
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.

@@ -20,6 +20,15 @@ export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
   getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[];
 
   /**
+   * Checks whether the given embedded resource exists and is not an array. If so, the resource is returned.
+   *
+   * @param linkRelationType The embedded resource name.
+   *
+   * @return null if it does not exist or if it is an array.
+   */
+  getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject;
+
+  /**
    * @return The resource state plus the embedded resources' state.
    */
   getPropertiesAndEmbeddedResourcesAsProperties(): JsonProperty<JsonValueType>[];
@@ -29,6 +38,11 @@ export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
   getLinks(): ResourceLink[];
 
   getSelfLink(): ResourceLink;
+
+  /**
+   * {@link getLinks All links} minus the ones {@link getSelfLink pointing to itself}.
+   */
+  getOtherLinks(): ResourceLink[];
 }
 
 export interface VersionedJsonResourceObject extends JsonResourceObject {

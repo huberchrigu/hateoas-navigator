@@ -40,13 +40,6 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
     }
   }
 
-  /**
-   * Checks whether the given embedded resource exists and is not an array. If so, the resource is returned.
-   *
-   * @param linkRelationType The embedded resource name.
-   *
-   * @return null if it does not exist or if it is an array.
-   */
   getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject {
     const resource = this.getValue()._embedded[linkRelationType];
     if (Array.isArray(resource)) {
@@ -70,9 +63,6 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
     return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
   }
 
-  /**
-   * {@link getLinks All links} minus the ones {@link getSelfLink pointing to itself}.
-   */
   getOtherLinks(): ResourceLink[] {
     return this.linkFactory.getAll()
       .filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
