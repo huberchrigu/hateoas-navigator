@@ -4,15 +4,15 @@ import {AbstractProperty} from './abstract-property';
 import {JsonObjectProperty, JsonProperty} from './json-property';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 
-export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends PropDescriptor> extends AbstractProperty<GenericObjectValueType<CHILDREN>, D>
-  implements JsonObjectProperty<CHILDREN> {
+export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends PropDescriptor>
+  extends AbstractProperty<GenericObjectValueType<CHILDREN>, D> implements JsonObjectProperty<CHILDREN> {
 
   constructor(name: string, value: GenericObjectValueType<CHILDREN>, descriptor: D, private propertyFactory: PropertyFactory<CHILDREN>) {
     super(name, value, descriptor);
   }
 
   getFormValue(): JsonValueType {
-    return this.toObj(property => property.getFormValue());
+    return this.toObjOfMappedValues(property => property.getFormValue());
   }
 
   getChildProperties(): JsonProperty<CHILDREN>[] {
@@ -24,13 +24,7 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Pr
     if (childProperties.length === 0) {
       return '';
     }
-    return childProperties.map(p => p.getName() + ": " + p.getDisplayValue()).reduce((a, b) => a + ", " + b);
-  }
-
-  toObj<V>(propertyToValue: (property: JsonProperty<CHILDREN>) => V): { [key: string]: V } {
-    const obj = {};
-    this.getChildProperties().forEach(property => obj[property.getName()] = propertyToValue(property));
-    return obj;
+    return childProperties.map(p => p.getName() + ': ' + p.getDisplayValue()).reduce((a, b) => a + ', ' + b);
   }
 
   /**
@@ -39,6 +33,17 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Pr
   getChildProperty(propertyName: string): JsonProperty<CHILDREN> {
     const v = this.getValue()[propertyName];
     return this.propertyFactory.create(propertyName, v);
+  }
+
+  /**
+   * {@link getChildProperties Gets all child properties} and transforms them with the given mapping function.
+   *
+   * _Is public because sub-classes of JsonObjectPropertyImpl need it, but does not need to be exported from the library._
+   */
+  toObjOfMappedValues<V>(propertyToValue: (property: JsonProperty<CHILDREN>) => V): { [key: string]: V } {
+    const obj = {};
+    this.getChildProperties().forEach(property => obj[property.getName()] = propertyToValue(property));
+    return obj;
   }
 
   protected getPropertyFactory(): PropertyFactory<CHILDREN> {

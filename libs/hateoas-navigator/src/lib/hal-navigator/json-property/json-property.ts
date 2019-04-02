@@ -1,5 +1,5 @@
 import {PropDescriptor} from '../descriptor';
-import {GenericArrayValueType, GenericObjectValueType, JsonValueType} from "./value-type/json-value-type";
+import {GenericArrayValueType, GenericObjectValueType, JsonValueType} from './value-type/json-value-type';
 
 export interface JsonProperty<V> {
   getDisplayValue(): string | number;
@@ -10,15 +10,20 @@ export interface JsonProperty<V> {
 
   getName(): string;
 
-  getValue(): V
+  getValue(): V;
+
+  hasDescriptor(): boolean;
 }
 
 export interface JsonArrayProperty<CHILDREN extends JsonValueType> extends JsonProperty<GenericArrayValueType<CHILDREN>> {
-  getArrayItems(): JsonProperty<CHILDREN>[]
+  getArrayItems(): JsonProperty<CHILDREN>[];
 }
 
 export interface JsonObjectProperty<CHILDREN extends JsonValueType> extends JsonProperty<GenericObjectValueType<CHILDREN>> {
-  getChildProperties(): JsonProperty<CHILDREN>[]
+  /**
+   * Gets all children, i.e. for a JSON object {a: ..., b: ...} "a" and "b", for a resource object also the embedded resources.
+   */
+  getChildProperties(): JsonProperty<CHILDREN>[];
 
   getChildProperty(propertyName: string): JsonProperty<CHILDREN>;
 }

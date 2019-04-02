@@ -20,6 +20,10 @@ export abstract class AbstractProperty<V, D extends PropDescriptor> implements J
     return this.value;
   }
 
+  hasDescriptor(): boolean {
+    return !!this.descriptor;
+  }
+
   /**
    * Use this internally if null/undefined values are ok.
    */
