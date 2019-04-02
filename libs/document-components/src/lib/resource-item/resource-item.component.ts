@@ -22,7 +22,7 @@ export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
   resourceObject: VersionedJsonResourceObject;
 
-  constructor(private route: ActivatedRoute, private halDocumentService: ResourceService, private dialog: MatDialog,
+  constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
               private router: Router, private resourceFactory: ResourceAdapterFactoryService) {
   }
 
@@ -46,7 +46,7 @@ export class ResourceItemComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ConfirmationDialogResult) => {
       if (result && result.confirmed) {
-        this.halDocumentService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
+        this.resourceService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
           .subscribe(() => {
             return this.router.navigate(['..'], {relativeTo: this.route});
           });
@@ -68,14 +68,17 @@ export class ResourceItemComponent implements OnInit {
       return this.router.navigate([resource.getSelfLink().getRelativeUriWithoutTemplatedPart()]);
     } else {
       const uri = link.getRelativeUriWithoutTemplatedPart();
-      const options = this.halDocumentService.getOptionsForCustomUri(uri);
+      const options = this.resourceService.getOptionsForCustomUri(uri);
       options.subscribe(o => this.openDialogForCustomLink(uri, o));
     }
   }
 
   private initResource(resourceObject: VersionedJsonResourceObject) {
+    if (!resourceObject) {
+      throw new Error(`No resource object provided!`);
+    }
     this.resourceObject = resourceObject;
-    this.specialLinks.splice(0, this.specialLinks.length, ...this.resourceObject.getOtherLinks());
+    this.specialLinks.splice(0, this.specialLinks.length, ...resourceObject.getOtherLinks());
   }
 
   private openDialogForCustomLink(uri: string, methods: string[]) {
@@ -87,7 +90,7 @@ export class ResourceItemComponent implements OnInit {
       if (!result || result.isCancelled()) {
         return;
       }
-      return this.halDocumentService.executeCustomAction(uri, this.resourceObject, result.method, result.body)
+      return this.resourceService.executeCustomAction(uri, this.resourceObject, result.method, result.body)
         .pipe(
           flatMap(resource => this.resourceFactory
             .resolveDescriptorAndAssociations(resource.getName(), resource.getValue(),

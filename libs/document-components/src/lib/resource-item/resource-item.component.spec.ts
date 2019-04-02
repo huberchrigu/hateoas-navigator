@@ -11,6 +11,7 @@ import {ResourceActions} from 'hateoas-navigator';
 import {ResourceDescriptor} from 'hateoas-navigator';
 import {of} from 'rxjs';
 import {PrimitiveOrEmptyProperty} from 'hateoas-navigator/hal-navigator/json-property/primitive-or-empty-property';
+import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
@@ -46,7 +47,8 @@ describe('ResourceItemComponent', () => {
         },
         {provide: MatDialog, useValue: {}},
         {provide: Router, useValue: {}},
-        {provide: ResourceService, useValue: {}}
+        {provide: ResourceService, useValue: {}},
+        {provide: ResourceAdapterFactoryService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

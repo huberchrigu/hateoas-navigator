@@ -38,7 +38,8 @@ export class HalNavigatorModule {
         provide: MODULE_CONFIG, useValue: configuration
       }, {
         provide: ResourceDescriptorProvider, useFactory: factory, deps: deps
-      }]
+      },
+        ResourceAdapterFactoryService]
     };
   }
 }
