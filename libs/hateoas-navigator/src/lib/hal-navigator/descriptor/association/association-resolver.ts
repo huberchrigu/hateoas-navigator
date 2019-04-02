@@ -49,8 +49,11 @@ export class AssociationResolver {
   }
 
   private resolveAssociation(descriptor: PropDescriptor): Observable<ResourceDescriptor> {
-    const observable = descriptor.orNull<AssociationPropertyDescriptor, 'resolveResource'>(d => d.resolveResource, this.descriptorProvider);
-    return observable ? observable : of(null);
+    const associatedResourceName = descriptor.orNull<AssociationPropertyDescriptor, 'getAssociatedResourceName'>(d =>
+      d.getAssociatedResourceName);
+    return associatedResourceName ? this.fetchDescriptorWithAssociations(associatedResourceName)
+        .pipe(tap(associatedResourceDesc => (descriptor as AssociationPropertyDescriptor).setResolvedResource(associatedResourceDesc))) :
+      of(null);
   }
 
   private resolveAll(descriptors: Array<PropDescriptor>): Observable<PropDescriptor[]> {

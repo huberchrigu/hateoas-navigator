@@ -1,21 +1,21 @@
 import {ResourceActions} from '../actions/resource-actions';
 import {DescriptorMapper} from './descriptor-mapper';
 import {
-  ArrayFunc, ArrayPropertyDescriptor, AssociationPropertyDescriptor,
-  ObjectPropertyDescriptor, PropDescriptor, ToFunction
-} from '../prop-descriptor';
+  AbstractPropDescriptor,
+  ArrayPropertyDescriptor, AssociationPropertyDescriptor,
+  ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {ResourceDescriptor} from '../resource-descriptor';
 import {Observable} from 'rxjs';
 import {NotNull} from '../../../decorators/not-null';
 import {tap} from 'rxjs/operators';
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import apply = Reflect.apply;
+
 import {LOGGER} from 'hateoas-navigator/logging/logger';
 
 export type FieldProcessor = (fieldBuilder: FormFieldBuilder) => FormFieldBuilder;
 
-class PropertyDescriptorImpl implements PropDescriptor {
+class PropertyDescriptorImpl extends AbstractPropDescriptor {
   /**
    *
    * @param name An array item does not necessarily requires a name. All other descriptors do.
@@ -23,6 +23,7 @@ class PropertyDescriptorImpl implements PropDescriptor {
    * @param fieldProcessor Must not be null/undefined
    */
   constructor(private name: string, private title: string, private fieldProcessor: FieldProcessor) {
+    super();
   }
 
   getName(): string {
@@ -35,22 +36,6 @@ class PropertyDescriptorImpl implements PropDescriptor {
 
   toFormFieldBuilder(): FormFieldBuilder {
     return this.fieldProcessor(new FormFieldBuilder(this.getName()));
-  }
-
-  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
-    try {
-      return apply(fct(this), this, args);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
-    try {
-      return apply(fct(this), this, []);
-    } catch (e) {
-      return [];
-    }
   }
 }
 
@@ -120,8 +105,12 @@ class AssociationDescriptorImpl extends PropertyDescriptorImpl implements Associ
 
   resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceDescriptor> {
     return descriptorProvider.resolve(this.getAssociatedResourceName()).pipe(
-      tap(d => this.resolvedResource = d)
+      tap(d => this.setResolvedResource(d))
     );
+  }
+
+  setResolvedResource(associatedResourceDesc: ResourceDescriptor): void {
+    this.resolvedResource = associatedResourceDesc;
   }
 }
 

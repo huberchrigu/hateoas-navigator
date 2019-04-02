@@ -2,6 +2,31 @@ import {FormFieldBuilder} from '../form/form-field-builder';
 import {ResourceDescriptor} from './resource-descriptor';
 import {Observable} from 'rxjs';
 import {ResourceDescriptorProvider} from './provider/resource-descriptor-provider';
+import apply = Reflect.apply;
+
+export abstract class AbstractPropDescriptor implements PropDescriptor {
+  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
+    try {
+      return apply(fct(this), this, args);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
+    try {
+      return apply(fct(this), this, []);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  abstract getName(): string;
+
+  abstract getTitle(): string;
+
+  abstract toFormFieldBuilder(): FormFieldBuilder;
+}
 
 export interface PropDescriptor {
 
@@ -51,7 +76,16 @@ export interface ObjectPropertyDescriptor extends PropDescriptor {
 }
 
 export interface AssociationPropertyDescriptor extends PropDescriptor {
+  /**
+   * Resolves the associated resource's descriptor.
+   */
   resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceDescriptor>;
+
+  /**
+   * Can be used to {@link resolveResource resolve the association alone} and then setting the resolved resource so
+   * {@link getResource it can be reused}
+   */
+  setResolvedResource(associatedResourceDesc: ResourceDescriptor): void;
 
   getResource(): ResourceDescriptor;
 

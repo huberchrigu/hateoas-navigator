@@ -4,6 +4,7 @@ import {FormFieldBuilder} from '../../form/form-field-builder';
 import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import Spy = jasmine.Spy;
 import {ResourceDescriptorProvider} from 'hateoas-navigator/hal-navigator/descriptor/provider/resource-descriptor-provider';
+import {ResourceDescriptor} from 'hateoas-navigator';
 
 export class PropertyDescriptorMockBuilder<T extends PropDescriptor> {
   protected methodNames = {
@@ -44,6 +45,18 @@ export class ObjectDescriptorMockBuilder extends PropertyDescriptorMockBuilder<O
   }
 }
 
+export class ResourceDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ResourceDescriptor> {
+  withChildrenDescriptors(children: Array<PropDescriptor>) {
+    this.methodNames.getChildDescriptors = children;
+    return this;
+  }
+
+  withChildDescriptor(child: PropDescriptor) {
+    this.methodNames.getChildDescriptor = child;
+    return this;
+  }
+}
+
 export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayPropertyDescriptor<PropDescriptor>> {
   withArrayItemsDescriptor(arrayItem: PropDescriptor) {
     this.methodNames.getItemsDescriptor = arrayItem;
@@ -55,6 +68,13 @@ export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuil
   withAssociatedResourceName(resolvedResourceName: string) {
     this.methodNames.getAssociatedResourceName = resolvedResourceName;
     this.methodNames.resolveResource = null;
+    this.methodNames.setResolvedResource = null;
+    this.methodNames.getResource = null;
+    return this;
+  }
+
+  withAssociatedResource(resource: ResourceDescriptor) {
+    this.methodNames.getResource = resource;
     return this;
   }
 
@@ -62,6 +82,11 @@ export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuil
     const resourceName = this.methodNames.getAssociatedResourceName;
     if (resourceName) {
       spy.resolveResource.and.callFake((descriptorProvider: ResourceDescriptorProvider) => descriptorProvider.resolve(resourceName));
+    }
+    if (spy.setResolvedResource && !this.methodNames.getResource) {
+      let resource;
+      spy.setResolvedResource.and.callFake(r => resource = r);
+      spy.getResource.and.callFake(() => resource);
     }
     return super.postConstruct(spy);
   }
