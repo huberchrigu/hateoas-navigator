@@ -2,7 +2,11 @@ import {ResourceDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {JsonProperty, JsonRawObjectProperty} from '../json-property/json-property';
-import {ObjectPropertyDescriptor, PropDescriptor} from '../descriptor/prop-descriptor';
+import {
+  AbstractPropDescriptor,
+  ObjectPropertyDescriptor,
+  PropDescriptor
+} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 import {JsonObjectPropertyImpl} from '../json-property/json-object-property-impl';
 import {JsonResourceObject} from './resource-object';
@@ -11,6 +15,33 @@ import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from 'hateoas-navigator/decorators/not-null';
 import {JsonArrayPropertyImpl} from '../json-property/json-array-property-impl';
 import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
+import {FormFieldBuilder} from 'hateoas-navigator';
+
+class ObjectPropertyDescDelegate extends AbstractPropDescriptor implements ObjectPropertyDescriptor {
+  constructor(private delegate: ResourceDescriptor, private children: PropDescriptor[]) {
+    super();
+  }
+
+  getChildDescriptor<T extends PropDescriptor>(resourceName: string): T {
+    return this.children.find(child => child.getName() === resourceName) as T;
+  }
+
+  getChildDescriptors<T extends PropDescriptor>(): Array<T> {
+    return this.children as Array<T>;
+  }
+
+  getName(): string {
+    return this.delegate.getName();
+  }
+
+  getTitle(): string {
+    return this.delegate.getTitle();
+  }
+
+  toFormFieldBuilder(): FormFieldBuilder {
+    return this.delegate.toFormFieldBuilder();
+  }
+}
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
@@ -78,7 +109,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
     const embeddedKeys = embedded ? Object.keys(embedded) : [];
 
     return stateKeys.map(k => this.getPropertyFactory().create(k, this.getValue()[k])).concat(
-      embeddedKeys.map(k => this.getPropertyFactory().create(k, embedded[k]))
+      embeddedKeys.map(k => this.getPropertyFactory().createEmbedded(k, embedded[k]))
     );
   }
 
@@ -96,9 +127,11 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
   }
 
   toRawObject(): JsonRawObjectProperty {
-    return new JsonObjectPropertyImpl<JsonValueType, PropDescriptor>(name, this.toObj(property =>
-        this.toValueWithRawInnerDataOnly(property)),
-      this.getDescriptorIfAny(), this.getPropertyFactory() as PropertyFactory<JsonValueType>);
+    const rawObj = this.toObjOfMappedValues(property => this.toValueWithRawInnerDataOnly(property));
+    const descriptors = this.getChildProperties().filter(p => p.hasDescriptor()).map(prop => prop.getDescriptor());
+    const desc = new ObjectPropertyDescDelegate(this.getDescriptorIfAny(), descriptors);
+    return new JsonObjectPropertyImpl<JsonValueType, PropDescriptor>(name, rawObj, desc,
+      this.getPropertyFactory() as PropertyFactory<JsonValueType>);
   }
 
   getDisplayValue(): string | number {
@@ -134,7 +167,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
 
   private toValueWithRawInnerDataOnly(property: JsonProperty<HalValueType>): JsonValueType {
     if (property instanceof JsonObjectPropertyImpl) {
-      return property.toObj(p => this.toValueWithRawInnerDataOnly(p));
+      return property.toObjOfMappedValues(p => this.toValueWithRawInnerDataOnly(p));
     } else if (property instanceof JsonArrayPropertyImpl) {
       return property.getArrayItems().map(item => this.toValueWithRawInnerDataOnly(item));
     } else {

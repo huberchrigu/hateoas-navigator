@@ -1,6 +1,6 @@
 import {PropertyFactory} from '../../json-property/factory/property-factory';
-import {HalValueType} from '../value-type/hal-value-type';
-import {JsonProperty} from '../../json-property/json-property';
+import {HalResourceObject, HalValueType} from '../value-type/hal-value-type';
+import {JsonArrayProperty, JsonProperty} from '../../json-property/json-property';
 import {JsonArrayPropertyImpl} from '../../json-property/json-array-property-impl';
 import {JsonObjectPropertyImpl} from '../../json-property/json-object-property-impl';
 import {PrimitiveOrEmptyProperty} from '../../json-property/primitive-or-empty-property';
@@ -8,14 +8,38 @@ import {PrimitiveValueType} from '../../json-property/value-type/json-value-type
 import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
 import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
 import {PropDescriptor} from 'hateoas-navigator';
-import {ArrayPropertyDescriptor, ObjectPropertyDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
+import {
+  ArrayPropertyDescriptor,
+  AssociationPropertyDescriptor,
+  ObjectPropertyDescriptor
+} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
+import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
 
 export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;
+  private forArrayOfAssociations = false;
 
   // TODO: Yet there is no distinction whether metadata is still in or not
 
   constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceDescriptor = null) {
+  }
+
+  /**
+   * An embedded resource is described as an association to another resource type, but does already contain real values. Therefore
+   * the association is resolved to the associated resource's descriptor.
+   */
+  createEmbedded(propertyName: string, associationOrArrayOfAssociations: HalValueType):
+    JsonResourceObject | JsonArrayProperty<HalResourceObject> {
+    const childDesc = this.getResDesc(propertyName);
+    if (Array.isArray(associationOrArrayOfAssociations)) {
+      return new JsonArrayPropertyImpl(propertyName, associationOrArrayOfAssociations, childDesc,
+        new HalPropertyFactory(this.halResourceFactory, childDesc as ResourceDescriptor)
+          .asFactoryOfArrayItems(true)) as JsonArrayProperty<HalResourceObject>;
+    } else if (associationOrArrayOfAssociations && typeof associationOrArrayOfAssociations === 'object') {
+      return this.halResourceFactory.create(propertyName, associationOrArrayOfAssociations,
+        childDesc ? (childDesc as AssociationPropertyDescriptor).getResource() : null);
+    }
+    throw new Error(`${propertyName} is not an embedded resource or an array of resources`);
   }
 
   create(name: string, value: HalValueType): JsonProperty<HalValueType> {
@@ -34,8 +58,9 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
     }
   }
 
-  asFactoryOfArrayItems() {
+  asFactoryOfArrayItems(forArrayOfAssociations = false) {
     this.forArray = true;
+    this.forArrayOfAssociations = forArrayOfAssociations;
     return this;
   }
 
@@ -45,7 +70,18 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   }
 
   private getArrayDesc() {
-    return this.parentDescriptor ? this.parentDescriptor.orNull<ArrayPropertyDescriptor<PropDescriptor>, 'getItemsDescriptor'>(d =>
-      d.getItemsDescriptor) as ResourceDescriptor : null;
+    if (!this.parentDescriptor) {
+      return null;
+    }
+    const arrayDesc = this.parentDescriptor
+      .orNull<ArrayPropertyDescriptor<PropDescriptor>, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
+    if (!arrayDesc) {
+      return null;
+    }
+    if (this.forArrayOfAssociations) {
+      return (arrayDesc as AssociationPropertyDescriptor).getResource();
+    } else {
+      return arrayDesc;
+    }
   }
 }

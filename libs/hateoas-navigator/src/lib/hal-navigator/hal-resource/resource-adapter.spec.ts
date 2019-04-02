@@ -1,18 +1,30 @@
 import {ResourceAdapter} from './resource-adapter';
-import {HalResourceObject} from './value-type/hal-value-type';
+import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {ResourceLinks} from './value-type/resource-links';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
+import {JsonArrayProperty} from '../json-property/json-property';
+import {
+  ArrayDescriptorMockBuilder,
+  PropertyDescriptorMockBuilder, ResourceDescriptorMockBuilder
+} from '../descriptor/combining/property-descriptor-mock-builder.spec';
+import {PropertyFactory} from 'hateoas-navigator/hal-navigator/json-property/factory/property-factory';
 
 describe('ResourceAdapter', () => {
+  let linkFactory: LinkFactory;
+  let resourceDescriptorProvider: ResourceDescriptorProvider;
+  let resourceFactory: ResourceAdapterFactoryService;
+  let propertyFactory: HalPropertyFactory;
 
-  // TODO: Should all be mocked, and tests moved to according factory
-  const linkFactory = {} as LinkFactory;
-  const resourceDescriptorProvider = {} as ResourceDescriptorProvider;
-  const resourceFactory = new ResourceAdapterFactoryService(resourceDescriptorProvider);
-  const propertyFactory = new HalPropertyFactory(resourceFactory);
+  beforeAll(() => {
+    // TODO: Should all be mocked, and tests moved to according factory
+    linkFactory = {} as LinkFactory;
+    resourceDescriptorProvider = {} as ResourceDescriptorProvider;
+    resourceFactory = new ResourceAdapterFactoryService(resourceDescriptorProvider);
+    propertyFactory = new HalPropertyFactory(resourceFactory);
+  });
 
   it('should get the relative link to this resource', () => {
     const links = {
@@ -40,11 +52,52 @@ describe('ResourceAdapter', () => {
     expect((result[1] as ResourceAdapter).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
   });
 
+  it('should get raw object without associations', () => {
+    const json = {
+      '_embedded': {
+        'array': [{
+          'item': 1
+        }]
+      }
+    };
+    const arrayItemDesc = new ResourceDescriptorMockBuilder().withChildrenDescriptors([
+      new PropertyDescriptorMockBuilder().withName('item').build()
+    ]).build();
+    const arrayProp = jasmine.createSpyObj<JsonArrayProperty<HalValueType>>('array', {
+      getName: 'array',
+      getValue: [{
+        'item': 1
+      }],
+      hasDescriptor: true,
+      getDescriptor: new ArrayDescriptorMockBuilder().withArrayItemsDescriptor(arrayItemDesc).build()
+    });
+
+    const propertyFactoryWithDesc = jasmine.createSpyObj<PropertyFactory<HalValueType>>('propertyFactory',
+      ['createEmbedded', 'create']);
+    propertyFactoryWithDesc.createEmbedded.and.callFake((propertyName: string) => {
+      expect(propertyName).toEqual('array');
+      return arrayProp;
+    });
+    propertyFactoryWithDesc.create.and.callFake((propertyName: string) => {
+      expect(propertyName).toEqual('array');
+      return arrayProp;
+    });
+
+    const testee = new ResourceAdapter('testee', json, propertyFactoryWithDesc, resourceFactory, linkFactory);
+    const result = testee.toRawObject();
+    expect(result.getChildProperties().length).toBe(1);
+
+    expect(arrayProp.getValue).toHaveBeenCalled();
+    expect(arrayProp.getDescriptor).toHaveBeenCalled();
+    expect(propertyFactoryWithDesc.create).toHaveBeenCalled();
+    expect(propertyFactoryWithDesc.createEmbedded).toHaveBeenCalled();
+  });
+
   function dummyLinks(): ResourceLinks {
     return {self: {href: 'this should not be displayed'}};
   }
 
-  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource = undefined): HalResourceObject {
+  function dummyResource(propertyName?: string, propertyValue?: string, embeddedResource?: any): HalResourceObject {
     const resource: HalResourceObject = {
       _links: dummyLinks()
     } as HalResourceObject;
