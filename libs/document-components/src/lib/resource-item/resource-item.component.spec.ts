@@ -24,15 +24,16 @@ describe('ResourceItemComponent', () => {
   } as ResourceActions;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject',
-      ['getPropertiesAndEmbeddedResourcesAsProperties', 'getDescriptor']);
-    versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties.and.returnValue([
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getChildProperties', 'getDescriptor',
+      'getOtherLinks']);
+    versionedResourceObject.getChildProperties.and.returnValue([
       {} as PrimitiveOrEmptyProperty
     ]);
     versionedResourceObject.getDescriptor.and.returnValue({
       getTitle: () => 'Test',
       getActions: () => actions
     } as ResourceDescriptor);
+    versionedResourceObject.getOtherLinks.and.returnValue([]);
 
     TestBed.configureTestingModule({
       declarations: [ResourceItemComponent],
@@ -62,6 +63,6 @@ describe('ResourceItemComponent', () => {
   });
 
   it('should fetch the resource data', () => {
-    expect(versionedResourceObject.getPropertiesAndEmbeddedResourcesAsProperties).toHaveBeenCalled();
+    expect(versionedResourceObject.getChildProperties).toHaveBeenCalled();
   });
 });
