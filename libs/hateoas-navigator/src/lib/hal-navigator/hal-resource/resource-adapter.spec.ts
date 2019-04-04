@@ -5,11 +5,6 @@ import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
-import {JsonArrayProperty} from '../json-property/json-property';
-import {
-  ArrayDescriptorMockBuilder,
-  PropertyDescriptorMockBuilder, ResourceDescriptorMockBuilder
-} from '../descriptor/combining/property-descriptor-mock-builder.spec';
 import {PropertyFactory} from 'hateoas-navigator/hal-navigator/json-property/factory/property-factory';
 
 describe('ResourceAdapter', () => {
@@ -46,51 +41,28 @@ describe('ResourceAdapter', () => {
 
     const testee = createTestee('resource', dummyResource('property', 'value',
       dummyResource('nestedProperty', 'nestedValue')));
-    const result = testee.getPropertiesAndEmbeddedResourcesAsProperties();
+    const result = testee.getChildProperties();
 
     expect(result.map(p => p.getName())).toEqual(['property', 'resource']);
     expect((result[1] as ResourceAdapter).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
   });
 
-  it('should get raw object without associations', () => {
+  it('should get embedded object without associations', () => {
+    const array = [{
+      'item': 1
+    }];
     const json = {
       '_embedded': {
-        'array': [{
-          'item': 1
-        }]
+        'array': array
       }
     };
-    const arrayItemDesc = new ResourceDescriptorMockBuilder().withChildrenDescriptors([
-      new PropertyDescriptorMockBuilder().withName('item').build()
-    ]).build();
-    const arrayProp = jasmine.createSpyObj<JsonArrayProperty<HalValueType>>('array', {
-      getName: 'array',
-      getValue: [{
-        'item': 1
-      }],
-      hasDescriptor: true,
-      getDescriptor: new ArrayDescriptorMockBuilder().withArrayItemsDescriptor(arrayItemDesc).build()
-    });
 
-    const propertyFactoryWithDesc = jasmine.createSpyObj<PropertyFactory<HalValueType>>('propertyFactory',
-      ['createEmbedded', 'create']);
-    propertyFactoryWithDesc.createEmbedded.and.callFake((propertyName: string) => {
-      expect(propertyName).toEqual('array');
-      return arrayProp;
-    });
-    propertyFactoryWithDesc.create.and.callFake((propertyName: string) => {
-      expect(propertyName).toEqual('array');
-      return arrayProp;
-    });
+    const propertyFactoryWithDesc = jasmine.createSpyObj<PropertyFactory<HalValueType>>('propertyFactory', ['createEmbedded']);
 
     const testee = new ResourceAdapter('testee', json, propertyFactoryWithDesc, resourceFactory, linkFactory);
-    const result = testee.toRawObject();
-    expect(result.getChildProperties().length).toBe(1);
+    expect(testee.getChildProperties().length).toBe(1);
 
-    expect(arrayProp.getValue).toHaveBeenCalled();
-    expect(arrayProp.getDescriptor).toHaveBeenCalled();
-    expect(propertyFactoryWithDesc.create).toHaveBeenCalled();
-    expect(propertyFactoryWithDesc.createEmbedded).toHaveBeenCalled();
+    expect(propertyFactoryWithDesc.createEmbedded).toHaveBeenCalledWith('array', array);
   });
 
   function dummyLinks(): ResourceLinks {

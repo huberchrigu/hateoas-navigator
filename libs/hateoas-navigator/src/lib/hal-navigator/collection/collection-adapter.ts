@@ -27,7 +27,7 @@ export class CollectionAdapter {
   getPropertyNames(): Array<string> {
     const properties = [];
     this.getItems().forEach(item => {
-      for (const property of CollectionAdapter.getNamesOfItem(item)) {
+      for (const property of this.getNamesOfItem(item)) {
         if (properties.indexOf(property) < 0) {
           properties.push(property);
         }
@@ -42,7 +42,10 @@ export class CollectionAdapter {
     );
   }
 
-  private static getNamesOfItem(resourceObject: JsonResourceObject) {
-    return resourceObject.getPropertiesAndEmbeddedResourcesAsProperties().map(p => p.getName());
+  /**
+   * We did not resolve associations, therefore use only the object state.
+   */
+  private getNamesOfItem(resourceObject: JsonResourceObject) {
+    return resourceObject.toRawObjectState().getChildProperties().map(p => p.getName());
   }
 }
