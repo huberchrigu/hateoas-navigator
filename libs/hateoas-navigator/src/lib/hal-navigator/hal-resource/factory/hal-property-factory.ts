@@ -19,8 +19,6 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;
   private forArrayOfAssociations = false;
 
-  // TODO: Yet there is no distinction whether metadata is still in or not
-
   constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceDescriptor = null) {
   }
 

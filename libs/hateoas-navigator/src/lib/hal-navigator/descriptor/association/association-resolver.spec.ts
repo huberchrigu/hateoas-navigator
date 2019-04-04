@@ -45,7 +45,6 @@ describe('AssociationResolver', () => {
     testee.fetchDescriptorWithAssociations('rootResource').subscribe(descriptor => {
       expect(descriptor.getChildDescriptors().length).toBe(1);
       expect(descriptor.getChildDescriptors()[0].orNull(d => d.getAssociatedResourceName)).toEqual('rootResource');
-      // expect(descriptor.getChildDescriptors()[0].orNull(d => d.getChildDescriptor, 'rootResource')).toEqual(descriptor.orNull(d => d.getChildrenDescriptors)[0]); // TODO: What is the consequence, that an association has no child descriptors
       wasCalled = true;
     });
     jasmine.clock().tick(1000);

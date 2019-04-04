@@ -41,7 +41,7 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
 
   resolveDescriptorAndAssociations(name: string, resourceObject: HalResourceObject,
                                    version: string): Observable<VersionedJsonResourceObject> {
-    return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(name).pipe(// TODO: Associations should be resolved too
+    return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(name).pipe(
       map(descriptor => {
         return this.createWithVersion(name, resourceObject, descriptor, version);
       }));
