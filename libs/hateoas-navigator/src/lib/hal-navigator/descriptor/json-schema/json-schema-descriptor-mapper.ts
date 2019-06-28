@@ -24,7 +24,7 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
       .withArrayItems(this.getArrayItemsDescriptor())
       .withFieldProcessor(field => this.addFormFieldDetails(field))
       .withBuilder((named) => new JsonSchemaDescriptorMapper(named.name, named.schema, this.schemaReferenceFactory,
-        this.getRequiredProperties().some(p => p === this.name)));
+        this.getRequiredProperties().some(p => p === named.name)));
   }
 
   private getTitle(): string {
