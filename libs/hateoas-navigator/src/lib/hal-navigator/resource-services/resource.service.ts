@@ -62,7 +62,8 @@ export class ResourceService {
 
   @Validate
   update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedJsonResourceObject> {
-    return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version);
+    return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version,
+      this.moduleConfig.updateMethod === 'PATCH');
   }
 
   @Validate
@@ -108,8 +109,8 @@ export class ResourceService {
       map(response => this.resourceCacheService.removeFromResponse(resourceLink, response)));
   }
 
-  private updateItemAndCachedVersion(resourceName: string, resourceUri: string, object: any, version: string) {
-    return this.putToApi(resourceUri, object, version).pipe(
+  private updateItemAndCachedVersion(resourceName: string, resourceUri: string, object: any, version: string, usePatch = false) {
+    return this.putToApi(resourceUri, object, version, usePatch ? 'patch' : 'put').pipe(
       map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
   }
 
@@ -138,8 +139,10 @@ export class ResourceService {
     return this.httpClient.post<HalResourceObject>(Api.PREFIX + resourceUrl, object, ResourceService.getOptions());
   }
 
-  private putToApi(resourceUrl: string, object: any, version: string): Observable<HttpResponse<HalResourceObject>> {
-    return this.httpClient.put<HalResourceObject>(Api.PREFIX + resourceUrl, object,
-      ResourceService.getOptions(HeaderOptions.withIfMatchHeader(version)));
+  private putToApi(resourceUrl: string, object: any, version: string, method: string): Observable<HttpResponse<HalResourceObject>> {
+    return this.httpClient.request<HalResourceObject>(method, Api.PREFIX + resourceUrl, {
+      body: object,
+      ...ResourceService.getOptions(HeaderOptions.withIfMatchHeader(version))
+    });
   }
 }
