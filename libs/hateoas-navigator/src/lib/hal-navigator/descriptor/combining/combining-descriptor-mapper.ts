@@ -4,6 +4,7 @@ import {PropertyCombiner} from '../mapper/property-combiner';
 import {ResourceActions} from 'hateoas-navigator';
 import {TwoArrays} from 'hateoas-navigator/js/two-any';
 import {MapperConfigs} from './mapper-config';
+import {LOGGER} from 'hateoas-navigator/logging/logger';
 
 /**
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.
@@ -22,11 +23,19 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
     }
   }
 
+  /**
+   * If this query parameter matches the resource name, its child builders and final result are logged.
+   */
+  private static readonly DEBUG_DESCRIPTOR_PARAM = 'debugDescriptor';
+
   private static getLinkedResource<T>(uri: string, builder: DescriptorBuilder<T>, linkFunction: (uri: string) => T) {
     const value: T = linkFunction(uri);
     return value ? builder.builderFunction(value) : null;
   }
 
+  private static logResult(name: string) {
+    return new URLSearchParams(window.location.search).get(CombiningDescriptorMapper.DEBUG_DESCRIPTOR_PARAM) === name;
+  }
 
   /**
    * Skip properties that can be ignored due to the type.
@@ -35,7 +44,8 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
     const builders = this.mappers.map(mapper => mapper.toBuilder());
     const combiner = new PropertyCombiner<DescriptorBuilder<any>>(builders);
     const type = combiner.getFirst('type');
-    builder.withName(combiner.getFirst('name'))
+    const name = combiner.getFirst('name');
+    builder.withName(name)
       .withType(type)
       .withBuilder(mappers => {
         this.verifyNoLoop(mappers);
@@ -56,6 +66,11 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
     }
     builder.withFieldProcessor(combiner.reduce('fieldProcessor',
       (a: FieldProcessor, b: FieldProcessor) => (fieldBuilder) => a(b(fieldBuilder)), builder.fieldProcessor));
+
+    if (CombiningDescriptorMapper.logResult(name)) {
+      builder.setLogResult();
+      builders.forEach(childBuilder => LOGGER.debug(childBuilder.mapperName + ': ' + JSON.stringify(childBuilder)));
+    }
   }
 
   getMapperName(): string {

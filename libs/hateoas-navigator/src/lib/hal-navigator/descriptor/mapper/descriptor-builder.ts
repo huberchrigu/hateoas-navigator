@@ -3,7 +3,8 @@ import {DescriptorMapper} from './descriptor-mapper';
 import {
   AbstractPropDescriptor,
   ArrayPropertyDescriptor, AssociationPropertyDescriptor,
-  ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+  ObjectPropertyDescriptor, PropDescriptor
+} from '../prop-descriptor';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {ResourceDescriptor} from '../resource-descriptor';
 import {Observable} from 'rxjs';
@@ -153,9 +154,17 @@ export class DescriptorBuilder<T> {
   public linkFunction: (uri: string) => T;
   public builderFunction: (value: T) => DescriptorMapper<T>;
   public type?: DescriptorType;
+  private logResult = false;
   public fieldProcessor: FieldProcessor = processor => processor;
 
   constructor(public mapperName: string) {
+  }
+
+  /**
+   * Logs this builder's result.
+   */
+  setLogResult(): void {
+    this.logResult = true;
   }
 
   withType(type: DescriptorType) {
@@ -237,6 +246,9 @@ export class DescriptorBuilder<T> {
         LOGGER.warn(`Type 'primitive' was auto-guessed in ${this.mapperName}. Try to set type explicitly.`);
       }
       descriptor = new PropertyDescriptorImpl(this.name, this.title, this.fieldProcessor);
+    }
+    if (this.logResult) {
+      LOGGER.debug(this.mapperName + ' -> ' + JSON.stringify(descriptor));
     }
     return descriptor;
   }

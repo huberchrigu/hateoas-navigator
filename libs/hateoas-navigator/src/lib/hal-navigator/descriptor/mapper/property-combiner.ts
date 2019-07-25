@@ -60,7 +60,7 @@ export class PropertyCombiner<T> {
             regroupedByKey[key].push(ignoredValue);
           }
         });
-      return Object.values(regroupedByKey);
+      return Object.keys(regroupedByKey).map(key => regroupedByKey[key]);
     } else {
       return undefined;
     }
