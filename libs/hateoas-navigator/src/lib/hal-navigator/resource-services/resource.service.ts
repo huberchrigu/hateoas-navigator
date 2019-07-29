@@ -44,7 +44,12 @@ export class ResourceService {
 
   @Validate
   getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
-    return this.getFromApi<HalResourceObject>('/' + resourceName).pipe(
+    return this.getCustomCollection(resourceName, '/' + resourceName);
+  }
+
+  @Validate
+  getCustomCollection(@Required resourceName: string, @Required uri: string): Observable<CollectionAdapter> {
+    return this.getFromApi<HalResourceObject>(uri).pipe(
       map(collectionHalDocument => this.resourceFactory.create(resourceName, collectionHalDocument, undefined)),
       map(resource => new CollectionAdapter(this.resourceFactory, resource)));
   }

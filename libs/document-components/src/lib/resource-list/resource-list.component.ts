@@ -1,14 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {ResourceDescriptor, VersionedResourceAdapter} from 'hateoas-navigator';
+import {ResourceDescriptor, ResourceService, VersionedResourceAdapter} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 import {of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {flatMap, map} from 'rxjs/operators';
 import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
+import {MatDialog} from '@angular/material';
+import {ResourceSearchDialogComponent} from 'document-components/resource-list/search-dialog/resource-search-dialog.component';
+import {ResourceSearchDialogData} from 'document-components/resource-list/search-dialog/resource-search-dialog-data';
+import {ResourceSearchDialogResult} from 'document-components/resource-list/search-dialog/resource-search-dialog-result';
 
 @Component({
-  selector: 'app-resource-list',
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.css']
 })
@@ -19,16 +22,20 @@ export class ResourceListComponent implements OnInit {
 
   dataSource: DataSource<JsonResourceObject>;
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, private resourceService: ResourceService) {
   }
 
   ngOnInit() {
     this.route.data
       .pipe(map((data: ResourceListRouteData) => data.collectionAdapter))
       .subscribe(collection => {
-        this.initTableMetadata(collection);
-        this.initDataSource(collection);
+        this.initCollection(collection);
       });
+  }
+
+  private initCollection(collection) {
+    this.initTableMetadata(collection);
+    this.initDataSource(collection);
   }
 
   /**
@@ -72,6 +79,23 @@ export class ResourceListComponent implements OnInit {
       disconnect: () => {
       }
     };
+  }
+
+  clickSearchModal() {
+    this.collection.getSearchUrls(this.resourceService).subscribe(urls => {
+      const dialogRef = this.dialog.open(ResourceSearchDialogComponent, {data: new ResourceSearchDialogData(urls)});
+      dialogRef.afterClosed().subscribe((result: ResourceSearchDialogResult) => {
+        if (result && !result.isCancelled()) {
+          this.updateCollection(result.uri);
+        }
+      });
+    });
+  }
+
+  private updateCollection(resourceUri: string) {
+    this.resourceService.getCustomCollection(this.collection.getResourceName(), resourceUri).pipe(
+      flatMap(collection => collection.resolve())
+    ).subscribe(collection => this.initCollection(collection));
   }
 }
 

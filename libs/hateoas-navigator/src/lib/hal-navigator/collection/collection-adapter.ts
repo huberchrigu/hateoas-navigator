@@ -2,14 +2,18 @@ import {Observable} from 'rxjs';
 import {ResourceDescriptor} from '../descriptor';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
 import {JsonResourceObject} from '../hal-resource/resource-object';
+import {ResourceService} from 'hateoas-navigator/hal-navigator';
+import {map} from 'rxjs/operators';
 
 export class CollectionAdapter {
   constructor(private factory: HalResourceFactory, private resourceObject: JsonResourceObject) {
 
   }
 
-  resolve(): Observable<JsonResourceObject> {
-    return this.factory.resolveDescriptor(this.resourceObject.getName(), this.resourceObject.getValue());
+  resolve(): Observable<CollectionAdapter> {
+    return this.factory.resolveDescriptor(this.resourceObject.getName(), this.resourceObject.getValue()).pipe(
+      map(resource => new CollectionAdapter(this.factory, resource))
+    );
   }
 
   getResourceName() {
@@ -34,6 +38,10 @@ export class CollectionAdapter {
       }
     });
     return properties;
+  }
+
+  getSearchUrls(resourceService: ResourceService) {
+    return resourceService.getItem(this.resourceObject.getName(), 'search').pipe(map(obj => obj.getOtherLinks()));
   }
 
   private getEmbeddedContent(): JsonResourceObject[] {

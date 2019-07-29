@@ -45,7 +45,7 @@ export class AssociationFieldComponent implements OnInit {
         return item ? item.title : 'loading...';
       }
       return null;
-    }
+    };
   }
   private filterValues(value: string, items: Array<LinkItem>): Array<LinkItem> {
     if (value) {

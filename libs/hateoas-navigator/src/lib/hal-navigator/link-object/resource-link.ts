@@ -61,6 +61,29 @@ export class ResourceLink extends Link {
     return this.resourceDescriptorResolver.resolve(this.extractResourceName());
   }
 
+  /**
+   * Extracts forGroup and calendarEntry from
+   * http://localhost:8080/suggestions/search/findByForGroupAndCalendarEntry{?forGroup,calendarEntry}
+   */
+  getTemplatedParts() {
+    const uri = this.link.href;
+    const indexOfFirstBracket = uri.indexOf('{?');
+    if (indexOfFirstBracket > -1) {
+      const templatedParts = uri.substring(indexOfFirstBracket + 2, uri.length - 1);
+      return templatedParts.split(',');
+    }
+    return [];
+  }
+
+  getRelativeUriWithReplacedTemplatedParts(values: { [param: string]: string }) {
+    const parts = this.getTemplatedParts().filter(param => values[param]).map(param => param + '=' + values[param]);
+    if (parts.length > 0) {
+      return this.getRelativeUriWithoutTemplatedPart() + '?' + parts.reduce((a, b) => a + '&' + b);
+    } else {
+      return this.getRelativeUriWithoutTemplatedPart();
+    }
+  }
+
   private removeTemplatedPart(uri: string) {
     if (this.link.templated) {
       const indexOfFirstBracket = uri.indexOf('{');
