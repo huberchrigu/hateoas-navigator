@@ -8,7 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateTimeType, ModuleConfiguration} from 'hateoas-navigator';
 import {PropertyConfigBuilder} from 'hateoas-navigator';
 import {HalNavigatorModule} from 'hateoas-navigator';
-import {DocumentComponentsModule} from 'document-components';
+import {ResourceComponentsModule} from 'resource-components';
 
 const halNavConfig: ModuleConfiguration = {
   updateMethod: 'PATCH',
@@ -45,7 +45,7 @@ const halNavConfig: ModuleConfiguration = {
   imports: [
     StaticComponentsModule,
     AppRoutingModule,
-    DocumentComponentsModule,
+    ResourceComponentsModule,
     HalNavigatorModule.forRoot(halNavConfig),
 
     BrowserModule,

@@ -1,4 +1,4 @@
-export {DocumentComponentsModule} from './document-components.module';
+export {ResourceComponentsModule} from './resource-components.module';
 export {GenericRoutes} from './generic-routes';
 export * from './resource-form';
 export * from './resource-item';

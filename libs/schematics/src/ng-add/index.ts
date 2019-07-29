@@ -5,7 +5,7 @@ import {WorkspaceProject, WorkspaceSchema} from '@angular-devkit/core/src/worksp
 import {addModuleImportToRootModule} from './ast';
 import {getProjectMainFile} from './project-main-file';
 import {getWorkspace} from '@schematics/angular/utility/config';
-import {documentComponentsVersion, hateoasNavigatorVersion} from './version-names';
+import {resourceComponentsVersion, hateoasNavigatorVersion} from './version-names';
 
 // per file.
 export function schematics(options: any): Rule {
@@ -31,7 +31,7 @@ function addPackageJsonDependencies() {
       {version: '^0.5.23', name: 'moment-timezone'},
       {version: '^2.22.2', name: 'moment'},
       {version: `~${hateoasNavigatorVersion}`, name: 'hateoas-navigator'},
-      {version: `~${documentComponentsVersion}`, name: 'document-components'}
+      {version: `~${resourceComponentsVersion}`, name: 'resource-components'}
     ];
 
     dependencies.forEach(dependency => {
@@ -57,8 +57,8 @@ function addModuleToImports(options: any): Rule {
     const project = getProject(tree, options);
 
     addModuleImportToRootModule(tree, 'HalNavigatorModule.forRoot(undefined)', 'hateoas-navigator', project);
-    addModuleImportToRootModule(tree, 'DocumentComponentsModule', 'document-components', project);
-    context.logger.log('info', `✅️ "HalNavigatorModule and DocumentComponentsModule are imported`);
+    addModuleImportToRootModule(tree, 'ResourceComponentsModule', 'resource-components', project);
+    context.logger.log('info', `✅️ "HalNavigatorModule and ResourceComponentsModule are imported`);
 
     return tree;
   };
@@ -70,7 +70,7 @@ function addGenericRoutes(options: any): Rule {
     import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {CollectionResolverService, ResourceDescriptorResolverService, ResourceObjectResolverService, RouteParams} from 'hateoas-navigator';
-import {ResourceFormComponent, ResourceItemComponent, ResourceListComponent} from 'document-components';
+import {ResourceFormComponent, ResourceItemComponent, ResourceListComponent} from 'resource-components';
 
 const routes: Routes = [{
   path: ':' + RouteParams.RESOURCE_PARAM + '/new',

@@ -24,11 +24,11 @@
       "hateoas-navigator/*": [
         "libs/hateoas-navigator/src/lib/*"
       ],
-      "document-components": [
-        "libs/document-components/src/lib"
+      "resource-components": [
+        "libs/resource-components/src/lib"
       ],
-      "document-components/*": [
-        "libs/document-components/src/lib/*"
+      "resource-components/*": [
+        "libs/resource-components/src/lib/*"
       ]
     }
   }

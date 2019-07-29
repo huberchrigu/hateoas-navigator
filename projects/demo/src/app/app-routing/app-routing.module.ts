@@ -3,7 +3,7 @@ import {
   RouterModule, Routes
 } from '@angular/router';
 import {HomeComponent} from '../static-components/home.component';
-import {GenericRoutes} from 'document-components';
+import {GenericRoutes} from 'resource-components';
 
 const routes: Routes = [
   {

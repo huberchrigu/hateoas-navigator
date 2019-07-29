@@ -1,5 +1,5 @@
 {
-  "name": "document-components",
+  "name": "resource-components",
   "version": "0.0.2-RC3",
   "schematics": "schematics/collection.json",
   "peerDependencies": {

@@ -31,9 +31,8 @@ import {RouterModule} from '@angular/router';
 import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
 import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
-import {ResourceSearchDialogComponent} from 'document-components/resource-list/search-dialog/resource-search-dialog.component';
+import {ResourceSearchDialogComponent} from 'resource-components/resource-list/search-dialog/resource-search-dialog.component';
 
-// TODO: Rename to ResourceComponentsModule, document is too specific for HAL
 @NgModule({
   imports: [
     CommonModule,
@@ -76,5 +75,5 @@ import {ResourceSearchDialogComponent} from 'document-components/resource-list/s
   exports: [NavigationComponent, ResourceListComponent],
   entryComponents: [ConfirmationDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent]
 })
-export class DocumentComponentsModule {
+export class ResourceComponentsModule {
 }

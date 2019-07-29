@@ -33,6 +33,6 @@
     "src/*/files/**/*"
   ],
   "paths": {
-    "document-components": ["../../dist/document-components"]
+    "resource-components": ["../../dist/resource-components"]
   }
 }
