@@ -22,11 +22,11 @@ export class AlpsDocumentAdapter {
   }
 
   private getDescriptors(): AlpsDescriptor[] {
-    let alps = this.alpsDocument.alps;
+    const alps = this.alpsDocument.alps;
     if (alps.descriptor) {
       return alps.descriptor;
     } else {
-      throw new Error(`ALPS should provide one more descriptors, given by the property "descriptor". But it only contained 
+      throw new Error(`ALPS should provide one more descriptors, given by the property "descriptor". But it only contained
       ${JSON.stringify(alps)}.
       If you use Spring HATEOAS, make sure that your version is >= 0.25.0.`);
     }

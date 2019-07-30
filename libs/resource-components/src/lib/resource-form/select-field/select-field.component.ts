@@ -3,7 +3,7 @@ import {FormControl} from '@angular/forms';
 import {SelectField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-select-field',
+  selector: 'lib-select-field',
   templateUrl: './select-field.component.html',
   styleUrls: ['../form-fields.sass']
 })

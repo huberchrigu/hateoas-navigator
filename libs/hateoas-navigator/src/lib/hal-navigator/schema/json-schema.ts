@@ -19,5 +19,5 @@ export type PropertyType = 'string' | 'array' | 'object' | 'number' | 'integer' 
 export type PropertyFormat = 'date-time' | 'uri';
 
 export interface JsonSchemaDefinitions {
-  [definition: string]: JsonSchema
+  [definition: string]: JsonSchema;
 }

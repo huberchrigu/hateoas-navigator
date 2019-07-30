@@ -1,15 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ResourceService} from 'hateoas-navigator';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {LinkField} from 'hateoas-navigator';
-import {startWith, map, combineLatest} from 'rxjs/operators';
+import {startWith, map} from 'rxjs/operators';
 
 /**
  * Currently the input's title is not shown due to https://github.com/angular/material2/issues/4863.
  */
 @Component({
-  selector: 'app-association-field',
+  selector: 'lib-association-field',
   templateUrl: './association-field.component.html',
   styleUrls: ['./association-field.component.sass', '../form-fields.sass']
 })
@@ -28,11 +28,9 @@ export class AssociationFieldComponent implements OnInit {
 
   ngOnInit() {
     const allItems = this.initItems();
-    this.filteredItems = this.control.valueChanges
-      .pipe(
-        startWith(null),
-        combineLatest(allItems, (value, items) => this.filterValues(value, items))
-      );
+    const valueChanges = this.control.valueChanges.pipe(startWith(null));
+    const valueAndItemsObservable = combineLatest(valueChanges, allItems);
+    this.filteredItems = valueAndItemsObservable.pipe(map(valueAndItems => this.filterValues(valueAndItems[0], valueAndItems[1])));
     this.initItems().subscribe(all => {
       this.updateItems(all);
     });
@@ -41,12 +39,13 @@ export class AssociationFieldComponent implements OnInit {
   toTitle(): (name: string) => string {
     return name => {
       if (name) {
-        const item = this.resolvedItems.find(item => item.name === name);
+        const item = this.resolvedItems.find(resolvedItem => resolvedItem.name === name);
         return item ? item.title : 'loading...';
       }
       return null;
     };
   }
+
   private filterValues(value: string, items: Array<LinkItem>): Array<LinkItem> {
     if (value) {
       return items.filter(item => item.title.toLowerCase().indexOf(value.toLowerCase()) > -1);

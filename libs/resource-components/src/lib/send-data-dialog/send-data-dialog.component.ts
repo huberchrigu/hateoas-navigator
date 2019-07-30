@@ -2,11 +2,10 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {SendDataDialogData} from './send-data-dialog-data';
 import {SendDataDialogResult} from './send-data-dialog-result';
-import {FormGroup} from "@angular/forms";
-import {FormControlFactory, FormField, SubFormField} from "hateoas-navigator";
+import {FormGroup} from '@angular/forms';
+import {FormControlFactory, FormField, SubFormField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-send-data-dialog',
   templateUrl: './send-data-dialog.component.html'
 })
 export class SendDataDialogComponent {

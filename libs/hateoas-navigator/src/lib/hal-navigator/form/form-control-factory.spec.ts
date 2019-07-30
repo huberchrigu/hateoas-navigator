@@ -37,7 +37,10 @@ describe('FormControlFactory', () => {
   });
 });
 
-function createFieldMock<T extends FormField>(name: string, type: FormFieldType, mockedMethods: { [NAME in keyof T]?: any } = null): FormField {
+function createFieldMock<T extends FormField>(
+  name: string,
+  type: FormFieldType, mockedMethods: { [NAME in keyof T]?: any } = null
+): FormField {
   const methodNames = {
     getName: name,
     getType: type,

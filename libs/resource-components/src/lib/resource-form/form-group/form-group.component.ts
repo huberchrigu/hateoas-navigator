@@ -3,7 +3,7 @@ import {FormField} from 'hateoas-navigator';
 import {FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'app-form-group',
+  selector: 'lib-form-group',
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.sass']
 })

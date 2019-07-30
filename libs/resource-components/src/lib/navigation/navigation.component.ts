@@ -4,7 +4,7 @@ import {NavigationItem} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-navigation',
+  selector: 'lib-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.sass']
 })

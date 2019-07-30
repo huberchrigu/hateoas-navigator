@@ -8,10 +8,10 @@ import {ResourceLink} from 'hateoas-navigator';
 import {FormControlFactory} from 'hateoas-navigator';
 import {PropDescriptor} from 'hateoas-navigator';
 import {SubFormField} from 'hateoas-navigator';
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-new-resource',
+  selector: 'lib-new-resource',
   templateUrl: './resource-form.component.html',
   styleUrls: ['./resource-form.component.sass']
 })

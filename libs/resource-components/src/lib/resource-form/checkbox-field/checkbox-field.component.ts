@@ -3,7 +3,7 @@ import {FormControl} from '@angular/forms';
 import {FormField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-checkbox-field',
+  selector: 'lib-checkbox-field',
   templateUrl: './checkbox-field.component.html',
   styleUrls: ['../form-fields.sass', './checkbox-field.component.sass']
 })

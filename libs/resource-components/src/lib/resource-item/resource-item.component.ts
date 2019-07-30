@@ -14,7 +14,7 @@ import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal
 import {flatMap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-resource-item',
+  selector: 'lib-resource-item',
   templateUrl: './resource-item.component.html',
   styleUrls: ['./resource-item.component.sass']
 })

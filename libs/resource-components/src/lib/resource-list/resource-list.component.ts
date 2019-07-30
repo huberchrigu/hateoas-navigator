@@ -7,9 +7,9 @@ import {of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
 import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
 import {MatDialog} from '@angular/material';
-import {ResourceSearchDialogComponent} from 'resource-components/resource-list/search-dialog/resource-search-dialog.component';
-import {ResourceSearchDialogData} from 'resource-components/resource-list/search-dialog/resource-search-dialog-data';
-import {ResourceSearchDialogResult} from 'resource-components/resource-list/search-dialog/resource-search-dialog-result';
+import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dialog.component';
+import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
+import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';
 
 @Component({
   templateUrl: './resource-list.component.html',

@@ -11,7 +11,9 @@ export function NotNull(messageFactory?: (obj: any, args: any[]) => string): Met
       if (returnValue) {
         return returnValue;
       }
-      const errorMessage = messageFactory ? messageFactory(this, args) : `Method ${propertyKey}() in ${this.constructor.name} returned null value for arguments "${JSON.stringify(args)}"`;
+      const errorMessage = messageFactory ?
+        messageFactory(this, args) :
+        `Method ${propertyKey}() in ${this.constructor.name} returned null value for arguments "${JSON.stringify(args)}"`;
       throw new Error(errorMessage);
     };
     return descriptor;

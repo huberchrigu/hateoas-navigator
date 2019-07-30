@@ -31,7 +31,7 @@ import {RouterModule} from '@angular/router';
 import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
 import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
-import {ResourceSearchDialogComponent} from 'resource-components/resource-list/search-dialog/resource-search-dialog.component';
+import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resource-search-dialog.component';
 
 @NgModule({
   imports: [

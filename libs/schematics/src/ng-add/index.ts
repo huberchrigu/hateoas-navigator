@@ -158,7 +158,7 @@ function addProxyConfigFile(): Rule {
 function replaceDemoMarkup(options: any) {
   return (host: Tree, context: SchematicContext) => {
     const markup = `
-    <app-navigation></app-navigation>
+    <lib-navigation></lib-navigation>
 <div id="cmp-content" class="mat-elevation-z2">
   <router-outlet></router-outlet>
 </div>

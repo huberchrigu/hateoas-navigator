@@ -7,7 +7,11 @@ import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal
 describe('ResourceObjectResolverService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ResourceObjectResolverService, {provide: ResourceService, useValue: {}}, {provide: ResourceAdapterFactoryService, useValue: {}}]
+      providers: [
+        ResourceObjectResolverService,
+        {provide: ResourceService, useValue: {}},
+        {provide: ResourceAdapterFactoryService, useValue: {}}
+      ]
     });
   });
 

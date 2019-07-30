@@ -29,7 +29,7 @@ export class FormFieldBuilder {
   private dateTimeType: DateTimeType;
   private linkedResource: string;
 
-  constructor(private name: string = undefined) {
+  constructor(private name?: string) {
   }
 
   withType(type: FormFieldType) {
@@ -85,7 +85,7 @@ export class FormFieldBuilder {
   build(): FormField {
     const type = this.type ? this.type : this.guessType();
     if (!type) {
-      LOGGER.warn('Form field ' + this.name + ' will be skiped since its type is missing');
+      LOGGER.warn('Form field ' + this.name + ' will be skipped since its type is missing');
       return null;
     }
     let formField: FormField;
@@ -186,7 +186,7 @@ export class FormFieldBuilder {
       } else {
         nameFieldMap[field.name] = field;
       }
-    })
+    });
   }
 
   private evaluateArraySpec() {

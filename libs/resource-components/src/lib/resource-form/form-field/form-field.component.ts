@@ -3,7 +3,7 @@ import {AbstractControl} from '@angular/forms';
 import {FormFieldType, SubFormField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-form-field',
+  selector: 'lib-form-field',
   templateUrl: './form-field.component.html',
   encapsulation: ViewEncapsulation.None
 })

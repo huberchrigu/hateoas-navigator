@@ -5,8 +5,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {of} from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 import {ResourceListComponent} from '../resource-list/resource-list.component';
-import {MatTableModule} from '@angular/material';
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {MatDialog, MatTableModule} from '@angular/material';
+import {ResourceDescriptor, ResourceService} from 'hateoas-navigator';
 import {ResourceActions} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 
@@ -38,7 +38,9 @@ describe('ResourceListComponent', () => {
               })
           }
         },
-        {provide: Router, useValue: {}}
+        {provide: Router, useValue: {}},
+        {provide: MatDialog, useValue: {}},
+        {provide: ResourceService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

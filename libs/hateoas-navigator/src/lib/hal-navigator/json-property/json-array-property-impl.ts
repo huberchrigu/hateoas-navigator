@@ -4,8 +4,15 @@ import {AbstractProperty} from './abstract-property';
 import {JsonArrayProperty, JsonProperty} from './json-property';
 import {PropertyFactory} from './factory/property-factory';
 
-export class JsonArrayPropertyImpl<CHILDREN extends JsonValueType> extends AbstractProperty<GenericArrayValueType<CHILDREN>, PropDescriptor> implements JsonArrayProperty<CHILDREN> {
-  constructor(name: string, value: GenericArrayValueType<CHILDREN>, descriptor: PropDescriptor, private propertyFactory: PropertyFactory<CHILDREN>) {
+export class JsonArrayPropertyImpl<CHILDREN extends JsonValueType>
+  extends AbstractProperty<GenericArrayValueType<CHILDREN>, PropDescriptor>
+  implements JsonArrayProperty<CHILDREN> {
+  constructor(
+    name: string,
+    value: GenericArrayValueType<CHILDREN>,
+    descriptor: PropDescriptor,
+    private propertyFactory: PropertyFactory<CHILDREN>
+  ) {
     super(name, value, descriptor);
   }
 

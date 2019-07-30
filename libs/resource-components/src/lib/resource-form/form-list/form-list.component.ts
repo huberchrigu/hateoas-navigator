@@ -5,7 +5,7 @@ import {FormControlFactory} from 'hateoas-navigator';
 import {ArrayField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-form-list',
+  selector: 'lib-form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.sass']
 })

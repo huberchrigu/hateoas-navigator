@@ -4,7 +4,7 @@ import {HalValueType} from 'hateoas-navigator/hal-navigator/hal-resource/value-t
 import {JsonArrayPropertyImpl} from 'hateoas-navigator/hal-navigator/json-property/json-array-property-impl';
 
 @Component({
-  selector: 'app-item-properties',
+  selector: 'lib-item-properties',
   templateUrl: './item-properties.component.html',
   styleUrls: ['./item-properties.component.sass']
 })

@@ -4,7 +4,7 @@ import {DateTimeType} from 'hateoas-navigator';
 import {DatePickerField} from 'hateoas-navigator';
 
 @Component({
-  selector: 'app-date-time-field',
+  selector: 'lib-date-time-field',
   templateUrl: './date-time-field.component.html',
   styleUrls: ['./date-time-field.component.sass', '../form-fields.sass']
 })

@@ -19,7 +19,7 @@ export function Validate(target: any, propertyName: string, descriptor: TypedPro
     }
 
     return method.apply(this, arguments);
-  }
+  };
 }
 
 /**

@@ -1,7 +1,7 @@
 <div class="cmp-container">
   <h2 class="mat-h2">{{field.getTitle()}}</h2>
   <div *ngFor="let formControl of formArray.controls">
-    <app-form-field [control]="formControl" [field]="field.getArraySpec()"></app-form-field>
+    <lib-form-field [control]="formControl" [field]="field.getArraySpec()"></lib-form-field>
 
     <mat-toolbar>
       <button type="button" mat-button color="warn" (click)="onRemove(formControl)">Remove</button>
