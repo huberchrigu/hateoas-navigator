@@ -5,7 +5,7 @@ import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
-import {PropertyFactory} from 'hateoas-navigator/hal-navigator/json-property/factory/property-factory';
+import {PropertyFactory} from '../json-property/factory/property-factory';
 
 describe('ResourceAdapter', () => {
   let linkFactory: LinkFactory;

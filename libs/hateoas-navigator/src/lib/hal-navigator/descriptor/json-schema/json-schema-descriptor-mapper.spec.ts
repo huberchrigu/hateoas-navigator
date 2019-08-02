@@ -1,11 +1,11 @@
 import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
-import {JsonSchemaDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/json-schema/json-schema-descriptor-mapper';
+import {JsonSchemaDescriptorMapper} from './json-schema-descriptor-mapper';
 import {
   ArrayPropertyDescriptor,
   ObjectPropertyDescriptor,
   PropDescriptor
-} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
+} from '../prop-descriptor';
 
 describe('JsonSchemaDescriptorMapper', () => {
   it('should get referenced child', () => {

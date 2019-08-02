@@ -6,14 +6,13 @@ import {JsonObjectPropertyImpl} from '../../json-property/json-object-property-i
 import {PrimitiveOrEmptyProperty} from '../../json-property/primitive-or-empty-property';
 import {PrimitiveValueType} from '../../json-property/value-type/json-value-type';
 import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
-import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
-import {PropDescriptor} from 'hateoas-navigator';
+import {HalResourceFactory} from './hal-resource-factory';
 import {
   ArrayPropertyDescriptor,
   AssociationPropertyDescriptor,
-  ObjectPropertyDescriptor
-} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
-import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
+  ObjectPropertyDescriptor, PropDescriptor
+} from '../../descriptor/prop-descriptor';
+import {JsonResourceObject} from '../json-resource-object';
 
 export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;

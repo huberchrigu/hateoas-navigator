@@ -2,8 +2,8 @@ import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provid
 import {combineLatest, forkJoin, Observable, of} from 'rxjs';
 import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import {map, flatMap, tap} from 'rxjs/operators';
-import {LOGGER} from 'hateoas-navigator/logging/logger';
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {LOGGER} from '../../../logging/logger';
+import {ResourceDescriptor} from '../resource-descriptor';
 
 /**
  * Recursively visits all descriptors and resolves all its associations if any.

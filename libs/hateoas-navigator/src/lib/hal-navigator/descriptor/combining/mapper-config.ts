@@ -1,4 +1,4 @@
-import {AlpsDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/alps/alps-descriptor-mapper';
+import {AlpsDescriptorMapper} from '../alps/alps-descriptor-mapper';
 
 export interface MapperConfig {
   ignoreChildren: boolean;

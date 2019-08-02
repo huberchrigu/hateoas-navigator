@@ -4,7 +4,7 @@ import {
   GenericArrayValueType,
   GenericObjectValueType,
   JsonValueType
-} from 'libs/hateoas-navigator/src/lib/hal-navigator/json-property/value-type/json-value-type';
+} from '../../json-property/value-type/json-value-type';
 
 export type HalValueType = HalResourceObject | HalObject | HalArray | JsonValueType;
 

@@ -6,8 +6,8 @@ import {LOGGER} from '../../logging/logger';
 import {VersionedResourceAdapter} from './versioned-resource-adapter';
 import {ResourceService} from '../resource-services/resource.service';
 import {RouteParams} from '../routing/route-params';
-import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
+import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object';
+import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
 
 @Injectable()
 export class ResourceObjectResolverService implements Resolve<VersionedJsonResourceObject> {

@@ -1,21 +1,20 @@
 import {map, catchError} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 import {Inject, Injectable} from '@angular/core';
-
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-factory';
 import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
-import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Required, Validate} from '../../decorators/required';
 import {ItemCacheService} from '../item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from '../config';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {Cacheable} from '../cache/cacheable';
-import {Observable} from 'rxjs';
 import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
 import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
-import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
+import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object';
 
 /**
  * This is the module's core service providing functionality to access resources (only HAL documents supported yet).

@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {SendDataDialogData} from './send-data-dialog-data';
 import {SendDataDialogResult} from './send-data-dialog-result';
 import {FormGroup} from '@angular/forms';

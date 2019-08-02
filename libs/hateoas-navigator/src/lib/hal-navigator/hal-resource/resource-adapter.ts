@@ -5,13 +5,15 @@ import {JsonProperty, JsonRawObjectProperty} from '../json-property/json-propert
 import {ObjectPropertyDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 import {JsonObjectPropertyImpl} from '../json-property/json-object-property-impl';
-import {JsonResourceObject} from './resource-object';
+import {JsonResourceObject} from './json-resource-object';
 import {PropertyFactory} from '../json-property/factory/property-factory';
-import {NotNull} from 'hateoas-navigator/decorators/not-null';
-import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
+import {NotNull} from '../../decorators/not-null';
+import {HalResourceFactory} from './factory/hal-resource-factory';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
+ *
+ * @dynamic
  */
 export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject {
   private static LINKS_PROPERTY = '_links';

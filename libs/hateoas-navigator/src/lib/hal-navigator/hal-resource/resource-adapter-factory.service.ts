@@ -8,7 +8,7 @@ import {LinkFactory} from '../link-object/link-factory';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AssociationResolver} from '../descriptor/association/association-resolver';
-import {JsonResourceObject, VersionedJsonResourceObject} from './resource-object';
+import {JsonResourceObject, VersionedJsonResourceObject} from './json-resource-object';
 import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
 import {Injectable} from '@angular/core';
 

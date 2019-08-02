@@ -1,6 +1,6 @@
-import {JsonArrayProperty, JsonProperty} from 'libs/hateoas-navigator/src/lib/hal-navigator/json-property/json-property';
-import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
-import {HalResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/value-type/hal-value-type';
+import {JsonArrayProperty, JsonProperty} from '../json-property';
+import {JsonResourceObject} from '../../hal-resource/json-resource-object';
+import {HalResourceObject} from '../../hal-resource/value-type/hal-value-type';
 
 export interface PropertyFactory<V> {
   create(name: string, value: V): JsonProperty<V>;

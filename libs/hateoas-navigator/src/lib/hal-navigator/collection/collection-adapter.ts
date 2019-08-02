@@ -1,8 +1,8 @@
 import {Observable} from 'rxjs';
 import {ResourceDescriptor} from '../descriptor';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
-import {JsonResourceObject} from '../hal-resource/resource-object';
-import {ResourceService} from 'hateoas-navigator/hal-navigator';
+import {JsonResourceObject} from '../hal-resource/json-resource-object';
+import {ResourceService} from '../resource-services/resource.service';
 import {map} from 'rxjs/operators';
 
 export class CollectionAdapter {

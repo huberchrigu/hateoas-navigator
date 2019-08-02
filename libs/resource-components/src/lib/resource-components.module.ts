@@ -6,19 +6,17 @@ import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-di
 import {ResourceFormComponent} from './resource-form/resource-form.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ResourceItemComponent} from './resource-item/resource-item.component';
-import {
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatIconModule,
-  MatInputModule,
-  MatNativeDateModule,
-  MatSelectModule,
-  MatTableModule,
-  MatToolbarModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {InputFieldComponent} from './resource-form/input-field/input-field.component';
 import {DateTimeFieldComponent} from './resource-form/date-time-field/date-time-field.component';
 import {FormGroupComponent} from './resource-form/form-group/form-group.component';

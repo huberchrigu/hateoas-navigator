@@ -4,14 +4,14 @@ import {ResourceLink, VersionedResourceAdapter} from 'hateoas-navigator';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
-import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
+import {ResourceAdapterFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
+import {VersionedJsonResourceObject} from 'hateoas-navigator';
 
 @Component({
   selector: 'lib-resource-item',

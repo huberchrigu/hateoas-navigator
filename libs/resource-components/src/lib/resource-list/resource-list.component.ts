@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {ResourceDescriptor, ResourceService, VersionedResourceAdapter} from 'hateoas-navigator';
+import {JsonResourceObject, ResourceDescriptor, ResourceService, VersionedResourceAdapter} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 import {of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
-import {JsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dialog.component';
 import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';

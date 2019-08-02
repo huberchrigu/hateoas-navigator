@@ -3,8 +3,8 @@ import SpyObjMethodNames = jasmine.SpyObjMethodNames;
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
 import Spy = jasmine.Spy;
-import {ResourceDescriptorProvider} from 'hateoas-navigator/hal-navigator/descriptor/provider/resource-descriptor-provider';
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
+import {ResourceDescriptor} from '../resource-descriptor';
 
 export class PropertyDescriptorMockBuilder<T extends PropDescriptor> {
   protected methodNames = {

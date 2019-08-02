@@ -2,8 +2,8 @@ import {map} from 'rxjs/operators';
 import {NavigationItem} from './navigation-item';
 import {LinkFactory} from '../link-object/link-factory';
 import {forkJoin, Observable} from 'rxjs';
-import {JsonResourceObject} from '../hal-resource/resource-object';
-import {ResourceLink} from 'hateoas-navigator/hal-navigator';
+import {JsonResourceObject} from '../hal-resource/json-resource-object';
+import {ResourceLink} from '../link-object/resource-link';
 
 export class NavigationFactory {
 

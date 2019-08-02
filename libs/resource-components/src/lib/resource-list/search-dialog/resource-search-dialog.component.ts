@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {ResourceSearchDialogData} from './resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './resource-search-dialog-result';
-import {ResourceLink} from 'hateoas-navigator/hal-navigator';
+import {ResourceLink} from 'hateoas-navigator';
 
 @Component({
   templateUrl: './resource-search-dialog.component.html',

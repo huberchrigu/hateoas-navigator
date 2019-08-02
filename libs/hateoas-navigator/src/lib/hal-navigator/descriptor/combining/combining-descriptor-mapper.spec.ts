@@ -1,6 +1,6 @@
 import {ActionType} from '../actions/action-type';
 import {CombiningDescriptorMapper} from './combining-descriptor-mapper';
-import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/resource-descriptor';
+import {ResourceDescriptor} from '../resource-descriptor';
 import {
   ArrayField,
   DatePickerField,
@@ -11,16 +11,16 @@ import {
   LinkField,
   ResourceActions,
   SubFormField
-} from 'hateoas-navigator';
-import {alps, jsonSchema} from 'hateoas-navigator/hal-navigator/descriptor/combining/sample-input.spec';
-import {SchemaReferenceFactory} from 'hateoas-navigator/hal-navigator/schema/schema-reference-factory';
-import {AlpsDocumentAdapter} from 'hateoas-navigator/hal-navigator/alps-document/alps-document-adapter';
-import {ObjectPropertyDescriptor, PropDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/prop-descriptor';
-import {JsonSchemaDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/json-schema/json-schema-descriptor-mapper';
-import {AlpsDescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/alps/alps-descriptor-mapper';
-import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
-import {DescriptorBuilder, FieldProcessor} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
-import {DefaultMapperConfigs} from 'hateoas-navigator/hal-navigator/descriptor/combining/mapper-config';
+} from '../..';
+import {alps, jsonSchema} from './sample-input.spec';
+import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
+import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';
+import {ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
+import {AlpsDescriptorMapper} from '../alps/alps-descriptor-mapper';
+import {DescriptorMapper} from '../mapper/descriptor-mapper';
+import {DescriptorBuilder, FieldProcessor} from '../mapper/descriptor-builder';
+import {DefaultMapperConfigs} from './mapper-config';
 
 describe('CombiningDescriptorMapper', () => {
   it('should not contain "update" action', () => {

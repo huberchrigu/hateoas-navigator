@@ -3,15 +3,15 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceAdapter} from 'hateoas-navigator';
 import SpyObj = jasmine.SpyObj;
 import {ResourceActions} from 'hateoas-navigator';
 import {ResourceDescriptor} from 'hateoas-navigator';
 import {of} from 'rxjs';
-import {PrimitiveOrEmptyProperty} from 'hateoas-navigator/hal-navigator/json-property/primitive-or-empty-property';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
+import {PrimitiveOrEmptyProperty} from 'hateoas-navigator';
+import {ResourceAdapterFactoryService} from 'hateoas-navigator';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;

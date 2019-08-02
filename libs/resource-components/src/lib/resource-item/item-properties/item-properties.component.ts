@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {JsonObjectProperty, JsonProperty} from 'hateoas-navigator/hal-navigator/json-property/json-property';
-import {HalValueType} from 'hateoas-navigator/hal-navigator/hal-resource/value-type/hal-value-type';
-import {JsonArrayPropertyImpl} from 'hateoas-navigator/hal-navigator/json-property/json-array-property-impl';
+import {JsonObjectProperty, JsonProperty} from 'hateoas-navigator';
+import {HalValueType} from 'hateoas-navigator';
+import {JsonArrayPropertyImpl} from 'hateoas-navigator';
 
 @Component({
   selector: 'lib-item-properties',

@@ -2,9 +2,9 @@ import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {getFormType} from '../../form/form-field-type';
-import {DescriptorMapper} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-mapper';
-import {DescriptorBuilder, DescriptorType} from 'hateoas-navigator/hal-navigator/descriptor/mapper/descriptor-builder';
-import {LOGGER} from 'hateoas-navigator/logging/logger';
+import {DescriptorMapper} from '../mapper/descriptor-mapper';
+import {DescriptorBuilder, DescriptorType} from '../mapper/descriptor-builder';
+import {LOGGER} from '../../../logging/logger';
 
 export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema> {
 

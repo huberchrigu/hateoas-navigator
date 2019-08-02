@@ -4,7 +4,7 @@ import {HalPropertyFactory} from '../hal-resource/factory/hal-property-factory';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
 import {LinkFactory} from '../link-object/link-factory';
 import {ResourceDescriptor} from '../descriptor/resource-descriptor';
-import {VersionedJsonResourceObject} from '../hal-resource/resource-object';
+import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object';
 
 /**
  * This is a resource object with a version.

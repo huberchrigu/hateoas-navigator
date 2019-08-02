@@ -1,12 +1,12 @@
-import {HalPropertyFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-property-factory';
-import {HalValueType} from 'hateoas-navigator/hal-navigator/hal-resource/value-type/hal-value-type';
-import {JsonArrayProperty, JsonObjectProperty} from 'hateoas-navigator/hal-navigator/json-property/json-property';
-import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {HalPropertyFactory} from './hal-property-factory';
+import {HalValueType} from '../value-type/hal-value-type';
+import {JsonArrayProperty, JsonObjectProperty} from '../../json-property/json-property';
+import {HalResourceFactory} from './hal-resource-factory';
+import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
 import {
   ArrayDescriptorMockBuilder, AssociationDescriptorMockBuilder, PropertyDescriptorMockBuilder,
   ResourceDescriptorMockBuilder
-} from 'hateoas-navigator/hal-navigator/descriptor/combining/property-descriptor-mock-builder.spec';
+} from '../../descriptor/combining/property-descriptor-mock-builder.spec';
 
 describe('HalPropertyFactory', () => {
   let resourceFactory: HalResourceFactory;

@@ -1,6 +1,6 @@
 import {HalResourceObject} from '../value-type/hal-value-type';
 import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
-import {JsonResourceObject} from '../resource-object';
+import {JsonResourceObject} from '../json-resource-object';
 import {Observable} from 'rxjs';
 
 /**

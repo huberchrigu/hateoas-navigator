@@ -6,8 +6,8 @@ import {HalResourceObject} from '../../hal-resource/value-type/hal-value-type';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {HeaderOptions} from '../../http/header-options';
 import {ResourceLink} from '../../link-object/resource-link';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator/hal-navigator/hal-resource/resource-adapter-factory.service';
-import {VersionedJsonResourceObject} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object';
+import {ResourceAdapterFactoryService} from '../../hal-resource/resource-adapter-factory.service';
+import {VersionedJsonResourceObject} from '../../hal-resource/json-resource-object';
 
 /**
  * Caches the returned items and saves them together with the <code>ETag</code>. The next time this resource is requested,

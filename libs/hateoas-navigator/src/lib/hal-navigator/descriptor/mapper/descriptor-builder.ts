@@ -11,8 +11,7 @@ import {Observable} from 'rxjs';
 import {NotNull} from '../../../decorators/not-null';
 import {tap} from 'rxjs/operators';
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-
-import {LOGGER} from 'hateoas-navigator/logging/logger';
+import {LOGGER} from '../../../logging/logger';
 
 export type FieldProcessor = (fieldBuilder: FormFieldBuilder) => FormFieldBuilder;
 

@@ -1,4 +1,4 @@
-import {ResourceLink} from 'hateoas-navigator/hal-navigator';
+import {ResourceLink} from 'hateoas-navigator';
 
 export class ResourceSearchDialogData {
   constructor(public urls: ResourceLink[]) {

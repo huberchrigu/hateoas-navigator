@@ -1,7 +1,8 @@
 import {JsonProperty} from './json-property';
 import {PropDescriptor} from '../descriptor';
-import {NotNull} from 'hateoas-navigator/decorators/not-null';
+import {NotNull} from '../../decorators/not-null';
 
+// @dynamic
 export abstract class AbstractProperty<V, D extends PropDescriptor> implements JsonProperty<V> {
 
   protected constructor(private name: string, private value: V, private descriptor?: D) {

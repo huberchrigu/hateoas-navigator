@@ -11,7 +11,7 @@ import {CombiningDescriptorMapper} from '../combining/combining-descriptor-mappe
 import {StaticDescriptorMapper} from '../static/static-descriptor-mapper';
 import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
 import {ResourceDescriptor} from '../resource-descriptor';
-import {DefaultMapperConfigs} from 'hateoas-navigator/hal-navigator/descriptor/combining/mapper-config';
+import {DefaultMapperConfigs} from '../combining/mapper-config';
 
 export class DefaultDescriptorProvider {
 
