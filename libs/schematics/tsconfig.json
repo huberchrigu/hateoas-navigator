@@ -31,8 +31,5 @@
   ],
   "exclude": [
     "src/*/files/**/*"
-  ],
-  "paths": {
-    "resource-components": ["../../dist/resource-components"]
-  }
+  ]
 }
