@@ -15,9 +15,13 @@ jobs:
     - script: npm run lint demo
       name: "demo"
     - stage: test
-      script: npm run test hateoas-navigator
+      script: npm run test hateoas-navigator --browsers ChromeHeadless
       name: "hateoas-navigator"
-    - script: npm run test resource-components
+    - script: npm run test resource-components --browsers ChromeHeadless
       name: "resource-components"
-    - script: npm run test demo
+    - script: npm run test demo --browsers ChromeHeadless
       name: "demo"
+
+before_install:
+  # start your web application and listen on `localhost`
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
