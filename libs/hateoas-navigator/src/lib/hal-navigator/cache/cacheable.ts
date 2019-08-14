@@ -1,14 +1,6 @@
 import {from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-export function Cacheable(): MethodDecorator {
-  return <(...args) => any>function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args) => any>) {
-    const proxyTarget = descriptor.value;
-    descriptor.value = new ProxyFactory(proxyTarget).getProxy();
-    return descriptor;
-  };
-}
-
 class ProxyFactory<T> {
   private cache = {};
 
@@ -37,4 +29,12 @@ class ProxyFactory<T> {
       }
     };
   }
+}
+
+export function Cacheable(): MethodDecorator {
+  return <(...args) => any>function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args) => any>) {
+    const proxyTarget = descriptor.value;
+    descriptor.value = new ProxyFactory(proxyTarget).getProxy();
+    return descriptor;
+  };
 }

@@ -1,3 +1,5 @@
+export enum LogLevel {TRACE, DEBUG, INFO, WARN, ERROR}
+
 export class Logger {
   constructor(private logLevel: LogLevel) {
   }
@@ -30,7 +32,5 @@ export class Logger {
     }
   }
 }
-
-export enum LogLevel {TRACE, DEBUG, INFO, WARN, ERROR}
 
 export const LOGGER = new Logger(LogLevel.DEBUG);

@@ -4,30 +4,6 @@ import {Observable} from 'rxjs';
 import {ResourceDescriptorProvider} from './provider/resource-descriptor-provider';
 import apply = Reflect.apply;
 
-export abstract class AbstractPropDescriptor implements PropDescriptor {
-  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
-    try {
-      return apply(fct(this), this, args);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
-    try {
-      return apply(fct(this), this, []);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  abstract getName(): string;
-
-  abstract getTitle(): string;
-
-  abstract toFormFieldBuilder(): FormFieldBuilder;
-}
-
 export interface PropDescriptor {
 
   /**
@@ -55,6 +31,30 @@ export interface PropDescriptor {
     ReturnType<ToFunction<T[F]>>;
 
   orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor>;
+}
+
+export abstract class AbstractPropDescriptor implements PropDescriptor {
+  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
+    try {
+      return apply(fct(this), this, args);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
+    try {
+      return apply(fct(this), this, []);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  abstract getName(): string;
+
+  abstract getTitle(): string;
+
+  abstract toFormFieldBuilder(): FormFieldBuilder;
 }
 
 export type ArrayFunc<T> = (...args: any[]) => T[];
