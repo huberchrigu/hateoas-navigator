@@ -5,6 +5,12 @@ import {ResourceSearchDialogData} from './resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './resource-search-dialog-result';
 import {ResourceLink} from 'hateoas-navigator';
 
+class ParameterControl extends FormControl {
+  constructor(public id: string) {
+    super();
+  }
+}
+
 @Component({
   templateUrl: './resource-search-dialog.component.html',
   styleUrls: ['../../resource-form/form-fields.sass']
@@ -67,11 +73,5 @@ export class ResourceSearchDialogComponent implements OnInit {
     const newParams = this.urls[value].getTemplatedParts().map(part => new ParameterControl(part));
 
     this.parameterControls.splice(0, this.parameterControls.length, ...newParams);
-  }
-}
-
-class ParameterControl extends FormControl {
-  constructor(public id: string) {
-    super();
   }
 }
