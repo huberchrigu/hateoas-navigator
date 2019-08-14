@@ -6,6 +6,11 @@ import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {DescriptorBuilder, DescriptorType} from '../mapper/descriptor-builder';
 import {LOGGER} from '../../../logging/logger';
 
+class NamedJsonSchema {
+  constructor(public name, public schema: JsonSchema) {
+  }
+}
+
 export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema> {
 
   constructor(private name: string, private schema: JsonSchema, protected schemaReferenceFactory: SchemaReferenceFactory,
@@ -96,9 +101,4 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
     return schema.$ref ? this.schemaReferenceFactory.getReferencedSchema(schema) : schema;
   }
 
-}
-
-class NamedJsonSchema {
-  constructor(public name, public schema: JsonSchema) {
-  }
 }

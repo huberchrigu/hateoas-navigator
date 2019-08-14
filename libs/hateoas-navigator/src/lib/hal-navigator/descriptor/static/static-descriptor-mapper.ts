@@ -3,6 +3,11 @@ import {FormFieldBuilder} from '../../form/form-field-builder';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {DescriptorBuilder} from '../mapper/descriptor-builder';
 
+class NamedConfig {
+  constructor(public name: string, public config: PropertyConfig) {
+  }
+}
+
 export class StaticDescriptorMapper extends DescriptorMapper<NamedConfig> {
 
   constructor(private name: string, protected config: PropertyConfig, protected itemConfigs: { [resourceName: string]: PropertyConfig }) {
@@ -56,9 +61,4 @@ export class StaticDescriptorMapper extends DescriptorMapper<NamedConfig> {
       .withOptions(this.config.enumOptions);
   }
 
-}
-
-class NamedConfig {
-  constructor(public name: string, public config: PropertyConfig) {
-  }
 }

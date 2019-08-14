@@ -1,4 +1,5 @@
 # HATEOAS Navigator
+[![Build Status](https://travis-ci.org/huberchrigu/hateoas-navigator.svg?branch=master)](https://travis-ci.org/huberchrigu/hateoas-navigator)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.
 

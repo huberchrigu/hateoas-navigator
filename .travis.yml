@@ -1,0 +1,37 @@
+dist: trusty
+sudo: false
+
+language: node_js
+node_js:
+  - "10"
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+cache:
+  directories:
+    - ./node_modules
+
+install:
+  - yarn install
+
+jobs:
+  include:
+    - stage: lint
+      script: npm run lint hateoas-navigator
+      name: "hateoas-navigator"
+    - script: npm run lint resource-components
+      name: "resource-components"
+    - script: npm run lint demo
+      name: "demo"
+    - stage: test
+      script: npm run test -- hateoas-navigator --no-watch --no-progress --browsers=ChromeHeadlessCI
+      name: "hateoas-navigator"
+    - script: npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
+      name: "resource-components"
+    - script: npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
+      name: "demo"

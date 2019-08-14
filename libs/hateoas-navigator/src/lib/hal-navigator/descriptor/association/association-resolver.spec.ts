@@ -2,12 +2,13 @@ import SpyObj = jasmine.SpyObj;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
 import {
   AssociationDescriptorMockBuilder,
-  ObjectDescriptorMockBuilder
+  ResourceDescriptorMockBuilder
 } from '../combining/property-descriptor-mock-builder.spec';
 import {AssociationResolver} from './association-resolver';
 import {Observable, of} from 'rxjs';
-import {AssociationPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+import {AssociationPropertyDescriptor} from '../prop-descriptor';
 import {fakeAsync} from '@angular/core/testing';
+import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator';
 
 describe('AssociationResolver', () => {
   let testee: AssociationResolver;
@@ -51,15 +52,15 @@ describe('AssociationResolver', () => {
     expect(wasCalled).toBeTruthy();
   }));
 
-  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<PropDescriptor> {
-    const rootResource = of(new ObjectDescriptorMockBuilder()
+  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<ResourceDescriptor> {
+    const rootResource = of(new ResourceDescriptorMockBuilder()
       .withChildrenDescriptors([new AssociationDescriptorMockBuilder()
         .withAssociatedResourceName(associationName)
         .withName(associationName)
         .build()])
       .withName(resource)
       .build());
-    const linkedResource = of(new ObjectDescriptorMockBuilder()
+    const linkedResource = of(new ResourceDescriptorMockBuilder()
       .withChildrenDescriptors([])
       .withName(associationName)
       .build());
