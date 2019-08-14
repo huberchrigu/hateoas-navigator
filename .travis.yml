@@ -1,9 +1,23 @@
+dist: trusty
+sudo: false
+
 language: node_js
 node_js:
-  - 10
+  - "10"
 
 addons:
-  chrome: stable
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+cache:
+  directories:
+    - ./node_modules
+
+install:
+  - yarn install
 
 jobs:
   include:
@@ -15,13 +29,9 @@ jobs:
     - script: npm run lint demo
       name: "demo"
     - stage: test
-      script: npm run test hateoas-navigator --browsers ChromeHeadless
+      script: npm run test -- hateoas-navigator --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "hateoas-navigator"
-    - script: npm run test resource-components --browsers ChromeHeadless
+    - script: npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "resource-components"
-    - script: npm run test demo --browsers ChromeHeadless
+    - script: npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "demo"
-
-before_install:
-  # start your web application and listen on `localhost`
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
