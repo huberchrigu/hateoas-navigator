@@ -80,6 +80,8 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
 
   /**
    * Overrides {@link JsonObjectPropertyImpl}'s implementation to also consider embedded resource objects.
+   *
+   * @return `null` if this resource object contains no child property (but may still have a child descriptor)
    */
   getChildProperty(propertyName: string): JsonProperty<HalValueType> {
     if (this.getStateKeys().some(k => k === propertyName)) {
@@ -89,6 +91,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
     if (embedded && embedded[propertyName]) {
       return this.getPropertyFactory().create(propertyName, embedded[propertyName]);
     }
+    return null;
   }
 
   toRawObjectState(): JsonRawObjectProperty {
