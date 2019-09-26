@@ -29,6 +29,7 @@
     "rxjs": "^6.4.0",
     "rxjs-compat": "^6.4.0",
     "rxjs-tslint": "^0.1.7",
+    "tsickle": "^0.37.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
