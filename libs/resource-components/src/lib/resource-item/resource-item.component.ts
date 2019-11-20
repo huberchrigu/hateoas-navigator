@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ResourceLink, VersionedResourceAdapter} from 'hateoas-navigator';
+import {JsonResourceObject, ResourceLink, VersionedResourceAdapter} from 'hateoas-navigator';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
@@ -12,6 +12,8 @@ import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result'
 import {ResourceAdapterFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {VersionedJsonResourceObject} from 'hateoas-navigator';
+import {Subscription} from 'rxjs';
+import {ResourceListComponent} from '../resource-list/resource-list.component';
 
 @Component({
   selector: 'lib-resource-item',
@@ -67,9 +69,33 @@ export class ResourceItemComponent implements OnInit {
     if (resource) {
       return this.router.navigate([resource.getSelfLink().getRelativeUriWithoutTemplatedPart()]);
     } else {
-      const uri = link.getRelativeUriWithoutTemplatedPart();
-      const options = this.resourceService.getOptionsForCustomUri(uri);
-      options.subscribe(o => this.openDialogForCustomLink(uri, o));
+      const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
+      if (resources) {
+        return this.goToResourceList(resources);
+      } else {
+        return this.openDialogForLink(link);
+      }
+    }
+  }
+
+  private openDialogForLink(link: ResourceLink): Subscription {
+    const uri = link.getRelativeUriWithoutTemplatedPart();
+    const options = this.resourceService.getOptionsForCustomUri(uri);
+    return options.subscribe(o => this.openDialogForCustomLink(uri, o));
+  }
+
+  isLinkDisabled(link: ResourceLink): Boolean {
+    const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
+    return resources && resources.length === 0;
+  }
+
+  private goToResourceList(resources: JsonResourceObject[]): Promise<Boolean> {
+    const queryParams = {};
+    queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().extractId());
+    if (resources.length === 0) {
+      throw new Error('Cannot got to empty list');
+    } else {
+      return this.router.navigate(['/' + resources[0].getSelfLink().extractResourceName()], {queryParams});
     }
   }
 

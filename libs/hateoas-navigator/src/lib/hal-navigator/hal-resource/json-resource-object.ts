@@ -30,6 +30,11 @@ export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
    */
   getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject;
 
+  /**
+   * Like {@link getEmbeddedResourceOrNull}, but returns null if the embedded is not an array.
+   */
+  getEmbeddedResourcesOrNull(linkRelationType: string): JsonResourceObject[];
+
   getDescriptor(): ResourceDescriptor;
 
   getLinks(): ResourceLink[];

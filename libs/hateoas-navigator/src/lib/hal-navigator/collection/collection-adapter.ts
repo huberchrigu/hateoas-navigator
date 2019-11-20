@@ -44,6 +44,10 @@ export class CollectionAdapter {
     return resourceService.getItem(this.resourceObject.getName(), 'search').pipe(map(obj => obj.getOtherLinks()));
   }
 
+  filterByIds(ids: string[]): JsonResourceObject[] {
+    return this.getItems().filter(item => ids.some(id => item.getSelfLink().extractId() === id));
+  }
+
   private getEmbeddedContent(): JsonResourceObject[] {
     return this.resourceObject.getEmbeddedResources(
       this.resourceObject.getName(), true

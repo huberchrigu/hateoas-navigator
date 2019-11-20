@@ -41,11 +41,20 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
   }
 
   getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject {
-    const resource = this.getValue()._embedded[linkRelationType];
+    const resource = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resource)) {
       return null;
     }
     return resource ? this.resourceFactory.create(linkRelationType, resource, this.getSubResourceDescriptor(linkRelationType)) : undefined;
+  }
+
+  getEmbeddedResourcesOrNull(linkRelationType: string): JsonResourceObject[] {
+    const resources = this.getEmbeddedNullSafe(linkRelationType);
+    if (Array.isArray(resources)) {
+      const subResourceDescriptor = this.getSubResourceDescriptor(linkRelationType);
+      return resources.map(resource => this.resourceFactory.create(linkRelationType, resource, subResourceDescriptor));
+    }
+    return undefined;
   }
 
   /**
@@ -102,6 +111,10 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
 
   getDisplayValue(): string | number {
     return this.toRawObjectState().getDisplayValue();
+  }
+
+  private getEmbeddedNullSafe(linkRelationType: string) {
+    return this.getValue()._embedded ? this.getValue()._embedded[linkRelationType] : undefined;
   }
 
   private getStateKeys() {
