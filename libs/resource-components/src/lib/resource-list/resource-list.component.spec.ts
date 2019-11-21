@@ -1,12 +1,12 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Data, Params, Router} from '@angular/router';
 import {of} from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 import {ResourceListComponent} from '../resource-list/resource-list.component';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableModule } from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {MatTableModule} from '@angular/material/table';
 import {ResourceDescriptor, ResourceService} from 'hateoas-navigator';
 import {ResourceActions} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
@@ -32,12 +32,12 @@ describe('ResourceListComponent', () => {
       providers: [
         {
           provide: ActivatedRoute, useValue: {
-            data: of(
-              {
-                collectionAdapter: collectionAdapter,
-                schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
-              })
-          }
+            data: of({
+              collectionAdapter: collectionAdapter,
+              schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
+            } as Data),
+            queryParams: of({} as Params)
+          } as ActivatedRoute
         },
         {provide: Router, useValue: {}},
         {provide: MatDialog, useValue: {}},
