@@ -89,18 +89,16 @@ export class ResourceService {
     const version = actionOn.getVersion();
     const name = actionOn.getName();
 
-    switch (method) {
-      case 'POST':
-        return this.createAndCache(name, uri, body);
-      case 'PUT':
-        return this.updateItemAndCachedVersion(name, uri, body, version);
-      case 'GET':
-        return this.getItemFromResourceOrCache(name, uri, ResourceLink.extractIdFromUri(name, uri));
-      case 'DELETE':
-        return this.removeFromBackendAndCache(uri, version).pipe(map(() => actionOn)); // TODO: DELETE responses are always ignored yet
-      default:
-        throw new Error(method + ' not supported');
-    }
+    return this.putToApi(uri, body, version, method).pipe(
+      map(response => {
+        const responseBody = response.body;
+        if (responseBody) {
+          return this.resourceCacheService.getItemFromModifyingResponse(name, response);
+        } else {
+          throw new Error('Custom action needs to return body - otherwise state cannot be known');
+        }
+      })
+    );
   }
 
   private createAndCache(resourceName: string, resourceUri: string, object: any) {
@@ -108,9 +106,10 @@ export class ResourceService {
       map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
   }
 
-  private removeFromBackendAndCache(resourceLink, version: string) {
+  private removeFromBackendAndCache(resourceLink, version: string): Observable<HttpResponse<any>> {
     return this.deleteFromApi(resourceLink, version).pipe(
-      map(response => this.resourceCacheService.removeFromResponse(resourceLink, response)));
+      map(response => this.resourceCacheService.removeFromResponse(resourceLink, response))
+    );
   }
 
   private updateItemAndCachedVersion(resourceName: string, resourceUri: string, object: any, version: string, usePatch = false) {
@@ -118,7 +117,7 @@ export class ResourceService {
       map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
   }
 
-  private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string) {
+  private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string): Observable<VersionedJsonResourceObject> {
     return this.getResponseFromApi<HalResourceObject>(resourceUri, this.resourceCacheService.getRequestHeader(resourceName, id))
       .pipe(
         map(response => this.resourceCacheService.getItemFromGetResponse(resourceName, response)),
