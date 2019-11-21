@@ -13,10 +13,16 @@ export class ResourceLink extends Link {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
+  /**
+   * @deprecated
+   */
   static relativeUriFromId(resource: string, id: string): string {
     return '/' + resource + '/' + id;
   }
 
+  /**
+   * @deprecated
+   */
   static extractIdFromUri(resource: string, uri: string) {
     const resourcePrefix = '/' + resource + '/';
     if (!uri.startsWith(resourcePrefix)) {
@@ -44,9 +50,15 @@ export class ResourceLink extends Link {
     const resourceUrl = relativeUrl.substring(1);
     const secondSlashIndex = resourceUrl.indexOf('/');
     if (secondSlashIndex > -1) {
-      return this.removeTemplatedPart(resourceUrl.substring(0, secondSlashIndex));
+      return resourceUrl.substring(0, secondSlashIndex);
     }
     return this.removeTemplatedPart(resourceUrl);
+  }
+
+  extractId(): string {
+    const relativeUrl = this.getRelativeUriWithoutTemplatedPart().substring(1);
+    const slashIndex = relativeUrl.indexOf('/');
+    return relativeUrl.substring(slashIndex + 1);
   }
 
   getFullUriWithoutTemplatedPart() {

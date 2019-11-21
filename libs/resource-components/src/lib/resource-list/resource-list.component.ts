@@ -3,9 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
 import {JsonResourceObject, ResourceDescriptor, ResourceService, VersionedResourceAdapter} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
-import {of} from 'rxjs';
+import {combineLatest, of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dialog.component';
 import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';
@@ -16,25 +16,28 @@ import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog
 })
 export class ResourceListComponent implements OnInit {
 
+  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, private resourceService: ResourceService) {
+  }
+
+  static FILTER_PARAM = 'filter';
+
   collection: CollectionAdapter;
   propertyNames: Array<string>;
 
   dataSource: DataSource<JsonResourceObject>;
 
-  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, private resourceService: ResourceService) {
-  }
-
   ngOnInit() {
-    this.route.data
-      .pipe(map((data: ResourceListRouteData) => data.collectionAdapter))
-      .subscribe(collection => {
-        this.initCollection(collection);
-      });
+    combineLatest([
+      this.route.data.pipe(map((data: ResourceListRouteData) => data.collectionAdapter)),
+      this.route.queryParams.pipe(map(params => params[ResourceListComponent.FILTER_PARAM]))
+    ]).subscribe(([collection, ids]) => {
+      this.initCollection(collection, ids && !Array.isArray(ids) ? [ids] : ids);
+    });
   }
 
-  private initCollection(collection) {
+  private initCollection(collection, ids: string[] = null) {
     this.initTableMetadata(collection);
-    this.initDataSource(collection);
+    this.initDataSource(collection, ids);
   }
 
   /**
@@ -52,7 +55,7 @@ export class ResourceListComponent implements OnInit {
   }
 
   onClick(item: VersionedResourceAdapter) {
-    this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
+    return this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
   }
 
   /**
@@ -67,19 +70,6 @@ export class ResourceListComponent implements OnInit {
     return descriptor.getActions().isCreateEnabled();
   }
 
-  private initTableMetadata(collection: CollectionAdapter) {
-    this.collection = collection;
-    this.propertyNames = this.collection.getPropertyNames();
-  }
-
-  private initDataSource(collection: CollectionAdapter) {
-    this.dataSource = {
-      connect: () => of(collection.getItems()),
-      disconnect: () => {
-      }
-    };
-  }
-
   clickSearchModal() {
     this.collection.getSearchUrls(this.resourceService).subscribe(urls => {
       const dialogRef = this.dialog.open(ResourceSearchDialogComponent, {data: new ResourceSearchDialogData(urls)});
@@ -89,6 +79,19 @@ export class ResourceListComponent implements OnInit {
         }
       });
     });
+  }
+
+  private initTableMetadata(collection: CollectionAdapter) {
+    this.collection = collection;
+    this.propertyNames = this.collection.getPropertyNames();
+  }
+
+  private initDataSource(collection: CollectionAdapter, ids: string[]) {
+    this.dataSource = {
+      connect: () => of(ids ? collection.filterByIds(ids) : collection.getItems()),
+      disconnect: () => {
+      }
+    };
   }
 
   private updateCollection(resourceUri: string) {
