@@ -120,7 +120,7 @@ export class ResourceItemComponent implements OnInit {
         .pipe(
           flatMap(resource => this.resourceFactory
             .resolveDescriptorAndAssociations(resource.getName(), resource.getValue(),
-              'unknown')) // TODO: Version should be known - or else do not use versioned resources
+              resource.getVersion()))
         ).subscribe(resource => this.initResource(resource));
     });
   }
