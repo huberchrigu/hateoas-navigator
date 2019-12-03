@@ -9,6 +9,11 @@ import {Observable} from 'rxjs';
 import {PropDescriptor} from '../descriptor';
 
 export class ResourceLink extends Link {
+
+  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
+    super(link.href);
+  }
+
   static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
@@ -20,21 +25,8 @@ export class ResourceLink extends Link {
     return '/' + resource + '/' + id;
   }
 
-  /**
-   * @deprecated
-   */
-  static extractIdFromUri(resource: string, uri: string) {
-    const resourcePrefix = '/' + resource + '/';
-    if (!uri.startsWith(resourcePrefix)) {
-      throw new Error(`Cannot extract ID from uri ${uri} and resource name ${resource}`);
-    }
-    const afterResource = uri.substring(resourcePrefix.length);
-    const indexSlash = afterResource.indexOf('/');
-    return indexSlash > -1 ? afterResource.substring(0, indexSlash) : afterResource;
-  }
-
-  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
-    super(link.href);
+  private static stringifyDate(value: string | Date) {
+    return (value as Date).toJSON ? (value as Date).toJSON() : value;
   }
 
   getRelationType() {
@@ -87,8 +79,13 @@ export class ResourceLink extends Link {
     return [];
   }
 
-  getRelativeUriWithReplacedTemplatedParts(values: { [param: string]: string }) {
-    const parts = this.getTemplatedParts().filter(param => values[param]).map(param => param + '=' + values[param]);
+  /**
+   * @param values Yet only strings, numbers and Dates/Moment are supported
+   */
+  getRelativeUriWithReplacedTemplatedParts(values: { [param: string]: string | Date }) {
+    const parts = this.getTemplatedParts()
+      .filter(param => values[param])
+      .map(param => param + '=' + ResourceLink.stringifyDate(values[param]));
     if (parts.length > 0) {
       return this.getRelativeUriWithoutTemplatedPart() + '?' + parts.reduce((a, b) => a + '&' + b);
     } else {

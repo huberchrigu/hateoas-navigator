@@ -72,7 +72,9 @@ export class ResourceListComponent implements OnInit {
 
   clickSearchModal() {
     this.collection.getSearchUrls(this.resourceService).subscribe(urls => {
-      const dialogRef = this.dialog.open(ResourceSearchDialogComponent, {data: new ResourceSearchDialogData(urls)});
+      const dialogRef = this.dialog.open(ResourceSearchDialogComponent, {
+        data: new ResourceSearchDialogData(urls, this.collection.getDescriptor())
+      });
       dialogRef.afterClosed().subscribe((result: ResourceSearchDialogResult) => {
         if (result && !result.isCancelled()) {
           this.updateCollection(result.uri);

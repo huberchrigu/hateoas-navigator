@@ -1,7 +1,7 @@
-import {ResourceLink} from 'hateoas-navigator';
+import {ResourceDescriptor, ResourceLink} from 'hateoas-navigator';
 
 export class ResourceSearchDialogData {
-  constructor(public urls: ResourceLink[]) {
+  constructor(public urls: ResourceLink[], public descriptor: ResourceDescriptor) {
 
   }
 

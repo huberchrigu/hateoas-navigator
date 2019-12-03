@@ -4,12 +4,10 @@
     <mat-form-field class="cmp-full-width">
       <mat-label>Query</mat-label>
       <mat-select [formControl]="queryControl" required>
-        <mat-option *ngFor="let opt of options" [value]="opt.key">{{opt.value}}</mat-option>
+        <mat-option *ngFor="let opt of options" [value]="opt.key">{{opt.title}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field *ngFor="let param of getParameters()" class="cmp-full-width">
-      <input matInput [placeholder]="param.id" [formControl]="param">
-    </mat-form-field>
+    <lib-form-group [fields]="fields" [formGroup]="fieldControls"></lib-form-group>
   </div>
   <div mat-dialog-actions>
     <a mat-raised-button (click)="onCancel()">Cancel</a>
