@@ -68,7 +68,7 @@ export class ItemCacheService {
   }
 
   private addToCache(item: VersionedJsonResourceObject): void {
-    this.cache[item.getSelfLink().getRelativeUri()] = item;
+    this.cache[item.getSelfLink().toRelativeLink().getUri()] = item;
   }
 
   private removeFromCache(resourceLink: string): void {
@@ -76,6 +76,6 @@ export class ItemCacheService {
   }
 
   private getFromCache(resource: string, id: string): VersionedJsonResourceObject {
-    return this.cache[ResourceLink.relativeUriFromId(resource, id)];
+    return this.cache[ResourceLink.linkFromId(resource, id).getUri()];
   }
 }

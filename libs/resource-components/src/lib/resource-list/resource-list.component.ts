@@ -55,7 +55,7 @@ export class ResourceListComponent implements OnInit {
   }
 
   onClick(item: VersionedResourceAdapter) {
-    return this.router.navigateByUrl(item.getSelfLink().getRelativeUri());
+    return this.router.navigateByUrl(item.getSelfLink().toRelativeLink().getUri());
   }
 
   /**

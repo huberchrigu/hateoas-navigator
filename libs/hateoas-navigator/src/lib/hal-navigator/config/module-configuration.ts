@@ -9,6 +9,13 @@ export interface ModuleConfiguration {
   itemConfigs: { [resourceName: string]: PropertyConfig };
 }
 
+export interface FormFieldSupport {
+  title?: string;
+  type?: FormFieldType;
+  dateTimeType?: DateTimeType;
+  enumOptions?: string[];
+}
+
 export interface PropertyConfig extends FormFieldSupport {
   actionLinks?: { [actionName: string]: PropertyConfig };
   associatedResourceName?: string;
@@ -25,11 +32,4 @@ export const MODULE_CONFIG = new InjectionToken('moduleConfig');
 export interface QueryConfig {
   title?: string;
   params?: { [paramName: string]: FormFieldSupport };
-}
-
-export interface FormFieldSupport {
-  title?: string;
-  type?: FormFieldType;
-  dateTimeType?: DateTimeType;
-  enumOptions?: string[];
 }

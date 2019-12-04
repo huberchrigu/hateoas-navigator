@@ -1,14 +1,15 @@
 /**
  * Represents a link to a resource and provides various functions to get information from this link.
  */
-import {Link} from './link';
 import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
 import {PropDescriptor} from '../descriptor';
+import {RelativeLink} from 'hateoas-navigator/hal-navigator/link-object/relative-link';
+import {AbsoluteLink} from 'hateoas-navigator/hal-navigator/link-object/absolute-link';
 
-export class ResourceLink extends Link {
+export class ResourceLink extends AbsoluteLink {
 
   constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
     super(link.href);
@@ -18,11 +19,8 @@ export class ResourceLink extends Link {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
-  /**
-   * @deprecated
-   */
-  static relativeUriFromId(resource: string, id: string): string {
-    return '/' + resource + '/' + id;
+  static linkFromId(resource: string, id: string): RelativeLink {
+    return new RelativeLink('/' + resource + '/' + id);
   }
 
   private static stringifyDate(value: string | Date) {
@@ -33,12 +31,8 @@ export class ResourceLink extends Link {
     return this.linkRelationType;
   }
 
-  getFullUri() {
-    return this.href;
-  }
-
   extractResourceName(): string {
-    const relativeUrl = this.getRelativeUri();
+    const relativeUrl = this.toRelativeLink().getUri();
     const resourceUrl = relativeUrl.substring(1);
     const secondSlashIndex = resourceUrl.indexOf('/');
     if (secondSlashIndex > -1) {
@@ -54,11 +48,11 @@ export class ResourceLink extends Link {
   }
 
   getFullUriWithoutTemplatedPart() {
-    return this.removeTemplatedPart(this.href);
+    return this.removeTemplatedPart(this.getUri());
   }
 
   getRelativeUriWithoutTemplatedPart() {
-    return this.removeTemplatedPart(this.getRelativeUri());
+    return this.removeTemplatedPart(this.toRelativeLink().getUri());
   }
 
   getResourceDescriptor(): Observable<PropDescriptor> {

@@ -3,7 +3,7 @@ import {FormControl} from '@angular/forms';
 import {ResourceService} from 'hateoas-navigator';
 import {combineLatest, Observable} from 'rxjs';
 import {LinkField} from 'hateoas-navigator';
-import {startWith, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 /**
  * Currently the input's title is not shown due to https://github.com/angular/material2/issues/4863.
@@ -28,8 +28,8 @@ export class AssociationFieldComponent implements OnInit {
 
   ngOnInit() {
     const allItems = this.initItems();
-    const valueChanges = this.control.valueChanges.pipe(startWith(null));
-    const valueAndItemsObservable = combineLatest(valueChanges, allItems);
+    const valueChanges = this.control.valueChanges;
+    const valueAndItemsObservable = combineLatest([valueChanges, allItems]);
     this.filteredItems = valueAndItemsObservable.pipe(map(valueAndItems => this.filterValues(valueAndItems[0], valueAndItems[1])));
     this.initItems().subscribe(all => {
       this.updateItems(all);
@@ -59,7 +59,7 @@ export class AssociationFieldComponent implements OnInit {
       map(collection => collection.getItems()),
       map(items => items.map(item => {
         return {
-          name: item.getSelfLink().getFullUri(),
+          name: item.getSelfLink().getUri(),
           title: '' + item.getDisplayValue()
         };
       })));

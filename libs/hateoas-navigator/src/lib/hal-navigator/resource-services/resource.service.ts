@@ -55,7 +55,7 @@ export class ResourceService {
 
   @Validate
   deleteResource(@Required document: HalResourceObject, version: string): Observable<HttpResponse<void>> {
-    const resourceLink = ResourceLink.fromResourceObject(document, undefined).getRelativeUri();
+    const resourceLink = ResourceLink.fromResourceObject(document, undefined).toRelativeLink();
     return this.removeFromBackendAndCache(resourceLink, version);
   }
 

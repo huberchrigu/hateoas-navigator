@@ -1,6 +1,6 @@
 import {AlpsDescriptor} from './alps-descriptor';
 import {AlpsDescriptorType} from './alps-descriptor-type';
-import {Link} from '../link-object/link';
+import {AbsoluteLink} from '../link-object/absolute-link';
 
 export class AlpsDescriptorAdapter {
   private static readonly PROFILE_PREFIX = '/profile/';
@@ -25,8 +25,8 @@ export class AlpsDescriptorAdapter {
     if (this.descriptor.type !== AlpsDescriptorType.SAFE) {
       throw new Error('A collection resource must be of type SAFE');
     }
-    const link = new Link(this.descriptor.rt);
-    const profileUri = link.getRelativeUri();
+    const link = new AbsoluteLink(this.descriptor.rt);
+    const profileUri = link.toRelativeLink().getUri();
     const uriWithoutProfile = profileUri.substring(AlpsDescriptorAdapter.PROFILE_PREFIX.length);
     const indexOfHash = uriWithoutProfile.indexOf('#');
     return uriWithoutProfile.substring(0, indexOfHash);

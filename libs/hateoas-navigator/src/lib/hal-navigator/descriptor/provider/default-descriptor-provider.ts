@@ -20,7 +20,7 @@ export class DefaultDescriptorProvider {
   }
 
   resolve(resourceName: string): Observable<ResourceDescriptor> {
-    return combineLatest(this.schemaService.getJsonSchema(resourceName), this.schemaService.getAlps(resourceName))
+    return combineLatest([this.schemaService.getJsonSchema(resourceName), this.schemaService.getAlps(resourceName)])
       .pipe(
         map(([jsonSchema, alps]) => this.assembleDescriptorBuilders(resourceName, jsonSchema, alps)),
         map(descriptorMappers => new CombiningDescriptorMapper(descriptorMappers, DefaultMapperConfigs.ignoreChildrenFromAlps())
