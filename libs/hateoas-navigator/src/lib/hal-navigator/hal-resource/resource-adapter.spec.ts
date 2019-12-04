@@ -28,7 +28,7 @@ describe('ResourceAdapter', () => {
     const testee = createTestee('resource', {
       _links: links
     } as HalResourceObject, new LinkFactory(links, resourceDescriptorProvider));
-    expect(testee.getSelfLink().toRelativeLink().getUri).toEqual('/resource/1');
+    expect(testee.getSelfLink().toRelativeLink().getUri()).toEqual('/resource/1');
   });
 
   it('should transform an array property to a display value', () => {
