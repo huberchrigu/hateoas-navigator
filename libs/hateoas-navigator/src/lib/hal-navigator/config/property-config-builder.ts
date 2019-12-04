@@ -1,7 +1,8 @@
-import {PropertyConfig} from './module-configuration';
+import {PropertyConfig, QueryConfig} from './module-configuration';
 
 export class PropertyConfigBuilder {
   properties: { [propertyName: string]: PropertyConfig } = {};
+  queries: { [queryName: string]: QueryConfig } = {};
   actionLinks: { [actionName: string]: PropertyConfig } = {};
   private title: string;
 
@@ -9,6 +10,11 @@ export class PropertyConfigBuilder {
 
   withProperty(propertyName: string, config: PropertyConfig): PropertyConfigBuilder {
     this.properties[propertyName] = config;
+    return this;
+  }
+
+  withQuery(queryName: string, propertyConfig: PropertyConfig) {
+    this.queries[queryName] = propertyConfig;
     return this;
   }
 
@@ -40,7 +46,8 @@ export class PropertyConfigBuilder {
       return {
         title: this.title,
         properties: this.properties,
-        actionLinks: this.actionLinks
+        actionLinks: this.actionLinks,
+        queries: this.queries
       };
     }
   }

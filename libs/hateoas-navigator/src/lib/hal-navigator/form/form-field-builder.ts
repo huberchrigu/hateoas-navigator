@@ -1,6 +1,6 @@
 import {LOGGER} from '../../logging/logger';
 import {FormFieldType} from './form-field-type';
-import {DateTimeType} from '../config';
+import {DateTimeType, FormFieldSupport} from '../config';
 import {FormField} from './form-field';
 import {SubFormField} from './sub-form-field';
 import {ArrayField} from './array-field';
@@ -82,6 +82,9 @@ export class FormFieldBuilder {
     return this;
   }
 
+  /**
+   * @return null if the type or name is null.
+   */
   build(): FormField {
     const type = this.type ? this.type : this.guessType();
     if (!type) {
@@ -119,6 +122,20 @@ export class FormFieldBuilder {
     this.setIfEmpty(other, FormFieldBuilder.ONE_VALUE_FIELDS);
     this.combineArraySpec(other.arraySpecProviders);
     this.combineSubFields(other.subFields);
+    return this;
+  }
+
+  /**
+   *
+   * @param config May be <code>null</code>.
+   */
+  fromConfig(config: FormFieldSupport) {
+    if (config) {
+      return this.setIfDefined(config.dateTimeType, v => this.withDateTimeType(v))
+        .setIfDefined(config.enumOptions, v => this.withOptions(v))
+        .setIfDefined(config.title, v => this.withTitle(v))
+        .setIfDefined(config.type, v => this.withType(v));
+    }
     return this;
   }
 
@@ -194,5 +211,9 @@ export class FormFieldBuilder {
       const newSpec = current();
       return newSpec ? previous.combineWith(newSpec) : previous;
     }, new FormFieldBuilder());
+  }
+
+  private setIfDefined<T>(value: T, setter: (v: T) => this) {
+    return value ? setter(value) : this;
   }
 }

@@ -1,52 +1,38 @@
 /**
  * Represents a link to a resource and provides various functions to get information from this link.
  */
-import {Link} from './link';
 import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
 import {PropDescriptor} from '../descriptor';
+import {RelativeLink} from 'hateoas-navigator/hal-navigator/link-object/relative-link';
+import {AbsoluteLink} from 'hateoas-navigator/hal-navigator/link-object/absolute-link';
 
-export class ResourceLink extends Link {
+export class ResourceLink extends AbsoluteLink {
+
+  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
+    super(link.href);
+  }
+
   static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
     return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
   }
 
-  /**
-   * @deprecated
-   */
-  static relativeUriFromId(resource: string, id: string): string {
-    return '/' + resource + '/' + id;
+  static linkFromId(resource: string, id: string): RelativeLink {
+    return new RelativeLink('/' + resource + '/' + id);
   }
 
-  /**
-   * @deprecated
-   */
-  static extractIdFromUri(resource: string, uri: string) {
-    const resourcePrefix = '/' + resource + '/';
-    if (!uri.startsWith(resourcePrefix)) {
-      throw new Error(`Cannot extract ID from uri ${uri} and resource name ${resource}`);
-    }
-    const afterResource = uri.substring(resourcePrefix.length);
-    const indexSlash = afterResource.indexOf('/');
-    return indexSlash > -1 ? afterResource.substring(0, indexSlash) : afterResource;
-  }
-
-  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
-    super(link.href);
+  private static stringifyDate(value: string | Date) {
+    return (value as Date).toJSON ? (value as Date).toJSON() : value;
   }
 
   getRelationType() {
     return this.linkRelationType;
   }
 
-  getFullUri() {
-    return this.href;
-  }
-
   extractResourceName(): string {
-    const relativeUrl = this.getRelativeUri();
+    const relativeUrl = this.toRelativeLink().getUri();
     const resourceUrl = relativeUrl.substring(1);
     const secondSlashIndex = resourceUrl.indexOf('/');
     if (secondSlashIndex > -1) {
@@ -62,11 +48,11 @@ export class ResourceLink extends Link {
   }
 
   getFullUriWithoutTemplatedPart() {
-    return this.removeTemplatedPart(this.href);
+    return this.removeTemplatedPart(this.getUri());
   }
 
   getRelativeUriWithoutTemplatedPart() {
-    return this.removeTemplatedPart(this.getRelativeUri());
+    return this.removeTemplatedPart(this.toRelativeLink().getUri());
   }
 
   getResourceDescriptor(): Observable<PropDescriptor> {
@@ -87,8 +73,13 @@ export class ResourceLink extends Link {
     return [];
   }
 
-  getRelativeUriWithReplacedTemplatedParts(values: { [param: string]: string }) {
-    const parts = this.getTemplatedParts().filter(param => values[param]).map(param => param + '=' + values[param]);
+  /**
+   * @param values Yet only strings, numbers and Dates/Moment are supported
+   */
+  getRelativeUriWithReplacedTemplatedParts(values: { [param: string]: string | Date }) {
+    const parts = this.getTemplatedParts()
+      .filter(param => values[param])
+      .map(param => param + '=' + ResourceLink.stringifyDate(values[param]));
     if (parts.length > 0) {
       return this.getRelativeUriWithoutTemplatedPart() + '?' + parts.reduce((a, b) => a + '&' + b);
     } else {

@@ -45,7 +45,7 @@ export class ResourceFormComponent implements OnInit {
       (resourceName, object) => this.halDocumentService.create(resourceName, object) :
       (resourceName, object) => this.halDocumentService.update(resourceName, this.route.snapshot.url[1].path, object, this.version);
     return submitFunction(this.route.snapshot.url[0].path, this.form.value).subscribe((item: VersionedResourceAdapter) => {
-      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue(), undefined).getRelativeUri());
+      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue(), undefined).toRelativeLink().getUri());
     });
   }
 }

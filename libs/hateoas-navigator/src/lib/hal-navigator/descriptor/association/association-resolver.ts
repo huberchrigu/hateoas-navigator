@@ -44,7 +44,7 @@ export class AssociationResolver {
       this.resolveAssociations(arrayItems) :
       of(null);
 
-    return combineLatest(this.resolveAssociation(descriptor), resolvedChildren, resolvedArrayItem)
+    return combineLatest([this.resolveAssociation(descriptor), resolvedChildren, resolvedArrayItem])
       .pipe(map(() => descriptor));
   }
 
