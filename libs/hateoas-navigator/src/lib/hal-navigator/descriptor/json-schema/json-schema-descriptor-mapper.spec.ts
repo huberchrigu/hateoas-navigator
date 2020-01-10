@@ -3,8 +3,7 @@ import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {JsonSchemaDescriptorMapper} from './json-schema-descriptor-mapper';
 import {
   ArrayPropertyDescriptor,
-  ObjectPropertyDescriptor,
-  PropDescriptor
+  ObjectPropertyDescriptor
 } from '../prop-descriptor';
 
 describe('JsonSchemaDescriptorMapper', () => {
@@ -29,7 +28,7 @@ describe('JsonSchemaDescriptorMapper', () => {
     referenceFactoryMock.getReferencedSchema.and.returnValue(referencedSchema);
 
     const testee = new JsonSchemaDescriptorMapper('testee', array, referenceFactoryMock)
-      .toDescriptor() as ArrayPropertyDescriptor<PropDescriptor>;
+      .toDescriptor() as ArrayPropertyDescriptor;
 
     const objDescriptor = testee.getItemsDescriptor() as ObjectPropertyDescriptor;
     expect(objDescriptor.getChildDescriptor('child').getTitle()).toEqual('Child');

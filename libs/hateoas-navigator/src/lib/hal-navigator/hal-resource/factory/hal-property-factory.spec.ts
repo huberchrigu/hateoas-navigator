@@ -1,12 +1,12 @@
 import {HalPropertyFactory} from './hal-property-factory';
-import {HalValueType} from '../value-type/hal-value-type';
-import {JsonArrayProperty, JsonObjectProperty} from '../../json-property/json-property';
 import {HalResourceFactory} from './hal-resource-factory';
 import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
 import {
   ArrayDescriptorMockBuilder, AssociationDescriptorMockBuilder, PropertyDescriptorMockBuilder,
   ResourceDescriptorMockBuilder
 } from '../../descriptor/combining/property-descriptor-mock-builder.spec';
+import {JsonResourceObject} from '../json-resource-object';
+import {JsonArrayProperty} from '../../json-property/array/array-property';
 
 describe('HalPropertyFactory', () => {
   let resourceFactory: HalResourceFactory;
@@ -34,11 +34,11 @@ describe('HalPropertyFactory', () => {
     const testee = new HalPropertyFactory(resourceFactory, resourceDesc);
     const result = testee.createEmbedded('array', [{
       'item': 1
-    }]) as JsonArrayProperty<HalValueType>;
+    }]) as JsonArrayProperty;
 
     const items = result.getArrayItems();
     expect(items.length).toBe(1);
-    const item = items[0] as JsonObjectProperty<HalValueType>;
+    const item = items[0] as JsonResourceObject;
     expect(item.getChildProperties().length).toBe(1);
     expect(item.getChildProperties()[0].getDescriptor().getName()).toEqual('item');
   });

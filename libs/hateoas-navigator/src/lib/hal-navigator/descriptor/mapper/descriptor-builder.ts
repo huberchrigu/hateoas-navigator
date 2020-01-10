@@ -39,7 +39,7 @@ class PropertyDescriptorImpl extends AbstractPropDescriptor {
   }
 }
 
-class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayPropertyDescriptor<PropDescriptor> {
+class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayPropertyDescriptor {
   constructor(name: string, title: string, private arrayItems: PropDescriptor, fieldProcessor: FieldProcessor) {
     super(name, title, fieldProcessor);
     if (!this.arrayItems) {
@@ -47,8 +47,8 @@ class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayPropert
     }
   }
 
-  getItemsDescriptor(): PropDescriptor {
-    return this.arrayItems;
+  getItemsDescriptor<D extends PropDescriptor>(): D {
+    return this.arrayItems as D;
   }
 
   toFormFieldBuilder(): FormFieldBuilder {

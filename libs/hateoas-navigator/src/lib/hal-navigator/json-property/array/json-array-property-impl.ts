@@ -1,16 +1,17 @@
-import {PropDescriptor} from '../descriptor';
-import {GenericArrayValueType, JsonValueType} from './value-type/json-value-type';
-import {AbstractProperty} from './abstract-property';
-import {JsonArrayProperty, JsonProperty} from './json-property';
-import {PropertyFactory} from './factory/property-factory';
+import {GenericArrayValueType, JsonValueType} from '../value-type/json-value-type';
+import {AbstractProperty} from '../abstract-property';
+import {PropertyFactory} from '../factory/property-factory';
+import {ArrayPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-descriptor';
+import {GenericProperty} from '../generic-property';
+import {ArrayProperty} from './array-property';
 
 export class JsonArrayPropertyImpl<CHILDREN extends JsonValueType>
-  extends AbstractProperty<GenericArrayValueType<CHILDREN>, PropDescriptor>
-  implements JsonArrayProperty<CHILDREN> {
+  extends AbstractProperty<GenericArrayValueType<CHILDREN>, ArrayPropertyDescriptor>
+  implements ArrayProperty<CHILDREN> {
   constructor(
     name: string,
     value: GenericArrayValueType<CHILDREN>,
-    descriptor: PropDescriptor,
+    descriptor: ArrayPropertyDescriptor,
     private propertyFactory: PropertyFactory<CHILDREN>
   ) {
     super(name, value, descriptor);
@@ -24,7 +25,7 @@ export class JsonArrayPropertyImpl<CHILDREN extends JsonValueType>
     return this.getArrayItems().map(item => item.getFormValue());
   }
 
-  getArrayItems(): JsonProperty<CHILDREN>[] {
+  getArrayItems(): GenericProperty<CHILDREN, PropDescriptor>[] {
     return this.getValue().map(item => this.propertyFactory.create(this.getName(), item));
   }
 

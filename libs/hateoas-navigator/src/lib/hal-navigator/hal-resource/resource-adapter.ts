@@ -1,14 +1,15 @@
 import {ResourceDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
-import {JsonProperty, JsonRawObjectProperty} from '../json-property/json-property';
+import {JsonObjectProperty} from '../json-property/object/object-property';
 import {ObjectPropertyDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
-import {JsonObjectPropertyImpl} from '../json-property/json-object-property-impl';
+import {JsonObjectPropertyImpl} from '../json-property/object/json-object-property-impl';
 import {JsonResourceObject} from './json-resource-object';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from '../../decorators/not-null';
 import {HalResourceFactory} from './factory/hal-resource-factory';
+import {HalProperty} from '../json-property/hal/hal-property';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
@@ -76,7 +77,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
   /**
    * Overrides {@link JsonObjectPropertyImpl}'s implementation to also return the embedded resource objects.
    */
-  getChildProperties(): JsonProperty<HalValueType>[] {
+  getChildProperties(): HalProperty[] {
     const stateKeys = this.getStateKeys();
 
     const embedded = this.getValue()._embedded;
@@ -92,7 +93,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
    *
    * @return `null` if this resource object contains no child property (but may still have a child descriptor)
    */
-  getChildProperty(propertyName: string): JsonProperty<HalValueType> {
+  getChildProperty(propertyName: string): HalProperty {
     if (this.getStateKeys().some(k => k === propertyName)) {
       return super.getChildProperty(propertyName);
     }
@@ -103,7 +104,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
     return null;
   }
 
-  toRawObjectState(): JsonRawObjectProperty {
+  toRawObjectState(): JsonObjectProperty {
     const obj = {};
     Object.keys(this.getValue()).filter(k => this.filterOutMetadata(k)).forEach(k => obj[k] = this.getValue()[k]);
     return new JsonObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny(), this.getPropertyFactory());

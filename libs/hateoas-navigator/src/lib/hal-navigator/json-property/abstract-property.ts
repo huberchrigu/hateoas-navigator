@@ -1,9 +1,9 @@
-import {JsonProperty} from './json-property';
 import {PropDescriptor} from '../descriptor';
 import {NotNull} from '../../decorators/not-null';
+import {GenericProperty} from './generic-property';
 
 // @dynamic
-export abstract class AbstractProperty<V, D extends PropDescriptor> implements JsonProperty<V> {
+export abstract class AbstractProperty<V, D extends PropDescriptor> implements GenericProperty<V, D> {
 
   protected constructor(private name: string, private value: V, private descriptor?: D) {
   }

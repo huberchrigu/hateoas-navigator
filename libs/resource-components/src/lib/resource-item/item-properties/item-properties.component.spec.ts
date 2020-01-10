@@ -3,14 +3,13 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ItemPropertiesComponent} from './item-properties.component';
 import {By} from '@angular/platform-browser';
 import {JsonArrayProperty} from 'hateoas-navigator';
-import {JsonValueType} from 'hateoas-navigator';
 import {JsonArrayPropertyImpl} from 'hateoas-navigator';
-import {PropDescriptor} from 'hateoas-navigator';
+import {ArrayPropertyDescriptor} from 'hateoas-navigator';
 
 describe('ItemPropertiesComponent', () => {
   let component: ItemPropertiesComponent;
   let fixture: ComponentFixture<ItemPropertiesComponent>;
-  let arrayProperty: JsonArrayProperty<JsonValueType>;
+  let arrayProperty: JsonArrayProperty;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -36,6 +35,6 @@ describe('ItemPropertiesComponent', () => {
    * Jasmine mock cannot be used due to `instanceof` usage.
    */
   function initArrayProperty() {
-    arrayProperty = new JsonArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as PropDescriptor, null);
+    arrayProperty = new JsonArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as ArrayPropertyDescriptor, null);
   }
 });

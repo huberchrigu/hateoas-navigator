@@ -65,14 +65,14 @@ export interface ObjectPropertyDescriptor extends PropDescriptor {
    * All child descriptors.
    * @returns <code>undefined</code> if the children are not known. An empty list if there are no children.
    */
-  getChildDescriptors<T extends PropDescriptor>(): Array<T>;
+  getChildDescriptors<CHILDREN extends PropDescriptor>(): Array<CHILDREN>;
 
   /**
    * The child property descriptor.
    * @returns <code>null</code> if there is no child.
    * <code>undefined</code> if the descriptor does not know its children.
    */
-  getChildDescriptor<T extends PropDescriptor>(resourceName: string): T;
+  getChildDescriptor<CHILDREN extends PropDescriptor>(resourceName: string): CHILDREN;
 }
 
 export interface AssociationPropertyDescriptor extends PropDescriptor {
@@ -92,9 +92,9 @@ export interface AssociationPropertyDescriptor extends PropDescriptor {
   getAssociatedResourceName(): string;
 }
 
-export interface ArrayPropertyDescriptor<T extends PropDescriptor> extends PropDescriptor {
+export interface ArrayPropertyDescriptor extends PropDescriptor {
   /**
    * Returns the descriptor of the array items.
    */
-  getItemsDescriptor(): T;
+  getItemsDescriptor<D extends PropDescriptor>(): D;
 }

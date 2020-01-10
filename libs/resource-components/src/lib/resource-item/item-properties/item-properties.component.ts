@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {JsonObjectProperty, JsonProperty} from 'hateoas-navigator';
-import {HalValueType} from 'hateoas-navigator';
+import {HalProperty, JsonArrayProperty, JsonResourceObject} from 'hateoas-navigator';
 import {JsonArrayPropertyImpl} from 'hateoas-navigator';
 
 @Component({
@@ -11,17 +10,17 @@ import {JsonArrayPropertyImpl} from 'hateoas-navigator';
 export class ItemPropertiesComponent {
 
   @Input()
-  properties: JsonProperty<HalValueType>[];
+  properties: HalProperty[];
 
-  isArray(property: JsonProperty<HalValueType>) {
+  isArray(property: HalProperty) {
     return property instanceof JsonArrayPropertyImpl;
   }
 
-  getArrayItems(property: JsonProperty<HalValueType>) {
-    return (property as JsonArrayPropertyImpl<HalValueType>).getArrayItems();
+  getArrayItems(property: HalProperty) {
+    return (property as JsonArrayProperty).getArrayItems();
   }
 
-  getChildProperties(property: JsonProperty<HalValueType>) {
-    return (property as JsonObjectProperty<HalValueType>).getChildProperties();
+  getChildProperties(property: HalProperty) {
+    return (property as JsonResourceObject).getChildProperties();
   }
 }

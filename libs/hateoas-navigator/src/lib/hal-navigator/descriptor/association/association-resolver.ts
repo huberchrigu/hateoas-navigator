@@ -37,7 +37,7 @@ export class AssociationResolver {
    */
   private resolveAssociations<T extends PropDescriptor>(descriptor: T): Observable<T> {
     const children = descriptor.orEmpty<ObjectPropertyDescriptor>(d => d.getChildDescriptors);
-    const arrayItems = descriptor.orNull<ArrayPropertyDescriptor<PropDescriptor>, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
+    const arrayItems = descriptor.orNull<ArrayPropertyDescriptor, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
 
     const resolvedChildren: Observable<PropDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
     const resolvedArrayItem: Observable<PropDescriptor> = arrayItems ?

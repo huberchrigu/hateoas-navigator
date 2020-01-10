@@ -6,6 +6,9 @@ import {
   JsonValueType
 } from '../../json-property/value-type/json-value-type';
 
+/**
+ * {@link JsonValueType JSON types} plus HAL {@link HalResourceObject resource objects}.
+ */
 export type HalValueType = HalResourceObject | HalObject | HalArray | JsonValueType;
 
 export type HalResourceObject = HalObject & {

@@ -57,7 +57,7 @@ export class ResourceDescriptorMockBuilder extends PropertyDescriptorMockBuilder
   }
 }
 
-export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayPropertyDescriptor<PropDescriptor>> {
+export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayPropertyDescriptor> {
   withArrayItemsDescriptor(arrayItem: PropDescriptor) {
     this.methodNames.getItemsDescriptor = arrayItem;
     return this;

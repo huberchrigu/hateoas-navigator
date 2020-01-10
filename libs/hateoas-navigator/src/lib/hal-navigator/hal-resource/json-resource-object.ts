@@ -1,13 +1,17 @@
-import {JsonObjectProperty, JsonRawObjectProperty} from '../../hal-navigator/json-property/json-property';
-import {HalValueType} from '../../hal-navigator/hal-resource/value-type/hal-value-type';
+import {ObjectProperty, JsonObjectProperty} from '../json-property/object/object-property';
+import {HalValueType} from './value-type/hal-value-type';
 import {ResourceDescriptor} from '../descriptor/resource-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 
-export interface JsonResourceObject extends JsonObjectProperty<HalValueType> {
+
+/**
+ * The same same as a {@link JsonObjectProperty plain old JSON object}, but contains embedded resources and links.
+ */
+export interface JsonResourceObject extends ObjectProperty<HalValueType> {
   /**
    * Removes embedded resources.
    */
-  toRawObjectState(): JsonRawObjectProperty;
+  toRawObjectState(): JsonObjectProperty;
 
   /**
    * Use this function to retrieve all resource objects of a collection resource.

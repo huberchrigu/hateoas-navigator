@@ -7,8 +7,7 @@ import createSpyObj = jasmine.createSpyObj;
 import SpyObjMethodNames = jasmine.SpyObjMethodNames;
 import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
-import {JsonArrayProperty} from '../../hal-navigator/json-property/json-property';
-import {JsonValueType} from '../../hal-navigator/json-property/value-type/json-value-type';
+import {JsonArrayProperty} from '../json-property/array/array-property';
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {
@@ -19,7 +18,7 @@ describe('FormControlFactory', () => {
         })
       })
     ];
-    const resourceProperty = createSpyObj<JsonArrayProperty<JsonValueType>>('resourceProperty', ['getFormValue']);
+    const resourceProperty = createSpyObj<JsonArrayProperty>('resourceProperty', ['getFormValue']);
     resourceProperty.getFormValue.and.returnValue([{'value': 1}, {'value': 2}]);
     const properties = {
       'array': resourceProperty

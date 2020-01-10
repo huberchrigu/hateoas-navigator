@@ -1,13 +1,15 @@
-import {GenericObjectValueType, JsonValueType} from './value-type/json-value-type';
-import {PropDescriptor} from '../descriptor';
-import {AbstractProperty} from './abstract-property';
-import {JsonObjectProperty, JsonProperty} from './json-property';
-import {PropertyFactory} from '../json-property/factory/property-factory';
+import {GenericObjectValueType, JsonValueType} from '../value-type/json-value-type';
+import {AbstractProperty} from '../abstract-property';
+import {ObjectProperty} from './object-property';
+import {PropertyFactory} from '../../json-property/factory/property-factory';
+import {ObjectPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-descriptor';
+import {GenericProperty} from '../generic-property';
 
-export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends PropDescriptor>
-  extends AbstractProperty<GenericObjectValueType<CHILDREN>, D> implements JsonObjectProperty<CHILDREN> {
+export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends ObjectPropertyDescriptor>
+  extends AbstractProperty<GenericObjectValueType<CHILDREN>, D> implements ObjectProperty<CHILDREN> {
 
-  constructor(name: string, value: GenericObjectValueType<CHILDREN>, descriptor: D, private propertyFactory: PropertyFactory<CHILDREN>) {
+  constructor(name: string, value: GenericObjectValueType<CHILDREN>,
+              descriptor: D, private propertyFactory: PropertyFactory<CHILDREN>) {
     super(name, value, descriptor);
   }
 
@@ -15,7 +17,7 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Pr
     return this.toObjOfMappedValues(property => property.getFormValue());
   }
 
-  getChildProperties(): JsonProperty<CHILDREN>[] {
+  getChildProperties(): GenericProperty<CHILDREN, PropDescriptor>[] {
     return Object.keys(this.getValue()).map(key => this.propertyFactory.create(key, this.getValue()[key]));
   }
 
@@ -30,7 +32,7 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Pr
   /**
    * @return even a property if the value is null or undefined.
    */
-  getChildProperty(propertyName: string): JsonProperty<CHILDREN> {
+  getChildProperty(propertyName: string): GenericProperty<CHILDREN, PropDescriptor> {
     const v = this.getValue()[propertyName];
     return this.propertyFactory.create(propertyName, v);
   }
@@ -40,7 +42,7 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Pr
    *
    * _Is public because sub-classes of JsonObjectPropertyImpl need it, but does not need to be exported from the library._
    */
-  toObjOfMappedValues<V>(propertyToValue: (property: JsonProperty<CHILDREN>) => V): { [key: string]: V } {
+  toObjOfMappedValues<V>(propertyToValue: (property: GenericProperty<CHILDREN, PropDescriptor>) => V): { [key: string]: V } {
     const obj = {};
     this.getChildProperties().forEach(property => obj[property.getName()] = propertyToValue(property));
     return obj;
