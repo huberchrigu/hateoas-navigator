@@ -39,7 +39,7 @@ export interface JsonResourceObject extends ObjectProperty<HalValueType> {
    */
   getEmbeddedResourcesOrNull(linkRelationType: string): JsonResourceObject[];
 
-  getDescriptor(): ResourceDescriptor;
+  getDescriptor(): ResourceDescriptor; // TODO: Remove from resource object
 
   getLinks(): ResourceLink[];
 

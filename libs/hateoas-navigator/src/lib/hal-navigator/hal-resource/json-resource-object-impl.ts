@@ -16,10 +16,10 @@ import {HalProperty} from '../json-property/hal/hal-property';
  *
  * @dynamic
  */
-export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject {
+export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject { // TODO: decouple descriptor
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
-  private static METADATA_PROPERTIES = [ResourceAdapter.LINKS_PROPERTY, ResourceAdapter.EMBEDDED_PROPERTY];
+  private static METADATA_PROPERTIES = [JsonResourceObjectImpl.LINKS_PROPERTY, JsonResourceObjectImpl.EMBEDDED_PROPERTY];
 
   constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
               private resourceFactory: HalResourceFactory,
@@ -131,7 +131,7 @@ export class ResourceAdapter extends JsonObjectPropertyImpl<HalValueType, Resour
   }
 
   private filterOutMetadata(key: string): boolean {
-    return !ResourceAdapter.METADATA_PROPERTIES.some(p => p === key);
+    return !JsonResourceObjectImpl.METADATA_PROPERTIES.some(p => p === key);
   }
 
   private getSubResourceDescriptor(embeddedRelationType: string): ResourceDescriptor {

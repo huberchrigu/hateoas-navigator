@@ -15,7 +15,7 @@ and a sample Angular frontend and Spring backend.
 * Resolvers that prefetch [a collection of resources](libs/hateoas-navigator/src/lib/hal-navigator/collection/collection-resolver.service.ts), [a single resource object](libs/hateoas-navigator/src/lib/hal-navigator/item/resource-object-resolver.service.ts) or
   [a resource descriptor](libs/hateoas-navigator/src/lib/hal-navigator/descriptor/resolver/resource-descriptor-resolver.service.ts) (since _0.1.0_) ([Example](libs/resource-components/src/lib/generic-routes.ts))
 * [`ResourceService`](libs/hateoas-navigator/src/lib/hal-navigator/resource-services/resource.service.ts) that fetches resources from the API and handles cross-concerns like resource caching (since _0.1.0_)
-* [`FormControlFactory`](libs/hateoas-navigator/src/lib/hal-navigator/form/form-control-factory.ts) transforms a [`ResourceAdapter`](libs/hateoas-navigator/src/lib/hal-navigator/hal-resource/resource-adapter.ts) into Angular form controls (since _0.1.0_)
+* [`FormControlFactory`](libs/hateoas-navigator/src/lib/hal-navigator/form/form-control-factory.ts) transforms a [`ResourceAdapter`](libs/hateoas-navigator/src/lib/hal-navigator/hal-resource/json-resource-object-impl.ts) into Angular form controls (since _0.1.0_)
 * [Links](libs/hateoas-navigator/src/lib/hal-navigator/link-object/resource-link.ts) from one resource to others are automatically generated and can easily be used for according operations (since _0.1.0_)
 * `debugDescriptor` request parameter to print debug information about [schema to resource descriptor mapping](libs/hateoas-navigator/src/lib/hal-navigator/descriptor/combining/combining-descriptor-mapper.ts) (since _0.1.0_) ([Example](http://localhost:4200/persons?debugDescriptor=persons))
 

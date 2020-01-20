@@ -1,4 +1,4 @@
-import {ResourceAdapter} from './resource-adapter';
+import {JsonResourceObjectImpl} from './json-resource-object-impl';
 import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {ResourceLinks} from './value-type/resource-links';
 import {LinkFactory} from '../link-object/link-factory';
@@ -7,7 +7,7 @@ import {ResourceAdapterFactoryService} from './resource-adapter-factory.service'
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 
-describe('ResourceAdapter', () => {
+describe('JsonResourceObjectImpl', () => {
   let linkFactory: LinkFactory;
   let resourceDescriptorProvider: ResourceDescriptorProvider;
   let resourceFactory: ResourceAdapterFactoryService;
@@ -44,7 +44,7 @@ describe('ResourceAdapter', () => {
     const result = testee.getChildProperties();
 
     expect(result.map(p => p.getName())).toEqual(['property', 'resource']);
-    expect((result[1] as ResourceAdapter).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
+    expect((result[1] as JsonResourceObjectImpl).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
   });
 
   it('should get embedded object without associations', () => {
@@ -59,7 +59,7 @@ describe('ResourceAdapter', () => {
 
     const propertyFactoryWithDesc = jasmine.createSpyObj<PropertyFactory<HalValueType>>('propertyFactory', ['createEmbedded']);
 
-    const testee = new ResourceAdapter('testee', json, propertyFactoryWithDesc, resourceFactory, linkFactory);
+    const testee = new JsonResourceObjectImpl('testee', json, propertyFactoryWithDesc, resourceFactory, linkFactory);
     expect(testee.getChildProperties().length).toBe(1);
 
     expect(propertyFactoryWithDesc.createEmbedded).toHaveBeenCalledWith('array', array);
@@ -85,6 +85,6 @@ describe('ResourceAdapter', () => {
   }
 
   function createTestee(name: string, halResourceObject: HalResourceObject, lf = linkFactory) {
-    return new ResourceAdapter(name, halResourceObject, propertyFactory, resourceFactory, lf);
+    return new JsonResourceObjectImpl(name, halResourceObject, propertyFactory, resourceFactory, lf);
   }
 });

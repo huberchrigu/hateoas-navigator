@@ -19,7 +19,7 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;
   private forArrayOfAssociations = false;
 
-  constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceDescriptor = null) {
+  constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceDescriptor = null) { // TODO: Decouple descriptor handling
   }
 
   /**

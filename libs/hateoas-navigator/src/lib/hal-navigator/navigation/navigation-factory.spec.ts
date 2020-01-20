@@ -2,11 +2,11 @@ import {NavigationFactory} from './navigation-factory';
 import {NavigationItem} from './navigation-item';
 import {ResourceLink} from '../link-object/resource-link';
 import {of} from 'rxjs/index';
-import {ResourceAdapter} from '../hal-resource/resource-adapter';
+import {JsonResourceObjectImpl} from '../hal-resource/json-resource-object-impl';
 
 describe('NavigationFactory', () => {
   it('should get navigation items', () => {
-    const resource = jasmine.createSpyObj<ResourceAdapter>('resource', ['getLinks']);
+    const resource = jasmine.createSpyObj<JsonResourceObjectImpl>('resource', ['getLinks']);
     resource.getLinks.and.returnValue([
       mockLink('profile', '/profile', 'Profile'),
       mockLink('collection', '/collection', 'Collection')

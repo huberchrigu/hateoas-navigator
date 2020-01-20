@@ -1,4 +1,4 @@
-import {ResourceAdapter} from '../hal-resource/resource-adapter';
+import {JsonResourceObjectImpl} from '../hal-resource/json-resource-object-impl';
 import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {HalPropertyFactory} from '../hal-resource/factory/hal-property-factory';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
@@ -9,7 +9,7 @@ import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object'
 /**
  * This is a resource object with a version.
  */
-export class VersionedResourceAdapter extends ResourceAdapter implements VersionedJsonResourceObject {
+export class VersionedResourceAdapter extends JsonResourceObjectImpl implements VersionedJsonResourceObject {
   constructor(private version: string, name: string, resourceObject: HalResourceObject, propertyFactory: HalPropertyFactory,
               resourceFactory: HalResourceFactory, linkFactory: LinkFactory, descriptor: ResourceDescriptor) {
     super(name, resourceObject, propertyFactory, resourceFactory, linkFactory, descriptor);

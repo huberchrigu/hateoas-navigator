@@ -1,4 +1,4 @@
 export * from './value-type';
 export * from './json-resource-object';
-export {ResourceAdapter} from './resource-adapter';
+export {JsonResourceObjectImpl} from './json-resource-object-impl';
 export {ResourceAdapterFactoryService} from './resource-adapter-factory.service';

@@ -1,7 +1,7 @@
 import {HalResourceFactory} from './factory/hal-resource-factory';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {HalResourceObject} from './value-type/hal-value-type';
-import {ResourceAdapter} from './resource-adapter';
+import {JsonResourceObjectImpl} from './json-resource-object-impl';
 import {ResourceDescriptor} from '../descriptor/resource-descriptor';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {LinkFactory} from '../link-object/link-factory';
@@ -23,9 +23,9 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
     }
   }
 
-  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject {
+  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject { // TODO: Decouple descriptor
     ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new ResourceAdapter(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
+    return new JsonResourceObjectImpl(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
       descriptor);
   }
 
