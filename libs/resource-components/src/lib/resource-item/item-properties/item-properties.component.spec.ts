@@ -2,9 +2,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
 import {By} from '@angular/platform-browser';
-import {JsonArrayProperty} from 'hateoas-navigator';
+import {ArrayPropertyDescriptor, JsonArrayProperty} from 'hateoas-navigator';
 import {JsonArrayPropertyImpl} from 'hateoas-navigator';
-import {ArrayPropertyDescriptor} from 'hateoas-navigator';
 
 describe('ItemPropertiesComponent', () => {
   let component: ItemPropertiesComponent;
