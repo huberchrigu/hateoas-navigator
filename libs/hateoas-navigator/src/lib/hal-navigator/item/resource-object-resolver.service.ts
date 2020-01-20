@@ -3,20 +3,20 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {LOGGER} from '../../logging/logger';
-import {VersionedResourceAdapter} from './versioned-resource-adapter';
+import {VersionedResourceObjectPropertyImpl} from './versioned-resource-object-property-impl';
 import {ResourceService} from '../resource-services/resource.service';
 import {RouteParams} from '../routing/route-params';
-import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object';
+import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
 import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
 
 @Injectable()
-export class ResourceObjectResolverService implements Resolve<VersionedJsonResourceObject> {
+export class ResourceObjectResolverService implements Resolve<VersionedResourceObjectProperty> {
 
   constructor(private resourceService: ResourceService, private resourceFactory: ResourceAdapterFactoryService) {
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedJsonResourceObject> |
-    Promise<VersionedResourceAdapter> | VersionedResourceAdapter {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceObjectProperty> |
+    Promise<VersionedResourceObjectPropertyImpl> | VersionedResourceObjectPropertyImpl {
     const resourceName = route.params[RouteParams.RESOURCE_PARAM];
     return this.resourceService
       .getItem(resourceName, route.params[RouteParams.ID_PARAM])

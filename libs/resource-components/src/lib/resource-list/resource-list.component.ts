@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {JsonResourceObject, ResourceDescriptor, ResourceService, VersionedResourceAdapter} from 'hateoas-navigator';
+import {ResourceObjectProperty, ResourceDescriptor, ResourceService, VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 import {combineLatest, of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
@@ -24,7 +24,7 @@ export class ResourceListComponent implements OnInit {
   collection: CollectionAdapter;
   propertyNames: Array<string>;
 
-  dataSource: DataSource<JsonResourceObject>;
+  dataSource: DataSource<ResourceObjectProperty>;
 
   ngOnInit() {
     combineLatest([
@@ -54,14 +54,14 @@ export class ResourceListComponent implements OnInit {
     return 'new';
   }
 
-  onClick(item: VersionedResourceAdapter) {
+  onClick(item: VersionedResourceObjectProperty) {
     return this.router.navigateByUrl(item.getSelfLink().toRelativeLink().getUri());
   }
 
   /**
    * @deprecated
    */
-  getDisplayValue(item: VersionedResourceAdapter, propertyName: string) {
+  getDisplayValue(item: VersionedResourceObjectProperty, propertyName: string) {
     return item.getChildProperty(propertyName).getDisplayValue();
   }
 

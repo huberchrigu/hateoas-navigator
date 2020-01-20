@@ -5,7 +5,7 @@ import {PropertyFactory} from '../../json-property/factory/property-factory';
 import {ObjectPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-descriptor';
 import {GenericProperty} from '../generic-property';
 
-export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends ObjectPropertyDescriptor>
+export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends ObjectPropertyDescriptor>
   extends AbstractProperty<GenericObjectValueType<CHILDREN>, D> implements ObjectProperty<CHILDREN> {
 
   constructor(name: string, value: GenericObjectValueType<CHILDREN>,
@@ -40,7 +40,7 @@ export class JsonObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Ob
   /**
    * {@link getChildProperties Gets all child properties} and transforms them with the given mapping function.
    *
-   * _Is public because sub-classes of JsonObjectPropertyImpl need it, but does not need to be exported from the library._
+   * _Is public because sub-classes of ObjectPropertyImpl need it, but does not need to be exported from the library._
    */
   toObjOfMappedValues<V>(propertyToValue: (property: GenericProperty<CHILDREN, PropDescriptor>) => V): { [key: string]: V } {
     const obj = {};

@@ -1,5 +1,5 @@
 import {FormArray} from '@angular/forms';
-import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
+import {VersionedResourceObjectPropertyImpl} from '../item/versioned-resource-object-property-impl';
 import {FormControlFactory} from './form-control-factory';
 import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
@@ -25,7 +25,7 @@ describe('FormControlFactory', () => {
     };
     const item = {
       getChildProperty: (name) => properties[name]
-    } as VersionedResourceAdapter;
+    } as VersionedResourceObjectPropertyImpl;
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);

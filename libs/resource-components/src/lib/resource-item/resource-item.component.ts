@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {JsonResourceObject, ResourceLink, VersionedResourceAdapter} from 'hateoas-navigator';
+import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
@@ -11,7 +11,6 @@ import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
 import {ResourceAdapterFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
-import {VersionedJsonResourceObject} from 'hateoas-navigator';
 import {Subscription} from 'rxjs';
 import {ResourceListComponent} from '../resource-list/resource-list.component';
 
@@ -22,14 +21,14 @@ import {ResourceListComponent} from '../resource-list/resource-list.component';
 })
 export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
-  resourceObject: VersionedJsonResourceObject;
+  resourceObject: VersionedResourceObjectProperty;
 
   constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
               private router: Router, private resourceFactory: ResourceAdapterFactoryService) {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: { resourceObject: VersionedResourceAdapter }) => {
+    this.route.data.subscribe((data: { resourceObject: VersionedResourceObjectProperty }) => {
       this.initResource(data.resourceObject);
     });
   }
@@ -89,7 +88,7 @@ export class ResourceItemComponent implements OnInit {
     return resources && resources.length === 0;
   }
 
-  private goToResourceList(resources: JsonResourceObject[]): Promise<Boolean> {
+  private goToResourceList(resources: ResourceObjectProperty[]): Promise<Boolean> {
     const queryParams = {};
     queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().extractId());
     if (resources.length === 0) {
@@ -99,7 +98,7 @@ export class ResourceItemComponent implements OnInit {
     }
   }
 
-  private initResource(resourceObject: VersionedJsonResourceObject) {
+  private initResource(resourceObject: VersionedResourceObjectProperty) {
     if (!resourceObject) {
       throw new Error(`No resource object provided!`);
     }

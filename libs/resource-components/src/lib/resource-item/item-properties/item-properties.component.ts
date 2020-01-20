@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {HalProperty, JsonArrayProperty, JsonResourceObject} from 'hateoas-navigator';
-import {JsonArrayPropertyImpl} from 'hateoas-navigator';
+import {HalProperty, JsonArrayProperty, ResourceObjectProperty} from 'hateoas-navigator';
+import {ArrayPropertyImpl} from 'hateoas-navigator';
 
 @Component({
   selector: 'lib-item-properties',
@@ -13,7 +13,7 @@ export class ItemPropertiesComponent {
   properties: HalProperty[];
 
   isArray(property: HalProperty) {
-    return property instanceof JsonArrayPropertyImpl;
+    return property instanceof ArrayPropertyImpl;
   }
 
   getArrayItems(property: HalProperty) {
@@ -21,6 +21,6 @@ export class ItemPropertiesComponent {
   }
 
   getChildProperties(property: HalProperty) {
-    return (property as JsonResourceObject).getChildProperties();
+    return (property as ResourceObjectProperty).getChildProperties();
   }
 }

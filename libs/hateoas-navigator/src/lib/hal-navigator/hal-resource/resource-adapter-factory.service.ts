@@ -1,15 +1,15 @@
 import {HalResourceFactory} from './factory/hal-resource-factory';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {HalResourceObject} from './value-type/hal-value-type';
-import {JsonResourceObjectImpl} from './json-resource-object-impl';
+import {ResourceObjectPropertyImpl} from './resource-object-property-impl';
 import {ResourceDescriptor} from '../descriptor/resource-descriptor';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {LinkFactory} from '../link-object/link-factory';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AssociationResolver} from '../descriptor/association/association-resolver';
-import {JsonResourceObject, VersionedJsonResourceObject} from './json-resource-object';
-import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
+import {ResourceObjectProperty, VersionedResourceObjectProperty} from './resource-object-property';
+import {VersionedResourceObjectPropertyImpl} from '../item/versioned-resource-object-property-impl';
 import {Injectable} from '@angular/core';
 
 @Injectable()
@@ -23,13 +23,13 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
     }
   }
 
-  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): JsonResourceObject { // TODO: Decouple descriptor
+  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): ResourceObjectProperty { // TODO: Decouple descriptor
     ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new JsonResourceObjectImpl(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
+    return new ResourceObjectPropertyImpl(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
       descriptor);
   }
 
-  resolveDescriptor(name: string, resourceObject: HalResourceObject): Observable<JsonResourceObject> {
+  resolveDescriptor(name: string, resourceObject: HalResourceObject): Observable<ResourceObjectProperty> {
     return this.descriptorResolver.resolve(name).pipe(
       map(descriptor => {
         if (!descriptor) {
@@ -40,7 +40,7 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
   }
 
   resolveDescriptorAndAssociations(name: string, resourceObject: HalResourceObject,
-                                   version: string): Observable<VersionedJsonResourceObject> {
+                                   version: string): Observable<VersionedResourceObjectProperty> {
     return new AssociationResolver(this.descriptorResolver).fetchDescriptorWithAssociations(name).pipe(
       map(descriptor => {
         return this.createWithVersion(name, resourceObject, descriptor, version);
@@ -48,9 +48,9 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
   }
 
   createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor, version: string):
-    VersionedJsonResourceObject {
+    VersionedResourceObjectProperty {
     ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new VersionedResourceAdapter(version, name, resourceObject, this.getPropertyFactory(descriptor), this,
+    return new VersionedResourceObjectPropertyImpl(version, name, resourceObject, this.getPropertyFactory(descriptor), this,
       this.getLinkFactory(resourceObject), descriptor);
   }
 

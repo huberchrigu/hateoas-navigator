@@ -1,7 +1,7 @@
 import {PropertyFactory} from '../../json-property/factory/property-factory';
 import {HalResourceObject, HalValueType} from '../value-type/hal-value-type';
-import {JsonArrayPropertyImpl} from '../../json-property/array/json-array-property-impl';
-import {JsonObjectPropertyImpl} from '../../json-property/object/json-object-property-impl';
+import {ArrayPropertyImpl} from '../../json-property/array/array-property-impl';
+import {ObjectPropertyImpl} from '../../json-property/object/object-property-impl';
 import {PrimitiveOrEmptyProperty} from '../../json-property/primitive-or-empty-property';
 import {PrimitiveValueType} from '../../json-property/value-type/json-value-type';
 import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
@@ -11,7 +11,7 @@ import {
   AssociationPropertyDescriptor,
   ObjectPropertyDescriptor, PropDescriptor
 } from '../../descriptor/prop-descriptor';
-import {JsonResourceObject} from '../json-resource-object';
+import {ResourceObjectProperty} from '../resource-object-property';
 import {HalProperty} from '../../json-property/hal/hal-property';
 import {ArrayProperty} from '../../json-property/array/array-property';
 
@@ -27,10 +27,10 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
    * the association is resolved to the associated resource's descriptor.
    */
   createEmbedded(propertyName: string, associationOrArrayOfAssociations: HalValueType):
-    JsonResourceObject | ArrayProperty<HalResourceObject> {
+    ResourceObjectProperty | ArrayProperty<HalResourceObject> {
     const childDesc = this.getResDesc(propertyName);
     if (Array.isArray(associationOrArrayOfAssociations)) {
-      return new JsonArrayPropertyImpl(propertyName, associationOrArrayOfAssociations, childDesc as ArrayPropertyDescriptor,
+      return new ArrayPropertyImpl(propertyName, associationOrArrayOfAssociations, childDesc as ArrayPropertyDescriptor,
         new HalPropertyFactory(this.halResourceFactory, childDesc as ResourceDescriptor)
           .asFactoryOfArrayItems(true)) as ArrayProperty<HalResourceObject>;
     } else if (associationOrArrayOfAssociations && typeof associationOrArrayOfAssociations === 'object') {
@@ -44,12 +44,12 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
     const childDesc = this.forArray ? this.getArrayDesc() : this.getResDesc(name);
     const childFactory = new HalPropertyFactory(this.halResourceFactory, childDesc as ResourceDescriptor);
     if (Array.isArray(value)) {
-      return new JsonArrayPropertyImpl(name, value, childDesc as ArrayPropertyDescriptor, childFactory.asFactoryOfArrayItems());
+      return new ArrayPropertyImpl(name, value, childDesc as ArrayPropertyDescriptor, childFactory.asFactoryOfArrayItems());
     } else if (value && typeof value === 'object') {
       if (value._links) { // TODO: There might be _links without a self link
         return this.halResourceFactory.create(name, value, childDesc as ResourceDescriptor);
       } else {
-        return new JsonObjectPropertyImpl(name, value, childDesc as ObjectPropertyDescriptor, childFactory);
+        return new ObjectPropertyImpl(name, value, childDesc as ObjectPropertyDescriptor, childFactory);
       }
     } else {
       return new PrimitiveOrEmptyProperty(name, value as PrimitiveValueType, childDesc);

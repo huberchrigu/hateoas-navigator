@@ -5,7 +5,7 @@ import {ArrayPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-des
 import {GenericProperty} from '../generic-property';
 import {ArrayProperty} from './array-property';
 
-export class JsonArrayPropertyImpl<CHILDREN extends JsonValueType>
+export class ArrayPropertyImpl<CHILDREN extends JsonValueType>
   extends AbstractProperty<GenericArrayValueType<CHILDREN>, ArrayPropertyDescriptor>
   implements ArrayProperty<CHILDREN> {
   constructor(

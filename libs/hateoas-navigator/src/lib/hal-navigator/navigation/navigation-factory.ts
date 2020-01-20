@@ -2,12 +2,12 @@ import {map} from 'rxjs/operators';
 import {NavigationItem} from './navigation-item';
 import {LinkFactory} from '../link-object/link-factory';
 import {forkJoin, Observable} from 'rxjs';
-import {JsonResourceObject} from '../hal-resource/json-resource-object';
+import {ResourceObjectProperty} from '../hal-resource/resource-object-property';
 import {ResourceLink} from '../link-object/resource-link';
 
 export class NavigationFactory {
 
-  constructor(private resourceObject: JsonResourceObject) {
+  constructor(private resourceObject: ResourceObjectProperty) {
   }
 
   getItems(): Observable<Array<NavigationItem>> {

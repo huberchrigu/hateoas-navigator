@@ -5,7 +5,7 @@ import {
   ArrayDescriptorMockBuilder, AssociationDescriptorMockBuilder, PropertyDescriptorMockBuilder,
   ResourceDescriptorMockBuilder
 } from '../../descriptor/combining/property-descriptor-mock-builder.spec';
-import {JsonResourceObject} from '../json-resource-object';
+import {ResourceObjectProperty} from '../resource-object-property';
 import {JsonArrayProperty} from '../../json-property/array/array-property';
 
 describe('HalPropertyFactory', () => {
@@ -38,7 +38,7 @@ describe('HalPropertyFactory', () => {
 
     const items = result.getArrayItems();
     expect(items.length).toBe(1);
-    const item = items[0] as JsonResourceObject;
+    const item = items[0] as ResourceObjectProperty;
     expect(item.getChildProperties().length).toBe(1);
     expect(item.getChildProperties()[0].getDescriptor().getName()).toEqual('item');
   });

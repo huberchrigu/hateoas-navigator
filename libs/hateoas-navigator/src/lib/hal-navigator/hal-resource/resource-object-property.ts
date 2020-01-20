@@ -7,7 +7,7 @@ import {ResourceLink} from '../link-object/resource-link';
 /**
  * The same same as a {@link JsonObjectProperty plain old JSON object}, but contains embedded resources and links.
  */
-export interface JsonResourceObject extends ObjectProperty<HalValueType> {
+export interface ResourceObjectProperty extends ObjectProperty<HalValueType> {
   /**
    * Removes embedded resources.
    */
@@ -23,7 +23,7 @@ export interface JsonResourceObject extends ObjectProperty<HalValueType> {
    *
    * @throws an error if not an array
    */
-  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[];
+  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceObjectProperty[];
 
   /**
    * Checks whether the given embedded resource exists and is not an array. If so, the resource is returned.
@@ -32,12 +32,12 @@ export interface JsonResourceObject extends ObjectProperty<HalValueType> {
    *
    * @return null if it does not exist or if it is an array.
    */
-  getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject;
+  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty;
 
   /**
    * Like {@link getEmbeddedResourceOrNull}, but returns null if the embedded is not an array.
    */
-  getEmbeddedResourcesOrNull(linkRelationType: string): JsonResourceObject[];
+  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[];
 
   getDescriptor(): ResourceDescriptor; // TODO: Remove from resource object
 
@@ -51,6 +51,6 @@ export interface JsonResourceObject extends ObjectProperty<HalValueType> {
   getOtherLinks(): ResourceLink[];
 }
 
-export interface VersionedJsonResourceObject extends JsonResourceObject {
+export interface VersionedResourceObjectProperty extends ResourceObjectProperty {
   getVersion(): string;
 }

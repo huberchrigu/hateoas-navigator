@@ -1,4 +1,4 @@
-import {JsonResourceObject} from '../../hal-resource/json-resource-object';
+import {ResourceObjectProperty} from '../../hal-resource/resource-object-property';
 import {PropDescriptor} from '../../descriptor/prop-descriptor';
 import {GenericProperty} from '../generic-property';
 import {JsonArrayProperty} from '../array/array-property';
@@ -11,5 +11,5 @@ export interface PropertyFactory<V> {
    *
    * @param associationOrArrayOfAssociations Might also be an array of embedded resources.
    */
-  createEmbedded(propertyName: string, associationOrArrayOfAssociations: V): JsonResourceObject | JsonArrayProperty;
+  createEmbedded(propertyName: string, associationOrArrayOfAssociations: V): ResourceObjectProperty | JsonArrayProperty;
 }

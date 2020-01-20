@@ -3,9 +3,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ResourceService} from 'hateoas-navigator';
-import {VersionedResourceAdapter} from 'hateoas-navigator';
+import {VersionedResourceObjectProperty} from 'hateoas-navigator';
 import SpyObj = jasmine.SpyObj;
 import {ResourceActions} from 'hateoas-navigator';
 import {ResourceDescriptor} from 'hateoas-navigator';
@@ -16,7 +16,7 @@ import {ResourceAdapterFactoryService} from 'hateoas-navigator';
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
   let fixture: ComponentFixture<ResourceItemComponent>;
-  let versionedResourceObject: SpyObj<VersionedResourceAdapter>;
+  let versionedResourceObject: SpyObj<VersionedResourceObjectProperty>;
 
   const actions = {
     isDeleteEnabled: () => true,
@@ -24,7 +24,7 @@ describe('ResourceItemComponent', () => {
   } as ResourceActions;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceAdapter>('resourceObject', ['getChildProperties', 'getDescriptor',
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObjectProperty>('resourceObject', ['getChildProperties', 'getDescriptor',
       'getOtherLinks']);
     versionedResourceObject.getChildProperties.and.returnValue([
       {} as PrimitiveOrEmptyProperty

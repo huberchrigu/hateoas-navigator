@@ -4,8 +4,8 @@ import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {JsonObjectProperty} from '../json-property/object/object-property';
 import {ObjectPropertyDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
-import {JsonObjectPropertyImpl} from '../json-property/object/json-object-property-impl';
-import {JsonResourceObject} from './json-resource-object';
+import {ObjectPropertyImpl} from '../json-property/object/object-property-impl';
+import {ResourceObjectProperty} from './resource-object-property';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from '../../decorators/not-null';
 import {HalResourceFactory} from './factory/hal-resource-factory';
@@ -16,10 +16,10 @@ import {HalProperty} from '../json-property/hal/hal-property';
  *
  * @dynamic
  */
-export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType, ResourceDescriptor> implements JsonResourceObject { // TODO: decouple descriptor
+export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType, ResourceDescriptor> implements ResourceObjectProperty { // TODO: decouple descriptor
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
-  private static METADATA_PROPERTIES = [JsonResourceObjectImpl.LINKS_PROPERTY, JsonResourceObjectImpl.EMBEDDED_PROPERTY];
+  private static METADATA_PROPERTIES = [ResourceObjectPropertyImpl.LINKS_PROPERTY, ResourceObjectPropertyImpl.EMBEDDED_PROPERTY];
 
   constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
               private resourceFactory: HalResourceFactory,
@@ -31,7 +31,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
     return this.linkFactory.getAll();
   }
 
-  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): JsonResourceObject[] {
+  getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceObjectProperty[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
       return embedded.map(e => this.resourceFactory.create(linkRelationType, e, useMainDescriptor ?
@@ -41,7 +41,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
     }
   }
 
-  getEmbeddedResourceOrNull(linkRelationType: string): JsonResourceObject {
+  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty {
     const resource = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resource)) {
       return null;
@@ -49,7 +49,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
     return resource ? this.resourceFactory.create(linkRelationType, resource, this.getSubResourceDescriptor(linkRelationType)) : undefined;
   }
 
-  getEmbeddedResourcesOrNull(linkRelationType: string): JsonResourceObject[] {
+  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[] {
     const resources = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resources)) {
       const subResourceDescriptor = this.getSubResourceDescriptor(linkRelationType);
@@ -75,7 +75,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
   }
 
   /**
-   * Overrides {@link JsonObjectPropertyImpl}'s implementation to also return the embedded resource objects.
+   * Overrides {@link ObjectPropertyImpl}'s implementation to also return the embedded resource objects.
    */
   getChildProperties(): HalProperty[] {
     const stateKeys = this.getStateKeys();
@@ -89,7 +89,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
   }
 
   /**
-   * Overrides {@link JsonObjectPropertyImpl}'s implementation to also consider embedded resource objects.
+   * Overrides {@link ObjectPropertyImpl}'s implementation to also consider embedded resource objects.
    *
    * @return `null` if this resource object contains no child property (but may still have a child descriptor)
    */
@@ -107,7 +107,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
   toRawObjectState(): JsonObjectProperty {
     const obj = {};
     Object.keys(this.getValue()).filter(k => this.filterOutMetadata(k)).forEach(k => obj[k] = this.getValue()[k]);
-    return new JsonObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny(), this.getPropertyFactory());
+    return new ObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny(), this.getPropertyFactory());
   }
 
   getDisplayValue(): string | number {
@@ -131,7 +131,7 @@ export class JsonResourceObjectImpl extends JsonObjectPropertyImpl<HalValueType,
   }
 
   private filterOutMetadata(key: string): boolean {
-    return !JsonResourceObjectImpl.METADATA_PROPERTIES.some(p => p === key);
+    return !ResourceObjectPropertyImpl.METADATA_PROPERTIES.some(p => p === key);
   }
 
   private getSubResourceDescriptor(embeddedRelationType: string): ResourceDescriptor {

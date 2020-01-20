@@ -14,7 +14,7 @@ import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
 import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
-import {VersionedJsonResourceObject} from '../hal-resource/json-resource-object';
+import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
 
 /**
  * This is the module's core service providing functionality to access resources (only HAL documents supported yet).
@@ -60,18 +60,18 @@ export class ResourceService {
   }
 
   @Validate
-  create(@Required resourceName: string, object: any): Observable<VersionedJsonResourceObject> {
+  create(@Required resourceName: string, object: any): Observable<VersionedResourceObjectProperty> {
     return this.createAndCache(resourceName, '/' + resourceName, object);
   }
 
   @Validate
-  update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedJsonResourceObject> {
+  update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceObjectProperty> {
     return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version,
       this.moduleConfig.updateMethod === 'PATCH');
   }
 
   @Validate
-  getItem(@Required resourceName: string, @Required id: string): Observable<VersionedJsonResourceObject> {
+  getItem(@Required resourceName: string, @Required id: string): Observable<VersionedResourceObjectProperty> {
     return this.getItemFromResourceOrCache(resourceName, `/${resourceName}/${id}`, id);
   }
 
@@ -84,8 +84,8 @@ export class ResourceService {
   }
 
   @Validate
-  executeCustomAction(@Required uri: string, @Required actionOn: VersionedJsonResourceObject, @Required method: string, body: object):
-    Observable<VersionedJsonResourceObject> {
+  executeCustomAction(@Required uri: string, @Required actionOn: VersionedResourceObjectProperty, @Required method: string, body: object):
+    Observable<VersionedResourceObjectProperty> {
     const version = actionOn.getVersion();
     const name = actionOn.getName();
 
@@ -117,7 +117,7 @@ export class ResourceService {
       map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
   }
 
-  private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string): Observable<VersionedJsonResourceObject> {
+  private getItemFromResourceOrCache(resourceName: string, resourceUri: string, id: string): Observable<VersionedResourceObjectProperty> {
     return this.getResponseFromApi<HalResourceObject>(resourceUri, this.resourceCacheService.getRequestHeader(resourceName, id))
       .pipe(
         map(response => this.resourceCacheService.getItemFromGetResponse(resourceName, response)),

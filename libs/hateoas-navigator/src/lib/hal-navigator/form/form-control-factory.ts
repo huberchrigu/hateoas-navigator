@@ -1,15 +1,29 @@
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {FormFieldType} from './form-field-type';
-import {VersionedResourceAdapter} from '../item/versioned-resource-adapter';
 import {FormField} from './form-field';
 import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
+import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
 
 export class FormControlFactory {
   private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER, FormFieldType.BOOLEAN,
     FormFieldType.NUMBER, FormFieldType.INTEGER, FormFieldType.SELECT, FormFieldType.LINK];
 
-  constructor(private item?: VersionedResourceAdapter) {
+  private static getValidatorFunctions(formField: FormField) {
+    const validatorFunctions: Array<ValidatorFn> = [];
+    if (formField.isRequired()) {
+      validatorFunctions.push(Validators.required);
+    }
+    if (formField.getType() === FormFieldType.NUMBER) {
+      validatorFunctions.push(Validators.pattern('^[0-9]+(.[0-9]*){0,1}$'));
+    }
+    if (formField.getType() === FormFieldType.INTEGER) {
+      validatorFunctions.push(Validators.pattern('^[0-9]+$'));
+    }
+    return validatorFunctions;
+  }
+
+  constructor(private item?: VersionedResourceObjectProperty) {
   }
 
   getControls(fields: FormField[]): { [key: string]: AbstractControl } {
@@ -38,7 +52,7 @@ export class FormControlFactory {
           disabled: formField.isReadOnly(),
           value: value
         },
-        this.getValidatorFunctions(formField));
+        FormControlFactory.getValidatorFunctions(formField));
     } else if (formField.getType() === FormFieldType.SUB_FORM) {
       return this.getFormGroup(formField as SubFormField, value);
     } else {
@@ -51,19 +65,5 @@ export class FormControlFactory {
     parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName(), this.getControlWithValue(f,
       obj ? obj[f.getName()] : undefined)));
     return formGroup;
-  }
-
-  private getValidatorFunctions(formField: FormField) {
-    const validatorFunctions: Array<ValidatorFn> = [];
-    if (formField.isRequired()) {
-      validatorFunctions.push(Validators.required);
-    }
-    if (formField.getType() === FormFieldType.NUMBER) {
-      validatorFunctions.push(Validators.pattern('^[0-9]+(.[0-9]*){0,1}$'));
-    }
-    if (formField.getType() === FormFieldType.INTEGER) {
-      validatorFunctions.push(Validators.pattern('^[0-9]+$'));
-    }
-    return validatorFunctions;
   }
 }
