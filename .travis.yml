@@ -12,9 +12,7 @@ addons:
     packages:
       - google-chrome-stable
 
-cache:
-  directories:
-    - ./node_modules
+cache: yarn
 
 install:
   - yarn install
