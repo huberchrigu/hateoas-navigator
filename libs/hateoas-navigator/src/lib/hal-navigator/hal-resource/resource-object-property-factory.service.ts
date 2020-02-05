@@ -11,7 +11,7 @@ import {AssociationResolver} from '../descriptor/association/association-resolve
 import {ResourceObjectProperty, VersionedResourceObjectProperty} from './resource-object-property';
 import {VersionedResourceObjectPropertyImpl} from '../item/versioned-resource-object-property-impl';
 import {Injectable} from '@angular/core';
-import {ObjectDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/generic-property-descriptor';
+import {ObjectDescriptor} from '../descriptor/generic-property-descriptor';
 
 @Injectable()
 export class ResourceObjectPropertyFactoryService implements HalResourceFactory {

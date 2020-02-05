@@ -36,6 +36,10 @@ Yet the [architecture is documented](documentation) as [PlantUML](http://plantum
 
 * [Domain Prototyping](https://medium.com/sprang/domain-prototyping-9a5f09a14f6d): How to quickly prototype domain logic with _HATEOAS Navigator_.
 
+## Release Notes
+### Release 0.2.0
+* New property type system
+
 # Angular CLI
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.
 

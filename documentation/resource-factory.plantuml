@@ -1,0 +1,42 @@
+@startuml
+package resource {
+  package factory {
+    class ResourceObjectPropertyFactoryService<<Service>>
+    interface HalResourceFactory
+
+    ResourceObjectPropertyFactoryService --|> HalResourceFactory
+  }
+
+  class ResourceObjectProperty {
+      getDescriptor()
+  }
+
+  HalResourceFactory ..> ResourceObjectProperty
+}
+
+package descriptor {
+  interface ResourceDescriptorProvider {
+      resolve()
+  }
+  interface ResourceObjectDescriptor
+  class AssociationResolver
+
+  AssociationResolver ..> ResourceDescriptorProvider
+  AssociationResolver ..> ResourceObjectDescriptor
+  ResourceDescriptorProvider ..> ResourceObjectDescriptor
+
+  note right of ResourceObjectDescriptor
+      Static description of a resource object.
+  end note
+
+  note bottom of AssociationResolver
+      Resolving associations:
+      1. Resolve the resource object's descriptor
+      2. Repeat this for all child properties with an association
+  end note
+}
+
+ResourceObjectProperty ..> ResourceObjectDescriptor
+ResourceObjectPropertyFactoryService ..> ResourceDescriptorProvider
+ResourceObjectPropertyFactoryService ..> AssociationResolver
+@enduml

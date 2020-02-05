@@ -1,0 +1,31 @@
+@startuml
+package provider {
+  interface ResourceDescriptorProvider {
+      resolve()
+  }
+  class DefaultDescriptorProvider <<Service>>
+
+  DefaultDescriptorProvider --|> ResourceDescriptorProvider
+}
+
+package mapper {
+  abstract class DescriptorMapper
+  class CombiningDescriptorMapper
+  class JsonSchemaDescriptorMapper
+  class AlpsDescriptorMapper
+
+  DescriptorMapper <|-- JsonSchemaDescriptorMapper
+  DescriptorMapper <|-- AlpsDescriptorMapper
+  DescriptorMapper <|-- CombiningDescriptorMapper
+  DescriptorMapper <.. CombiningDescriptorMapper
+
+  note bottom of AlpsDescriptorMapper
+      Knows which resource belongs to an association/uri property.
+  end note
+}
+
+class ResourceSchemaService<<Service>>
+
+DefaultDescriptorProvider ..> mapper
+DefaultDescriptorProvider ..> ResourceSchemaService
+@enduml
