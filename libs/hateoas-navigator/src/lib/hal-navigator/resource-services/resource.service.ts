@@ -13,7 +13,7 @@ import {Cacheable} from '../cache/cacheable';
 import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
-import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
 import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
 
 /**
@@ -31,7 +31,7 @@ export class ResourceService {
   constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
               @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration,
               private descriptorResolver: ResourceDescriptorProvider,
-              private resourceFactory: ResourceAdapterFactoryService) {
+              private resourceFactory: ResourceObjectPropertyFactoryService) {
   }
 
   @Cacheable()

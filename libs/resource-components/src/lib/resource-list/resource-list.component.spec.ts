@@ -7,7 +7,7 @@ import SpyObj = jasmine.SpyObj;
 import {ResourceListComponent} from '../resource-list/resource-list.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
-import {ResourceDescriptor, ResourceService} from 'hateoas-navigator';
+import {ResourceObjectDescriptor, ResourceService} from 'hateoas-navigator';
 import {ResourceActions} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 
@@ -25,7 +25,7 @@ describe('ResourceListComponent', () => {
     collectionAdapter.getDescriptor.and.returnValue({
       getTitle: () => 'Resources',
       getActions: () => actions
-    } as ResourceDescriptor);
+    } as ResourceObjectDescriptor);
     TestBed.configureTestingModule({
       imports: [MatTableModule],
       declarations: [ResourceListComponent],

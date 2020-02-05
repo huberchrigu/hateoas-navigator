@@ -1,17 +1,17 @@
 import {GenericObjectValueType, JsonValueType} from '../value-type/json-value-type';
 import {GenericProperty} from '../generic-property';
-import {ObjectPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-descriptor';
+import {ObjectDescriptor, GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
 
 /**
  * A property whose value is an object (key/value map).
  */
-export interface ObjectProperty<V extends JsonValueType> extends GenericProperty<GenericObjectValueType<V>, ObjectPropertyDescriptor> {
+export interface ObjectProperty<V extends JsonValueType> extends GenericProperty<GenericObjectValueType<V>, ObjectDescriptor> {
   /**
    * Gets all children, i.e. for a JSON object {a: ..., b: ...} "a" and "b", for a resource object also the embedded resources.
    */
-  getChildProperties(): GenericProperty<V, PropDescriptor>[];
+  getChildProperties(): GenericProperty<V, GenericPropertyDescriptor>[];
 
-  getChildProperty(propertyName: string): GenericProperty<V, PropDescriptor>;
+  getChildProperty(propertyName: string): GenericProperty<V, GenericPropertyDescriptor>;
 }
 
 /**

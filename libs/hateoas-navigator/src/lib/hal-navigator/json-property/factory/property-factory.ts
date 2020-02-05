@@ -1,10 +1,10 @@
 import {ResourceObjectProperty} from '../../hal-resource/resource-object-property';
-import {PropDescriptor} from '../../descriptor/prop-descriptor';
+import {GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
 import {GenericProperty} from '../generic-property';
 import {JsonArrayProperty} from '../array/array-property';
 
 export interface PropertyFactory<V> {
-  create(name: string, value: V): GenericProperty<V, PropDescriptor>;
+  create(name: string, value: V): GenericProperty<V, GenericPropertyDescriptor>;
 
   /**
    * Creates a property with knowing that the property is an embedded resource representing an association.

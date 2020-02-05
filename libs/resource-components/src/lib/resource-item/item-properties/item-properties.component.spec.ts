@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
 import {By} from '@angular/platform-browser';
-import {ArrayPropertyDescriptor, JsonArrayProperty} from 'hateoas-navigator';
+import {ArrayDescriptor, JsonArrayProperty} from 'hateoas-navigator';
 import {ArrayPropertyImpl} from 'hateoas-navigator';
 
 describe('ItemPropertiesComponent', () => {
@@ -34,6 +34,6 @@ describe('ItemPropertiesComponent', () => {
    * Jasmine mock cannot be used due to `instanceof` usage.
    */
   function initArrayProperty() {
-    arrayProperty = new ArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as ArrayPropertyDescriptor, null);
+    arrayProperty = new ArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as ArrayDescriptor, null);
   }
 });

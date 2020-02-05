@@ -1,7 +1,7 @@
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {ResourceObjectDescriptor} from 'hateoas-navigator';
 
 export class SendDataDialogData {
-  constructor(public methods: string[], public descriptor: ResourceDescriptor) {
+  constructor(public methods: string[], public descriptor: ResourceObjectDescriptor) {
 
   }
 

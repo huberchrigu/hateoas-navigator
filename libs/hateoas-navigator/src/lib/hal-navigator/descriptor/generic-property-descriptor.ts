@@ -1,10 +1,18 @@
 import {FormFieldBuilder} from '../form/form-field-builder';
-import {ResourceDescriptor} from './resource-descriptor';
+import {ResourceObjectDescriptor} from './resource-object-descriptor';
 import {Observable} from 'rxjs';
 import {ResourceDescriptorProvider} from './provider/resource-descriptor-provider';
 import apply = Reflect.apply;
 
-export interface PropDescriptor {
+/**
+ * A descriptor provides the scheme/metadata for a property within a resource object.
+ * It is not related to property values.
+ *
+ * <i>Naming</i>: The interface name is chosen to not confuse with {@link PropertyDescriptor}.
+ *
+ * <i>For each property:</i> If it is not known, <code>undefined</code> is returned.
+ */
+export interface GenericPropertyDescriptor {
 
   /**
    * This is a title describing the property.
@@ -27,14 +35,19 @@ export interface PropDescriptor {
    * @param fct The function of T
    * @param args The function's arguments
    */
-  orNull<T extends PropDescriptor, F extends keyof T>(fct: (T) => T[F], ...args: Parameters<ToFunction<T[F]>>):
+  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (T) => T[F], ...args: Parameters<ToFunction<T[F]>>):
     ReturnType<ToFunction<T[F]>>;
 
-  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor>;
+  /**
+   * Convenience method that returns the function's result, if this descriptor is of the given type.
+   * @param fct The function of T
+   * @return Empty array if other type
+   */
+  orEmpty<T extends GenericPropertyDescriptor>(fct: (T) => ArrayFunc<T>): Array<GenericPropertyDescriptor>;
 }
 
-export abstract class AbstractPropDescriptor implements PropDescriptor {
-  orNull<T extends PropDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
+export abstract class AbstractPropDescriptor implements GenericPropertyDescriptor {
+  orNull<T extends GenericPropertyDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
     try {
       return apply(fct(this), this, args);
     } catch (e) {
@@ -42,7 +55,7 @@ export abstract class AbstractPropDescriptor implements PropDescriptor {
     }
   }
 
-  orEmpty<T extends PropDescriptor>(fct: (T) => ArrayFunc<T>): Array<PropDescriptor> {
+  orEmpty<T extends GenericPropertyDescriptor>(fct: (T) => ArrayFunc<T>): Array<GenericPropertyDescriptor> {
     try {
       return apply(fct(this), this, []);
     } catch (e) {
@@ -60,41 +73,41 @@ export abstract class AbstractPropDescriptor implements PropDescriptor {
 export type ArrayFunc<T> = (...args: any[]) => T[];
 export type ToFunction<T> = T extends (...args: any[]) => any ? T : never;
 
-export interface ObjectPropertyDescriptor extends PropDescriptor {
+export interface ObjectDescriptor extends GenericPropertyDescriptor {
   /**
    * All child descriptors.
    * @returns <code>undefined</code> if the children are not known. An empty list if there are no children.
    */
-  getChildDescriptors<CHILDREN extends PropDescriptor>(): Array<CHILDREN>;
+  getChildDescriptors<CHILDREN extends GenericPropertyDescriptor>(): Array<CHILDREN>;
 
   /**
    * The child property descriptor.
    * @returns <code>null</code> if there is no child.
    * <code>undefined</code> if the descriptor does not know its children.
    */
-  getChildDescriptor<CHILDREN extends PropDescriptor>(resourceName: string): CHILDREN;
+  getChildDescriptor<CHILDREN extends GenericPropertyDescriptor>(resourceName: string): CHILDREN;
 }
 
-export interface AssociationPropertyDescriptor extends PropDescriptor {
+export interface AssociationDescriptor extends GenericPropertyDescriptor {
   /**
    * Resolves the associated resource's descriptor.
    */
-  resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceDescriptor>;
+  resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceObjectDescriptor>;
 
   /**
    * Can be used to {@link resolveResource resolve the association alone} and then setting the resolved resource so
    * {@link getResource it can be reused}
    */
-  setResolvedResource(associatedResourceDesc: ResourceDescriptor): void;
+  setResolvedResource(associatedResourceDesc: ResourceObjectDescriptor): void;
 
-  getResource(): ResourceDescriptor;
+  getResource(): ResourceObjectDescriptor;
 
   getAssociatedResourceName(): string;
 }
 
-export interface ArrayPropertyDescriptor extends PropDescriptor {
+export interface ArrayDescriptor extends GenericPropertyDescriptor {
   /**
    * Returns the descriptor of the array items.
    */
-  getItemsDescriptor<D extends PropDescriptor>(): D;
+  getItemsDescriptor<D extends GenericPropertyDescriptor>(): D;
 }

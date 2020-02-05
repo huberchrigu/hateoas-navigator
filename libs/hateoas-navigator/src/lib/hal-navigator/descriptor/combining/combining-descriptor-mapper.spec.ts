@@ -1,6 +1,6 @@
 import {ActionType} from '../actions/action-type';
 import {CombiningDescriptorMapper} from './combining-descriptor-mapper';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 import {
   ArrayField,
   DatePickerField,
@@ -15,7 +15,7 @@ import {
 import {alps, jsonSchema} from './sample-input.spec';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {AlpsDocumentAdapter} from '../../alps-document/alps-document-adapter';
-import {ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+import {ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
 import {AlpsDescriptorMapper} from '../alps/alps-descriptor-mapper';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
@@ -35,7 +35,7 @@ describe('CombiningDescriptorMapper', () => {
     let testee;
     try {
       testee = new CombiningDescriptorMapper([property, resourceWithCreateAndDelete, resourceWithGets], {})
-        .toDescriptor() as ResourceDescriptor;
+        .toDescriptor() as ResourceObjectDescriptor;
     } catch (e) {
       console.error(e);
     }
@@ -60,14 +60,14 @@ describe('CombiningDescriptorMapper', () => {
           descriptorMapper({name: 'C'} as DescriptorBuilder<any>)
         ]
       } as DescriptorBuilder<any>)
-    ], {}).toDescriptor() as ObjectPropertyDescriptor;
+    ], {}).toDescriptor() as ObjectDescriptor;
     const result = testee.getChildDescriptors();
     expect(result.length).toBe(3);
     expectChild(result[0], 'A');
     expectChild(result[1], 'B');
     expectChild(result[2], 'C');
 
-    function expectChild(descriptor: PropDescriptor, expectedName: string) {
+    function expectChild(descriptor: GenericPropertyDescriptor, expectedName: string) {
       expect(descriptor.getName()).toBe(expectedName);
     }
   });

@@ -1,12 +1,12 @@
 import SpyObj = jasmine.SpyObj;
 import SpyObjMethodNames = jasmine.SpyObjMethodNames;
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+import {ArrayDescriptor, AssociationDescriptor, ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import Spy = jasmine.Spy;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
-export class PropertyDescriptorMockBuilder<T extends PropDescriptor> {
+export class PropertyDescriptorMockBuilder<T extends GenericPropertyDescriptor> {
   protected methodNames = {
     toFormFieldBuilder: {} as FormFieldBuilder,
     getTitle: undefined,
@@ -38,33 +38,33 @@ export class PropertyDescriptorMockBuilder<T extends PropDescriptor> {
   }
 }
 
-export class ObjectDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ObjectPropertyDescriptor> {
-  withChildrenDescriptors(children: Array<PropDescriptor>) {
+export class ObjectDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ObjectDescriptor> {
+  withChildrenDescriptors(children: Array<GenericPropertyDescriptor>) {
     this.methodNames.getChildDescriptors = children;
     return this;
   }
 }
 
-export class ResourceDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ResourceDescriptor> {
-  withChildrenDescriptors(children: Array<PropDescriptor>) {
+export class ResourceDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ResourceObjectDescriptor> {
+  withChildrenDescriptors(children: Array<GenericPropertyDescriptor>) {
     this.methodNames.getChildDescriptors = children;
     return this;
   }
 
-  withChildDescriptor(child: PropDescriptor) {
+  withChildDescriptor(child: GenericPropertyDescriptor) {
     this.methodNames.getChildDescriptor = child;
     return this;
   }
 }
 
-export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayPropertyDescriptor> {
-  withArrayItemsDescriptor(arrayItem: PropDescriptor) {
+export class ArrayDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ArrayDescriptor> {
+  withArrayItemsDescriptor(arrayItem: GenericPropertyDescriptor) {
     this.methodNames.getItemsDescriptor = arrayItem;
     return this;
   }
 }
 
-export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuilder<AssociationPropertyDescriptor> {
+export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuilder<AssociationDescriptor> {
   withAssociatedResourceName(resolvedResourceName: string) {
     this.methodNames.getAssociatedResourceName = resolvedResourceName;
     this.methodNames.resolveResource = null;
@@ -73,12 +73,12 @@ export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuil
     return this;
   }
 
-  withAssociatedResource(resource: ResourceDescriptor) {
+  withAssociatedResource(resource: ResourceObjectDescriptor) {
     this.methodNames.getResource = resource;
     return this;
   }
 
-  protected postConstruct(spy: jasmine.SpyObj<AssociationPropertyDescriptor>): jasmine.SpyObj<AssociationPropertyDescriptor> {
+  protected postConstruct(spy: jasmine.SpyObj<AssociationDescriptor>): jasmine.SpyObj<AssociationDescriptor> {
     const resourceName = this.methodNames.getAssociatedResourceName;
     if (resourceName) {
       spy.resolveResource.and.callFake((descriptorProvider: ResourceDescriptorProvider) => descriptorProvider.resolve(resourceName));

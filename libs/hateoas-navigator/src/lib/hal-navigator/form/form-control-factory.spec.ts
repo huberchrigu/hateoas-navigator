@@ -1,5 +1,4 @@
 import {FormArray} from '@angular/forms';
-import {VersionedResourceObjectPropertyImpl} from '../item/versioned-resource-object-property-impl';
 import {FormControlFactory} from './form-control-factory';
 import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
@@ -8,6 +7,7 @@ import SpyObjMethodNames = jasmine.SpyObjMethodNames;
 import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
 import {JsonArrayProperty} from '../json-property/array/array-property';
+import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {
@@ -25,7 +25,7 @@ describe('FormControlFactory', () => {
     };
     const item = {
       getChildProperty: (name) => properties[name]
-    } as VersionedResourceObjectPropertyImpl;
+    } as VersionedResourceObjectProperty;
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);

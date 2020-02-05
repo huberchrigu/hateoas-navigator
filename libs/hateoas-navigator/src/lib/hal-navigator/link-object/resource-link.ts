@@ -5,7 +5,7 @@ import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
-import {PropDescriptor} from '../descriptor';
+import {GenericPropertyDescriptor} from '../descriptor';
 import {RelativeLink} from 'hateoas-navigator/hal-navigator/link-object/relative-link';
 import {AbsoluteLink} from 'hateoas-navigator/hal-navigator/link-object/absolute-link';
 
@@ -55,7 +55,7 @@ export class ResourceLink extends AbsoluteLink {
     return this.removeTemplatedPart(this.toRelativeLink().getUri());
   }
 
-  getResourceDescriptor(): Observable<PropDescriptor> {
+  getResourceDescriptor(): Observable<GenericPropertyDescriptor> {
     return this.resourceDescriptorResolver.resolve(this.extractResourceName());
   }
 

@@ -2,9 +2,9 @@ import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {JsonSchemaDescriptorMapper} from './json-schema-descriptor-mapper';
 import {
-  ArrayPropertyDescriptor,
-  ObjectPropertyDescriptor
-} from '../prop-descriptor';
+  ArrayDescriptor,
+  ObjectDescriptor
+} from '../generic-property-descriptor';
 
 describe('JsonSchemaDescriptorMapper', () => {
   it('should get referenced child', () => {
@@ -28,9 +28,9 @@ describe('JsonSchemaDescriptorMapper', () => {
     referenceFactoryMock.getReferencedSchema.and.returnValue(referencedSchema);
 
     const testee = new JsonSchemaDescriptorMapper('testee', array, referenceFactoryMock)
-      .toDescriptor() as ArrayPropertyDescriptor;
+      .toDescriptor() as ArrayDescriptor;
 
-    const objDescriptor = testee.getItemsDescriptor() as ObjectPropertyDescriptor;
+    const objDescriptor = testee.getItemsDescriptor() as ObjectDescriptor;
     expect(objDescriptor.getChildDescriptor('child').getTitle()).toEqual('Child');
     expect(referenceFactoryMock.getReferencedSchema).toHaveBeenCalled();
   });

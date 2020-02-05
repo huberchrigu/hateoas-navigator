@@ -1,0 +1,32 @@
+@startuml
+package property {
+interface VersionedResourceObjectProperty
+interface ResourceObjectProperty
+interface ObjectProperty
+interface ArrayProperty
+interface GenericProperty
+}
+
+package descriptor {
+interface ResourceObjectDescriptor
+interface ObjectDescriptor
+interface ArrayDescriptor
+interface GenericPropertyDescriptor
+interface AssociationDescriptor
+}
+
+VersionedResourceObjectProperty --|> ResourceObjectProperty
+ResourceObjectProperty --|> ObjectProperty
+ObjectProperty --|> GenericProperty
+ArrayProperty --|> GenericProperty
+
+ResourceObjectDescriptor --|> ObjectDescriptor
+AssociationDescriptor --|> GenericPropertyDescriptor
+ObjectDescriptor --|> GenericPropertyDescriptor
+ArrayDescriptor --|> GenericPropertyDescriptor
+
+ResourceObjectProperty ..> ResourceObjectDescriptor
+ObjectProperty ..> ObjectDescriptor
+ArrayProperty ..> ArrayDescriptor
+GenericProperty ..> descriptor
+@enduml

@@ -1,9 +1,9 @@
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
 import {combineLatest, forkJoin, Observable, of} from 'rxjs';
-import {ArrayPropertyDescriptor, AssociationPropertyDescriptor, ObjectPropertyDescriptor, PropDescriptor} from '../prop-descriptor';
+import {ArrayDescriptor, AssociationDescriptor, ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import {map, flatMap, tap} from 'rxjs/operators';
 import {LOGGER} from '../../../logging/logger';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
 /**
  * Recursively visits all descriptors and resolves all its associations if any.
@@ -12,12 +12,12 @@ import {ResourceDescriptor} from '../resource-descriptor';
  * </p>
  */
 export class AssociationResolver {
-  private cache: { [resourceName: string]: ResourceDescriptor } = {};
+  private cache: { [resourceName: string]: ResourceObjectDescriptor } = {};
 
   constructor(private descriptorProvider: ResourceDescriptorProvider) {
   }
 
-  fetchDescriptorWithAssociations(resourceName: string): Observable<ResourceDescriptor> {
+  fetchDescriptorWithAssociations(resourceName: string): Observable<ResourceObjectDescriptor> {
     LOGGER.debug('Resolving ' + resourceName);
     const cached = this.cache[resourceName];
     if (cached) {
@@ -35,12 +35,12 @@ export class AssociationResolver {
   /**
    * Resolves the associations of the descriptor itself (if any), of its children and its array items.
    */
-  private resolveAssociations<T extends PropDescriptor>(descriptor: T): Observable<T> {
-    const children = descriptor.orEmpty<ObjectPropertyDescriptor>(d => d.getChildDescriptors);
-    const arrayItems = descriptor.orNull<ArrayPropertyDescriptor, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
+  private resolveAssociations<T extends GenericPropertyDescriptor>(descriptor: T): Observable<T> {
+    const children = descriptor.orEmpty<ObjectDescriptor>(d => d.getChildDescriptors);
+    const arrayItems = descriptor.orNull<ArrayDescriptor, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
 
-    const resolvedChildren: Observable<PropDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
-    const resolvedArrayItem: Observable<PropDescriptor> = arrayItems ?
+    const resolvedChildren: Observable<GenericPropertyDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
+    const resolvedArrayItem: Observable<GenericPropertyDescriptor> = arrayItems ?
       this.resolveAssociations(arrayItems) :
       of(null);
 
@@ -48,15 +48,15 @@ export class AssociationResolver {
       .pipe(map(() => descriptor));
   }
 
-  private resolveAssociation(descriptor: PropDescriptor): Observable<ResourceDescriptor> {
-    const associatedResourceName = descriptor.orNull<AssociationPropertyDescriptor, 'getAssociatedResourceName'>(d =>
+  private resolveAssociation(descriptor: GenericPropertyDescriptor): Observable<ResourceObjectDescriptor> {
+    const associatedResourceName = descriptor.orNull<AssociationDescriptor, 'getAssociatedResourceName'>(d =>
       d.getAssociatedResourceName);
     return associatedResourceName ? this.fetchDescriptorWithAssociations(associatedResourceName)
-        .pipe(tap(associatedResourceDesc => (descriptor as AssociationPropertyDescriptor).setResolvedResource(associatedResourceDesc))) :
+        .pipe(tap(associatedResourceDesc => (descriptor as AssociationDescriptor).setResolvedResource(associatedResourceDesc))) :
       of(null);
   }
 
-  private resolveAll(descriptors: Array<PropDescriptor>): Observable<PropDescriptor[]> {
+  private resolveAll(descriptors: Array<GenericPropertyDescriptor>): Observable<GenericPropertyDescriptor[]> {
     return forkJoin(descriptors.map(d => this.resolveAssociations(d)));
   }
 }

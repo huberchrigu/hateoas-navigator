@@ -1,8 +1,7 @@
-import {ResourceDescriptor} from '../descriptor';
+import {ResourceObjectDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {JsonObjectProperty} from '../json-property/object/object-property';
-import {ObjectPropertyDescriptor} from '../descriptor/prop-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 import {ObjectPropertyImpl} from '../json-property/object/object-property-impl';
 import {ResourceObjectProperty} from './resource-object-property';
@@ -10,21 +9,27 @@ import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from '../../decorators/not-null';
 import {HalResourceFactory} from './factory/hal-resource-factory';
 import {HalProperty} from '../json-property/hal/hal-property';
+import {ResourceObjectFactory} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object-factory';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.
  *
  * @dynamic
  */
-export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType, ResourceDescriptor> implements ResourceObjectProperty { // TODO: decouple descriptor
+export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType, ResourceObjectDescriptor>
+  implements ResourceObjectProperty {
+
   private static LINKS_PROPERTY = '_links';
   private static EMBEDDED_PROPERTY = '_embedded';
   private static METADATA_PROPERTIES = [ResourceObjectPropertyImpl.LINKS_PROPERTY, ResourceObjectPropertyImpl.EMBEDDED_PROPERTY];
 
+  private resourceFactory: ResourceObjectFactory;
+
   constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
-              private resourceFactory: HalResourceFactory,
-              private linkFactory: LinkFactory, descriptor: ResourceDescriptor = null) {
+              resourceFactory: HalResourceFactory,
+              private linkFactory: LinkFactory, descriptor: ResourceObjectDescriptor = null) {
     super(name, resourceObject, descriptor, propertyFactory);
+    this.resourceFactory = new ResourceObjectFactory(resourceFactory, this.getDescriptorIfAny());
   }
 
   getLinks(): ResourceLink[] {
@@ -34,8 +39,8 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
   getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceObjectProperty[] {
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
-      return embedded.map(e => this.resourceFactory.create(linkRelationType, e, useMainDescriptor ?
-        this.getDescriptorIfAny() : this.getSubResourceDescriptor(linkRelationType)));
+      return embedded.map(resource =>
+        this.resourceFactory.createResourceObjectProperty(linkRelationType, resource, useMainDescriptor));
     } else {
       throw new Error('Embedded object ' + linkRelationType + ' was not an array as expected');
     }
@@ -46,14 +51,16 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
     if (Array.isArray(resource)) {
       return null;
     }
-    return resource ? this.resourceFactory.create(linkRelationType, resource, this.getSubResourceDescriptor(linkRelationType)) : undefined;
+    return resource ?
+      this.resourceFactory.createResourceObjectProperty(linkRelationType, resource, false) :
+      undefined;
   }
 
   getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[] {
     const resources = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resources)) {
-      const subResourceDescriptor = this.getSubResourceDescriptor(linkRelationType);
-      return resources.map(resource => this.resourceFactory.create(linkRelationType, resource, subResourceDescriptor));
+      return resources.map(resource =>
+        this.resourceFactory.createResourceObjectProperty(linkRelationType, resource, false));
     }
     return undefined;
   }
@@ -132,10 +139,5 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
 
   private filterOutMetadata(key: string): boolean {
     return !ResourceObjectPropertyImpl.METADATA_PROPERTIES.some(p => p === key);
-  }
-
-  private getSubResourceDescriptor(embeddedRelationType: string): ResourceDescriptor {
-    return this.getDescriptorIfAny() ? this.getDescriptor().orNull<ObjectPropertyDescriptor, 'getChildDescriptor'>(d =>
-      d.getChildDescriptor, embeddedRelationType) as ResourceDescriptor : undefined;
   }
 }

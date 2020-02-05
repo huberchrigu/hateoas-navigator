@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
-import {ResourceObjectProperty, ResourceDescriptor, ResourceService, VersionedResourceObjectProperty} from 'hateoas-navigator';
+import {ResourceObjectProperty, ResourceObjectDescriptor, ResourceService, VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
 import {combineLatest, of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
@@ -66,7 +66,7 @@ export class ResourceListComponent implements OnInit {
   }
 
   isAddEnabled() {
-    const descriptor: ResourceDescriptor = this.collection.getDescriptor();
+    const descriptor: ResourceObjectDescriptor = this.collection.getDescriptor();
     return descriptor.getActions().isCreateEnabled();
   }
 

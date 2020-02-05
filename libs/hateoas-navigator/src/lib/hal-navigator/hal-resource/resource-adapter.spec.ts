@@ -3,21 +3,21 @@ import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {ResourceLinks} from './value-type/resource-links';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
-import {ResourceAdapterFactoryService} from './resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from './resource-object-property-factory.service';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 
 describe('ResourceObjectPropertyImpl', () => {
   let linkFactory: LinkFactory;
   let resourceDescriptorProvider: ResourceDescriptorProvider;
-  let resourceFactory: ResourceAdapterFactoryService;
+  let resourceFactory: ResourceObjectPropertyFactoryService;
   let propertyFactory: HalPropertyFactory;
 
   beforeAll(() => {
     // TODO: Should all be mocked, and tests moved to according factory
     linkFactory = {} as LinkFactory;
     resourceDescriptorProvider = {} as ResourceDescriptorProvider;
-    resourceFactory = new ResourceAdapterFactoryService(resourceDescriptorProvider);
+    resourceFactory = new ResourceObjectPropertyFactoryService(resourceDescriptorProvider);
     propertyFactory = new HalPropertyFactory(resourceFactory);
   });
 

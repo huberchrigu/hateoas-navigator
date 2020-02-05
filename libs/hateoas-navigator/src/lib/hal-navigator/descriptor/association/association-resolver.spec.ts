@@ -6,9 +6,9 @@ import {
 } from '../combining/property-descriptor-mock-builder.spec';
 import {AssociationResolver} from './association-resolver';
 import {Observable, of} from 'rxjs';
-import {AssociationPropertyDescriptor} from '../prop-descriptor';
+import {AssociationDescriptor} from '../generic-property-descriptor';
 import {fakeAsync} from '@angular/core/testing';
-import {ResourceDescriptor} from 'hateoas-navigator/hal-navigator';
+import {ResourceObjectDescriptor} from 'hateoas-navigator/hal-navigator';
 
 describe('AssociationResolver', () => {
   let testee: AssociationResolver;
@@ -31,7 +31,7 @@ describe('AssociationResolver', () => {
       expect(descriptorProviderMock.resolve).toHaveBeenCalledWith('associatedResource');
       expect(descriptor.getChildDescriptors().length).toBe(1);
       expect(descriptor.getChildDescriptors()[0]
-        .orNull<AssociationPropertyDescriptor, 'getAssociatedResourceName'>(d => d.getAssociatedResourceName))
+        .orNull<AssociationDescriptor, 'getAssociatedResourceName'>(d => d.getAssociatedResourceName))
         .toEqual('associatedResource');
       wasCalled = true;
     });
@@ -52,7 +52,7 @@ describe('AssociationResolver', () => {
     expect(wasCalled).toBeTruthy();
   }));
 
-  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<ResourceDescriptor> {
+  function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<ResourceObjectDescriptor> {
     const rootResource = of(new ResourceDescriptorMockBuilder()
       .withChildrenDescriptors([new AssociationDescriptorMockBuilder()
         .withAssociatedResourceName(associationName)

@@ -9,7 +9,7 @@ import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dial
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator';
+import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 import {ResourceListComponent} from '../resource-list/resource-list.component';
@@ -24,7 +24,7 @@ export class ResourceItemComponent implements OnInit {
   resourceObject: VersionedResourceObjectProperty;
 
   constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
-              private router: Router, private resourceFactory: ResourceAdapterFactoryService) {
+              private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService) {
   }
 
   ngOnInit() {
@@ -77,15 +77,15 @@ export class ResourceItemComponent implements OnInit {
     }
   }
 
+  isLinkDisabled(link: ResourceLink): Boolean {
+    const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
+    return resources && resources.length === 0;
+  }
+
   private openDialogForLink(link: ResourceLink): Subscription {
     const uri = link.getRelativeUriWithoutTemplatedPart();
     const options = this.resourceService.getOptionsForCustomUri(uri);
     return options.subscribe(o => this.openDialogForCustomLink(uri, o));
-  }
-
-  isLinkDisabled(link: ResourceLink): Boolean {
-    const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
-    return resources && resources.length === 0;
   }
 
   private goToResourceList(resources: ResourceObjectProperty[]): Promise<Boolean> {

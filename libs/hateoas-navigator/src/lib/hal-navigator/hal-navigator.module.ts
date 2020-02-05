@@ -9,7 +9,7 @@ import {ResourceDescriptorProvider} from './descriptor/provider/resource-descrip
 import {DefaultDescriptorProvider} from './descriptor/provider/default-descriptor-provider';
 import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-descriptor-resolver.service';
 import {ResourceSchemaService} from './resource-services/resource-schema.service';
-import {ResourceAdapterFactoryService} from './hal-resource/resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from './hal-resource/resource-object-property-factory.service';
 
 @NgModule({
   imports: [
@@ -22,7 +22,7 @@ import {ResourceAdapterFactoryService} from './hal-resource/resource-adapter-fac
     ResourceObjectResolverService,
     ItemCacheService,
     ResourceSchemaService,
-    ResourceAdapterFactoryService
+    ResourceObjectPropertyFactoryService
   ]
 })
 export class HalNavigatorModule {
@@ -39,7 +39,7 @@ export class HalNavigatorModule {
       }, {
         provide: ResourceDescriptorProvider, useFactory: factory, deps: deps
       },
-        ResourceAdapterFactoryService]
+        ResourceObjectPropertyFactoryService]
     };
   }
 }

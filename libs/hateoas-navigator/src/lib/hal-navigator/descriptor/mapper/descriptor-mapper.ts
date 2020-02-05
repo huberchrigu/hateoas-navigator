@@ -1,8 +1,8 @@
 import {DescriptorBuilder} from './descriptor-builder';
-import {PropDescriptor} from '../prop-descriptor';
+import {GenericPropertyDescriptor} from '../generic-property-descriptor';
 
 export abstract class DescriptorMapper<T> {
-  toDescriptor(): PropDescriptor {
+  toDescriptor(): GenericPropertyDescriptor {
     return this.toBuilder().toDescriptor();
   }
 

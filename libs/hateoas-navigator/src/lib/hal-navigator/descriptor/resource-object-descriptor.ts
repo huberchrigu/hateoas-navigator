@@ -1,11 +1,11 @@
 import {ResourceActions} from './actions/resource-actions';
-import {ObjectPropertyDescriptor} from './prop-descriptor';
+import {ObjectDescriptor} from './generic-property-descriptor';
 
-export interface ResourceDescriptor extends ObjectPropertyDescriptor {
+export interface ResourceObjectDescriptor extends ObjectDescriptor {
   getActions(): ResourceActions;
 
   /**
    * For a given resource /resource/xyz, it returns the descriptor for a link /resource/xyz/action.
    */
-  getDescriptorForLink(uri: string): ResourceDescriptor;
+  getDescriptorForLink(uri: string): ResourceObjectDescriptor;
 }

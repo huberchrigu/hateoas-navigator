@@ -6,7 +6,7 @@ import {HalResourceObject} from '../../hal-resource/value-type/hal-value-type';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {HeaderOptions} from '../../http/header-options';
 import {ResourceLink} from '../../link-object/resource-link';
-import {ResourceAdapterFactoryService} from '../../hal-resource/resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from '../../hal-resource/resource-object-property-factory.service';
 import {VersionedResourceObjectProperty} from '../../hal-resource/resource-object-property';
 
 /**
@@ -18,7 +18,7 @@ export class ItemCacheService {
   private static E_TAG_HEADER = 'ETag';
   private cache: { [key: string]: VersionedResourceObjectProperty } = {};
 
-  constructor(private resourceAdapterFactoryService: ResourceAdapterFactoryService) {
+  constructor(private resourceAdapterFactoryService: ResourceObjectPropertyFactoryService) {
   }
 
   getItemFromModifyingResponse(resourceName: string, response: HttpResponse<HalResourceObject>): VersionedResourceObjectProperty {

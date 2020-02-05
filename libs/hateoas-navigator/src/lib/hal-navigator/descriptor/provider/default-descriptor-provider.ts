@@ -10,7 +10,7 @@ import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {CombiningDescriptorMapper} from '../combining/combining-descriptor-mapper';
 import {StaticDescriptorMapper} from '../static/static-descriptor-mapper';
 import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 import {DefaultMapperConfigs} from '../combining/mapper-config';
 
 export class DefaultDescriptorProvider {
@@ -19,12 +19,12 @@ export class DefaultDescriptorProvider {
 
   }
 
-  resolve(resourceName: string): Observable<ResourceDescriptor> {
+  resolve(resourceName: string): Observable<ResourceObjectDescriptor> {
     return combineLatest([this.schemaService.getJsonSchema(resourceName), this.schemaService.getAlps(resourceName)])
       .pipe(
         map(([jsonSchema, alps]) => this.assembleDescriptorBuilders(resourceName, jsonSchema, alps)),
         map(descriptorMappers => new CombiningDescriptorMapper(descriptorMappers, DefaultMapperConfigs.ignoreChildrenFromAlps())
-          .toDescriptor() as ResourceDescriptor)
+          .toDescriptor() as ResourceObjectDescriptor)
       );
   }
 

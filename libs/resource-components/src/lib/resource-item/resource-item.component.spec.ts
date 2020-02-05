@@ -8,10 +8,10 @@ import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceObjectProperty} from 'hateoas-navigator';
 import SpyObj = jasmine.SpyObj;
 import {ResourceActions} from 'hateoas-navigator';
-import {ResourceDescriptor} from 'hateoas-navigator';
+import {ResourceObjectDescriptor} from 'hateoas-navigator';
 import {of} from 'rxjs';
-import {PrimitiveOrEmptyProperty} from 'hateoas-navigator';
-import {ResourceAdapterFactoryService} from 'hateoas-navigator';
+import {PrimitivePropertyImpl} from 'hateoas-navigator';
+import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
@@ -24,15 +24,15 @@ describe('ResourceItemComponent', () => {
   } as ResourceActions;
 
   beforeEach(async(() => {
-    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObjectProperty>('resourceObject', ['getChildProperties', 'getDescriptor',
-      'getOtherLinks']);
+    versionedResourceObject = jasmine.createSpyObj<VersionedResourceObjectProperty>('resourceObject',
+      ['getChildProperties', 'getDescriptor', 'getOtherLinks']);
     versionedResourceObject.getChildProperties.and.returnValue([
-      {} as PrimitiveOrEmptyProperty
+      {} as PrimitivePropertyImpl
     ]);
     versionedResourceObject.getDescriptor.and.returnValue({
       getTitle: () => 'Test',
       getActions: () => actions
-    } as ResourceDescriptor);
+    } as ResourceObjectDescriptor);
     versionedResourceObject.getOtherLinks.and.returnValue([]);
 
     TestBed.configureTestingModule({
@@ -49,7 +49,7 @@ describe('ResourceItemComponent', () => {
         {provide: MatDialog, useValue: {}},
         {provide: Router, useValue: {}},
         {provide: ResourceService, useValue: {}},
-        {provide: ResourceAdapterFactoryService, useValue: {}}
+        {provide: ResourceObjectPropertyFactoryService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

@@ -2,11 +2,11 @@ import {ResourceActions} from '../actions/resource-actions';
 import {DescriptorMapper} from './descriptor-mapper';
 import {
   AbstractPropDescriptor,
-  ArrayPropertyDescriptor, AssociationPropertyDescriptor,
-  ObjectPropertyDescriptor, PropDescriptor
-} from '../prop-descriptor';
+  ArrayDescriptor, AssociationDescriptor,
+  ObjectDescriptor, GenericPropertyDescriptor
+} from '../generic-property-descriptor';
 import {FormFieldBuilder} from '../../form/form-field-builder';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 import {Observable} from 'rxjs';
 import {NotNull} from '../../../decorators/not-null';
 import {tap} from 'rxjs/operators';
@@ -39,15 +39,15 @@ class PropertyDescriptorImpl extends AbstractPropDescriptor {
   }
 }
 
-class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayPropertyDescriptor {
-  constructor(name: string, title: string, private arrayItems: PropDescriptor, fieldProcessor: FieldProcessor) {
+class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayDescriptor {
+  constructor(name: string, title: string, private arrayItems: GenericPropertyDescriptor, fieldProcessor: FieldProcessor) {
     super(name, title, fieldProcessor);
     if (!this.arrayItems) {
       throw new Error('An array requires array items');
     }
   }
 
-  getItemsDescriptor<D extends PropDescriptor>(): D {
+  getItemsDescriptor<D extends GenericPropertyDescriptor>(): D {
     return this.arrayItems as D;
   }
 
@@ -57,19 +57,19 @@ class ArrayDescriptorImpl extends PropertyDescriptorImpl implements ArrayPropert
   }
 }
 
-class ObjectDescriptorImpl extends PropertyDescriptorImpl implements ObjectPropertyDescriptor {
-  constructor(name: string, title: string, private children: PropDescriptor[], fieldProcessor: FieldProcessor) {
+class ObjectDescriptorImpl extends PropertyDescriptorImpl implements ObjectDescriptor {
+  constructor(name: string, title: string, private children: GenericPropertyDescriptor[], fieldProcessor: FieldProcessor) {
     super(name, title, fieldProcessor);
     if (!children) {
       throw new Error('An object requires child properties');
     }
   }
 
-  getChildDescriptor<T extends PropDescriptor>(resourceName: string): T {
+  getChildDescriptor<T extends GenericPropertyDescriptor>(resourceName: string): T {
     return this.children.find(d => d.getName() === resourceName) as T;
   }
 
-  getChildDescriptors<T extends PropDescriptor>(): Array<T> {
+  getChildDescriptors<T extends GenericPropertyDescriptor>(): Array<T> {
     return this.children as T[];
   }
 
@@ -79,8 +79,8 @@ class ObjectDescriptorImpl extends PropertyDescriptorImpl implements ObjectPrope
   }
 }
 
-class AssociationDescriptorImpl extends PropertyDescriptorImpl implements AssociationPropertyDescriptor {
-  private resolvedResource: ResourceDescriptor;
+class AssociationDescriptorImpl extends PropertyDescriptorImpl implements AssociationDescriptor {
+  private resolvedResource: ResourceObjectDescriptor;
 
   constructor(name: string, title: string, private association: string, fieldProcessor: FieldProcessor) {
     super(name, title, fieldProcessor);
@@ -99,17 +99,17 @@ class AssociationDescriptorImpl extends PropertyDescriptorImpl implements Associ
   }
 
   @NotNull(() => 'Association must be resolved before')
-  getResource(): ResourceDescriptor {
+  getResource(): ResourceObjectDescriptor {
     return this.resolvedResource;
   }
 
-  resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceDescriptor> {
+  resolveResource(descriptorProvider: ResourceDescriptorProvider): Observable<ResourceObjectDescriptor> {
     return descriptorProvider.resolve(this.getAssociatedResourceName()).pipe(
       tap(d => this.setResolvedResource(d))
     );
   }
 
-  setResolvedResource(associatedResourceDesc: ResourceDescriptor): void {
+  setResolvedResource(associatedResourceDesc: ResourceObjectDescriptor): void {
     this.resolvedResource = associatedResourceDesc;
   }
 }
@@ -117,9 +117,9 @@ class AssociationDescriptorImpl extends PropertyDescriptorImpl implements Associ
 /**
  * A resource descriptor might know only links OR actions.
  */
-class ResourceDescriptorImpl extends ObjectDescriptorImpl implements ResourceDescriptor {
-  constructor(name: string, title: string, children: PropDescriptor[], private actions: ResourceActions,
-              private linkFunction: (uri: string) => ResourceDescriptor, fieldProcessor: FieldProcessor) {
+class ResourceDescriptorImpl extends ObjectDescriptorImpl implements ResourceObjectDescriptor {
+  constructor(name: string, title: string, children: GenericPropertyDescriptor[], private actions: ResourceActions,
+              private linkFunction: (uri: string) => ResourceObjectDescriptor, fieldProcessor: FieldProcessor) {
     super(name, title, children, fieldProcessor);
     if (!linkFunction && !actions) {
       throw new Error('Not a valid resource');
@@ -130,7 +130,7 @@ class ResourceDescriptorImpl extends ObjectDescriptorImpl implements ResourceDes
     return this.actions;
   }
 
-  getDescriptorForLink(uri: string): ResourceDescriptor {
+  getDescriptorForLink(uri: string): ResourceObjectDescriptor {
     return this.linkFunction ? this.linkFunction(uri) : undefined;
   }
 }
@@ -222,8 +222,8 @@ export class DescriptorBuilder<T> {
    * An resource is handled like a sub-type of an object, i.e. it has children or the object/resource type, plus the resource type or a
    * resource property like actions or link functions.
    */
-  toDescriptor(): PropDescriptor {
-    let descriptor: PropDescriptor;
+  toDescriptor(): GenericPropertyDescriptor {
+    let descriptor: GenericPropertyDescriptor;
     if (this.isType('array', !!this.arrayItems)) {
       descriptor = new ArrayDescriptorImpl(this.name, this.title, this.buildDescriptor(this.arrayItems), this.fieldProcessor);
     } else if (this.isType('object', !!this.children) || this.isType('resource')) {
@@ -234,7 +234,7 @@ export class DescriptorBuilder<T> {
            or a link action (value set: ${!!this.linkFunction})`);
         }
         descriptor = new ResourceDescriptorImpl(this.name, this.title, children, this.actions,
-          (uri: string) => this.buildDescriptor(this.linkFunction(uri)) as ResourceDescriptor, this.fieldProcessor);
+          (uri: string) => this.buildDescriptor(this.linkFunction(uri)) as ResourceObjectDescriptor, this.fieldProcessor);
       } else {
         descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor);
       }
@@ -267,11 +267,11 @@ export class DescriptorBuilder<T> {
     return false;
   }
 
-  private buildDescriptor(value: T): PropDescriptor {
+  private buildDescriptor(value: T): GenericPropertyDescriptor {
     return this.builderFunction(value).toDescriptor();
   }
 
-  private buildDescriptors(children: Array<T>): PropDescriptor[] {
+  private buildDescriptors(children: Array<T>): GenericPropertyDescriptor[] {
     return children.map(c => this.buildDescriptor(c));
   }
 }

@@ -1,6 +1,6 @@
 import {HalPropertyFactory} from './hal-property-factory';
 import {HalResourceFactory} from './hal-resource-factory';
-import {ResourceDescriptor} from '../../descriptor/resource-descriptor';
+import {ResourceObjectDescriptor} from '../../descriptor/resource-object-descriptor';
 import {
   ArrayDescriptorMockBuilder, AssociationDescriptorMockBuilder, PropertyDescriptorMockBuilder,
   ResourceDescriptorMockBuilder
@@ -10,7 +10,7 @@ import {JsonArrayProperty} from '../../json-property/array/array-property';
 
 describe('HalPropertyFactory', () => {
   let resourceFactory: HalResourceFactory;
-  let resourceDesc: ResourceDescriptor;
+  let resourceDesc: ResourceObjectDescriptor;
 
   beforeAll(() => {
     resourceFactory = jasmine.createSpyObj('resourceFactory', ['create']);

@@ -1,6 +1,6 @@
 import {ObjectProperty, JsonObjectProperty} from '../json-property/object/object-property';
 import {HalValueType} from './value-type/hal-value-type';
-import {ResourceDescriptor} from '../descriptor/resource-descriptor';
+import {ResourceObjectDescriptor} from '../descriptor/resource-object-descriptor';
 import {ResourceLink} from '../link-object/resource-link';
 
 
@@ -39,7 +39,7 @@ export interface ResourceObjectProperty extends ObjectProperty<HalValueType> {
    */
   getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[];
 
-  getDescriptor(): ResourceDescriptor; // TODO: Remove from resource object
+  getDescriptor(): ResourceObjectDescriptor;
 
   getLinks(): ResourceLink[];
 

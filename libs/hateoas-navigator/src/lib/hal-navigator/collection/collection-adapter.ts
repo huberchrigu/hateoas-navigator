@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {ResourceDescriptor} from '../descriptor';
+import {ResourceObjectDescriptor} from '../descriptor';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
 import {ResourceObjectProperty} from '../hal-resource/resource-object-property';
 import {ResourceService} from '../resource-services/resource.service';
@@ -8,6 +8,13 @@ import {map} from 'rxjs/operators';
 export class CollectionAdapter {
   constructor(private factory: HalResourceFactory, private resourceObject: ResourceObjectProperty) {
 
+  }
+
+  /**
+   * We did not resolve associations, therefore use only the object state.
+   */
+  private static getNamesOfItem(resourceObject: ResourceObjectProperty) {
+    return resourceObject.toRawObjectState().getChildProperties().map(p => p.getName());
   }
 
   resolve(): Observable<CollectionAdapter> {
@@ -20,7 +27,7 @@ export class CollectionAdapter {
     return this.resourceObject.getName();
   }
 
-  getDescriptor(): ResourceDescriptor {
+  getDescriptor(): ResourceObjectDescriptor {
     return this.resourceObject.getDescriptor();
   }
 
@@ -31,7 +38,7 @@ export class CollectionAdapter {
   getPropertyNames(): Array<string> {
     const properties = [];
     this.getItems().forEach(item => {
-      for (const property of this.getNamesOfItem(item)) {
+      for (const property of CollectionAdapter.getNamesOfItem(item)) {
         if (properties.indexOf(property) < 0) {
           properties.push(property);
         }
@@ -52,12 +59,5 @@ export class CollectionAdapter {
     return this.resourceObject.getEmbeddedResources(
       this.resourceObject.getName(), true
     );
-  }
-
-  /**
-   * We did not resolve associations, therefore use only the object state.
-   */
-  private getNamesOfItem(resourceObject: ResourceObjectProperty) {
-    return resourceObject.toRawObjectState().getChildProperties().map(p => p.getName());
   }
 }

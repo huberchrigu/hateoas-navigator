@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
-import {ResourceDescriptor} from '../resource-descriptor';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
 export abstract class ResourceDescriptorProvider {
-  abstract resolve(resourceName: string): Observable<ResourceDescriptor>;
+  abstract resolve(resourceName: string): Observable<ResourceObjectDescriptor>;
 }

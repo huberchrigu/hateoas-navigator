@@ -2,7 +2,7 @@ import {TestBed, inject} from '@angular/core/testing';
 
 import {ResourceObjectResolverService} from './resource-object-resolver.service';
 import {ResourceService} from '../resource-services/resource.service';
-import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
 
 describe('ResourceObjectResolverService', () => {
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('ResourceObjectResolverService', () => {
       providers: [
         ResourceObjectResolverService,
         {provide: ResourceService, useValue: {}},
-        {provide: ResourceAdapterFactoryService, useValue: {}}
+        {provide: ResourceObjectPropertyFactoryService, useValue: {}}
       ]
     });
   });

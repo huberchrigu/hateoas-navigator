@@ -7,12 +7,12 @@ import {VersionedResourceObjectPropertyImpl} from './versioned-resource-object-p
 import {ResourceService} from '../resource-services/resource.service';
 import {RouteParams} from '../routing/route-params';
 import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
-import {ResourceAdapterFactoryService} from '../hal-resource/resource-adapter-factory.service';
+import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
 
 @Injectable()
 export class ResourceObjectResolverService implements Resolve<VersionedResourceObjectProperty> {
 
-  constructor(private resourceService: ResourceService, private resourceFactory: ResourceAdapterFactoryService) {
+  constructor(private resourceService: ResourceService, private resourceFactory: ResourceObjectPropertyFactoryService) {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceObjectProperty> |

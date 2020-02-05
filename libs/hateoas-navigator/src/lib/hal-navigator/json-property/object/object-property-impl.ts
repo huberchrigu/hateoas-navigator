@@ -2,10 +2,10 @@ import {GenericObjectValueType, JsonValueType} from '../value-type/json-value-ty
 import {AbstractProperty} from '../abstract-property';
 import {ObjectProperty} from './object-property';
 import {PropertyFactory} from '../../json-property/factory/property-factory';
-import {ObjectPropertyDescriptor, PropDescriptor} from '../../descriptor/prop-descriptor';
+import {ObjectDescriptor, GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
 import {GenericProperty} from '../generic-property';
 
-export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends ObjectPropertyDescriptor>
+export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends ObjectDescriptor>
   extends AbstractProperty<GenericObjectValueType<CHILDREN>, D> implements ObjectProperty<CHILDREN> {
 
   constructor(name: string, value: GenericObjectValueType<CHILDREN>,
@@ -17,7 +17,7 @@ export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Object
     return this.toObjOfMappedValues(property => property.getFormValue());
   }
 
-  getChildProperties(): GenericProperty<CHILDREN, PropDescriptor>[] {
+  getChildProperties(): GenericProperty<CHILDREN, GenericPropertyDescriptor>[] {
     return Object.keys(this.getValue()).map(key => this.propertyFactory.create(key, this.getValue()[key]));
   }
 
@@ -32,7 +32,7 @@ export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Object
   /**
    * @return even a property if the value is null or undefined.
    */
-  getChildProperty(propertyName: string): GenericProperty<CHILDREN, PropDescriptor> {
+  getChildProperty(propertyName: string): GenericProperty<CHILDREN, GenericPropertyDescriptor> {
     const v = this.getValue()[propertyName];
     return this.propertyFactory.create(propertyName, v);
   }
@@ -42,7 +42,7 @@ export class ObjectPropertyImpl<CHILDREN extends JsonValueType, D extends Object
    *
    * _Is public because sub-classes of ObjectPropertyImpl need it, but does not need to be exported from the library._
    */
-  toObjOfMappedValues<V>(propertyToValue: (property: GenericProperty<CHILDREN, PropDescriptor>) => V): { [key: string]: V } {
+  toObjOfMappedValues<V>(propertyToValue: (property: GenericProperty<CHILDREN, GenericPropertyDescriptor>) => V): { [key: string]: V } {
     const obj = {};
     this.getChildProperties().forEach(property => obj[property.getName()] = propertyToValue(property));
     return obj;

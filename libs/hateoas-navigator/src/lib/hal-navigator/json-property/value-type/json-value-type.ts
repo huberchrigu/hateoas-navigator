@@ -1,7 +1,7 @@
 /**
  * A simple representation of JSON data types.
  */
-export type JsonValueType = PrimitiveValueType | ObjectValueType | ArrayValueType;
+export type JsonValueType = PrimitiveValueType | ObjectValueType | ArrayValueType | null | undefined;
 
 export type PrimitiveValueType = string | number | boolean;
 

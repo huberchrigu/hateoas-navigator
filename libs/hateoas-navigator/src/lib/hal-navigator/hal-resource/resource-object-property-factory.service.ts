@@ -2,7 +2,7 @@ import {HalResourceFactory} from './factory/hal-resource-factory';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {HalResourceObject} from './value-type/hal-value-type';
 import {ResourceObjectPropertyImpl} from './resource-object-property-impl';
-import {ResourceDescriptor} from '../descriptor/resource-descriptor';
+import {ResourceObjectDescriptor} from '../descriptor/resource-object-descriptor';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {LinkFactory} from '../link-object/link-factory';
 import {Observable} from 'rxjs';
@@ -11,9 +11,10 @@ import {AssociationResolver} from '../descriptor/association/association-resolve
 import {ResourceObjectProperty, VersionedResourceObjectProperty} from './resource-object-property';
 import {VersionedResourceObjectPropertyImpl} from '../item/versioned-resource-object-property-impl';
 import {Injectable} from '@angular/core';
+import {ObjectDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/generic-property-descriptor';
 
 @Injectable()
-export class ResourceAdapterFactoryService implements HalResourceFactory {
+export class ResourceObjectPropertyFactoryService implements HalResourceFactory {
   constructor(private descriptorResolver: ResourceDescriptorProvider) {
   }
 
@@ -23,10 +24,15 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
     }
   }
 
-  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor): ResourceObjectProperty { // TODO: Decouple descriptor
-    ResourceAdapterFactoryService.assertObj(resourceObject);
-    return new ResourceObjectPropertyImpl(name, resourceObject, this.getPropertyFactory(descriptor), this, this.getLinkFactory(resourceObject),
-      descriptor);
+  private static getSubResourceDescriptor(embeddedRelationType: string, descriptor: ResourceObjectDescriptor): ResourceObjectDescriptor {
+    return descriptor ? descriptor.orNull<ObjectDescriptor, 'getChildDescriptor'>(d =>
+      d.getChildDescriptor, embeddedRelationType) as ResourceObjectDescriptor : undefined;
+  }
+
+  create(name: string, resourceObject: HalResourceObject, descriptor: ResourceObjectDescriptor): ResourceObjectProperty {
+    ResourceObjectPropertyFactoryService.assertObj(resourceObject);
+    return new ResourceObjectPropertyImpl(name, resourceObject, this.getPropertyFactory(descriptor), this,
+      this.getLinkFactory(resourceObject), descriptor);
   }
 
   resolveDescriptor(name: string, resourceObject: HalResourceObject): Observable<ResourceObjectProperty> {
@@ -47,18 +53,24 @@ export class ResourceAdapterFactoryService implements HalResourceFactory {
       }));
   }
 
-  createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceDescriptor, version: string):
+  createWithVersion(name: string, resourceObject: HalResourceObject, descriptor: ResourceObjectDescriptor, version: string):
     VersionedResourceObjectProperty {
-    ResourceAdapterFactoryService.assertObj(resourceObject);
+    ResourceObjectPropertyFactoryService.assertObj(resourceObject);
     return new VersionedResourceObjectPropertyImpl(version, name, resourceObject, this.getPropertyFactory(descriptor), this,
       this.getLinkFactory(resourceObject), descriptor);
+  }
+
+  createResourceObjectProperty(name: string, obj: HalResourceObject, useMainDescriptor: boolean, descriptor: ResourceObjectDescriptor) {
+    return this.create(name, obj, useMainDescriptor ?
+      descriptor :
+      ResourceObjectPropertyFactoryService.getSubResourceDescriptor(name, descriptor));
   }
 
   private getLinkFactory(resourceObject: HalResourceObject) {
     return new LinkFactory(resourceObject._links, this.descriptorResolver);
   }
 
-  private getPropertyFactory(descriptor: ResourceDescriptor) {
+  private getPropertyFactory(descriptor: ResourceObjectDescriptor) {
     return new HalPropertyFactory(this, descriptor);
   }
 }

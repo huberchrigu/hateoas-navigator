@@ -10,7 +10,7 @@ import {
   ModuleConfiguration,
   FormFieldSupport, PropertyConfig,
   QueryConfig,
-  ResourceDescriptor,
+  ResourceObjectDescriptor,
   ResourceLink, FormFieldBuilder
 } from 'hateoas-navigator';
 import {LOGGER} from 'hateoas-navigator/logging/logger';
@@ -28,7 +28,7 @@ export class ResourceSearchDialogComponent implements OnInit {
     this.descriptor = data.descriptor;
   }
 
-  private descriptor: ResourceDescriptor;
+  private descriptor: ResourceObjectDescriptor;
 
   options = [];
   urls: ResourceLink[];
