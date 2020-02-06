@@ -12,6 +12,19 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
 
   private readonly name: string;
 
+  private static guessType(children: Array<AlpsDescriptor>, actions: ResourceActions, associatedResourceName: string): DescriptorType {
+    if (associatedResourceName) {
+      return 'association';
+    } else if (children) {
+      if (actions) {
+        return 'resource';
+      } else {
+        return 'object';
+      }
+    }
+    return undefined;
+  }
+
   /**
    * Only root resource has actions, therefore _allDescriptors_ should be empty for all children.
    */
@@ -25,7 +38,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
     const actions = this.toActions();
     const associatedResourceName = this.getAssociatedResourceName();
     builder.withName(this.name)
-      .withType(this.guessType(children, actions, associatedResourceName))
+      .withType(AlpsDescriptorMapper.guessType(children, actions, associatedResourceName))
       .withActions(actions)
       .withChildren(children)
       .withArrayItems(this.getArrayItems())
@@ -51,7 +64,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
    * *This can lead to infinite loops, if the ALPS descriptor mapper is used without any other mapper.*
    */
   private getArrayItems(): AlpsDescriptor {
-    return this.alps; // TODO: E.g. 'version'
+    return this.alps;
   }
 
   private getAssociatedResourceName(): string {
@@ -93,18 +106,5 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
       return new ResourceAction(ActionType.CREATE_ITEM, true);
     }
     return null;
-  }
-
-  private guessType(children: Array<AlpsDescriptor>, actions: ResourceActions, associatedResourceName: string): DescriptorType {
-    if (associatedResourceName) {
-      return 'association';
-    } else if (children) {
-      if (actions) {
-        return 'resource';
-      } else {
-        return 'object';
-      }
-    }
-    return undefined;
   }
 }

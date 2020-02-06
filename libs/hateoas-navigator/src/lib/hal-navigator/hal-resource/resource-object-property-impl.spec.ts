@@ -3,22 +3,21 @@ import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
 import {ResourceLinks} from './value-type/resource-links';
 import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
-import {ResourceObjectPropertyFactoryService} from './resource-object-property-factory.service';
-import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {PropertyFactory} from '../json-property/factory/property-factory';
+import SpyObj = jasmine.SpyObj;
+import {ResourceLink, ResourceObjectProperty} from 'hateoas-navigator';
+import {HalResourceFactory} from './factory/hal-resource-factory';
+import {PrimitiveProperty} from '../json-property/generic-property';
 
 describe('ResourceObjectPropertyImpl', () => {
-  let linkFactory: LinkFactory;
-  let resourceDescriptorProvider: ResourceDescriptorProvider;
-  let resourceFactory: ResourceObjectPropertyFactoryService;
-  let propertyFactory: HalPropertyFactory;
+  let linkFactory: SpyObj<LinkFactory>;
+  let resourceFactory: SpyObj<HalResourceFactory>;
+  let propertyFactory: SpyObj<HalPropertyFactory>;
 
-  beforeAll(() => {
-    // TODO: Should all be mocked, and tests moved to according factory
-    linkFactory = {} as LinkFactory;
-    resourceDescriptorProvider = {} as ResourceDescriptorProvider;
-    resourceFactory = new ResourceObjectPropertyFactoryService(resourceDescriptorProvider);
-    propertyFactory = new HalPropertyFactory(resourceFactory);
+  beforeEach(() => {
+    linkFactory = jasmine.createSpyObj<LinkFactory>(['getLink']);
+    resourceFactory = jasmine.createSpyObj<HalResourceFactory>(['create']);
+    propertyFactory = jasmine.createSpyObj<HalPropertyFactory>(['create', 'createEmbedded']);
   });
 
   it('should get the relative link to this resource', () => {
@@ -27,8 +26,11 @@ describe('ResourceObjectPropertyImpl', () => {
     };
     const testee = createTestee('resource', {
       _links: links
-    } as HalResourceObject, new LinkFactory(links, resourceDescriptorProvider));
-    expect(testee.getSelfLink().toRelativeLink().getUri()).toEqual('/resource/1');
+    } as HalResourceObject);
+    const link = {} as ResourceLink;
+    linkFactory.getLink.withArgs('self').and.returnValue(link);
+    expect(testee.getSelfLink()).toBe(link);
+    expect(linkFactory.getLink).toHaveBeenCalledWith('self');
   });
 
   it('should transform an array property to a display value', () => {
@@ -44,7 +46,6 @@ describe('ResourceObjectPropertyImpl', () => {
     const result = testee.getChildProperties();
 
     expect(result.map(p => p.getName())).toEqual(['property', 'resource']);
-    expect((result[1] as ResourceObjectPropertyImpl).getChildProperties().map(p => p.getName())).toEqual(['nestedProperty']);
   });
 
   it('should get embedded object without associations', () => {
@@ -75,16 +76,23 @@ describe('ResourceObjectPropertyImpl', () => {
     } as HalResourceObject;
     if (propertyName) {
       resource[propertyName] = propertyValue;
+      propertyFactory.create.withArgs(propertyName, propertyValue).and.returnValue({
+        getDisplayValue: () => propertyValue,
+        getName: () => propertyName
+      } as PrimitiveProperty);
     }
     if (embeddedResource) {
       resource._embedded = {
         resource: embeddedResource
       };
+      propertyFactory.createEmbedded.withArgs('resource', embeddedResource).and.returnValue({
+        getName: () => 'resource'
+      } as ResourceObjectProperty);
     }
     return resource;
   }
 
-  function createTestee(name: string, halResourceObject: HalResourceObject, lf = linkFactory) {
-    return new ResourceObjectPropertyImpl(name, halResourceObject, propertyFactory, resourceFactory, lf);
+  function createTestee(name: string, halResourceObject: HalResourceObject) {
+    return new ResourceObjectPropertyImpl(name, halResourceObject, propertyFactory, resourceFactory, linkFactory);
   }
 });

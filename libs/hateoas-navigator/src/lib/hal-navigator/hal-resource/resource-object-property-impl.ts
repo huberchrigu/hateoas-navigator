@@ -67,18 +67,31 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
 
   /**
    * A resource object is always represented as its unique link.
+   *
+   * @throws Error if there is no {@link getSelfLink self link}.
    */
   getFormValue(): string {
-    return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE).getFullUriWithoutTemplatedPart();
+    const link = this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
+    if (!link) {
+      throw new Error(`Cannot get form value for resource object  ${this.getName()} -> self link is required?`);
+    }
+    return link.getFullUriWithoutTemplatedPart();
   }
 
+  /**
+   * May be <code>undefined</code>.
+   */
   getSelfLink(): ResourceLink {
     return this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
   }
 
   getOtherLinks(): ResourceLink[] {
-    return this.linkFactory.getAll()
-      .filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
+    const all = this.linkFactory.getAll();
+    if (this.getSelfLink()) {
+      return all.filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
+    } else {
+      return all;
+    }
   }
 
   /**

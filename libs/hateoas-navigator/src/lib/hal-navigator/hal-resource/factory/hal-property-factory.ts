@@ -47,7 +47,7 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
     if (Array.isArray(value)) {
       return new ArrayPropertyImpl(name, value, childDesc as ArrayDescriptor, childFactory.asFactoryOfArrayItems());
     } else if (value && typeof value === 'object') {
-      if (value._links) { // TODO: There might be _links without a self link
+      if (value._links) {
         return this.halResourceFactory.create(name, value, childDesc as ResourceObjectDescriptor);
       } else {
         return new ObjectPropertyImpl(name, value, childDesc as ObjectDescriptor, childFactory);

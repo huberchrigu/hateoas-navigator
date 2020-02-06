@@ -16,7 +16,8 @@ export interface GenericProperty<V, D extends GenericPropertyDescriptor> {
   getFormValue(): JsonValueType;
 
   /**
-   * {@link GenericPropertyDescriptor Metadata} about this property. The metadata is completely independent from the actual value.
+   * {@link GenericPropertyDescriptor Metadata} about this property.
+   * @throws Error If no descriptor was resolved and found (use {@link hasDescriptor} to be sure).
    */
   getDescriptor(): D;
 
@@ -27,6 +28,9 @@ export interface GenericProperty<V, D extends GenericPropertyDescriptor> {
    */
   getValue(): V;
 
+  /**
+   * The property has a {@link GenericPropertyDescriptor descriptor} if it was resolved and found.
+   */
   hasDescriptor(): boolean;
 }
 
