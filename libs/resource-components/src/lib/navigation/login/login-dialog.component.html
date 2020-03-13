@@ -1,0 +1,15 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <h1 mat-dialog-title>Login</h1>
+  <div mat-dialog-content>
+    <mat-form-field>
+      <input matInput placeholder="Username" formControlName="username">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Password" formControlName="password" type="password">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <a mat-raised-button (click)="onCancel()">Cancel</a>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Login</button>
+  </div>
+</form>

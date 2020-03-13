@@ -6,17 +6,17 @@ import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-di
 import {ResourceFormComponent} from './resource-form/resource-form.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ResourceItemComponent} from './resource-item/resource-item.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatTableModule} from '@angular/material/table';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import {InputFieldComponent} from './resource-form/input-field/input-field.component';
 import {DateTimeFieldComponent} from './resource-form/date-time-field/date-time-field.component';
 import {FormGroupComponent} from './resource-form/form-group/form-group.component';
@@ -30,6 +30,7 @@ import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
 import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
 import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resource-search-dialog.component';
+import {LoginDialogComponent} from './navigation/login/login-dialog.component';
 
 @NgModule({
   imports: [
@@ -68,10 +69,11 @@ import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resou
     ItemPropertiesComponent,
     AssociationFieldComponent,
     FormFieldComponent,
-    CheckboxFieldComponent
+    CheckboxFieldComponent,
+    LoginDialogComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
-  entryComponents: [ConfirmationDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent]
+  entryComponents: [ConfirmationDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent, LoginDialogComponent]
 })
 export class ResourceComponentsModule {
 }
