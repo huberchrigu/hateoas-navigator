@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ResourceListComponent} from './resource-list/resource-list.component';
 import {NavigationComponent} from './navigation/navigation.component';
-import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-dialog.component';
+import {MessageDialogComponent} from './message-dialog/message-dialog.component';
 import {ResourceFormComponent} from './resource-form/resource-form.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ResourceItemComponent} from './resource-item/resource-item.component';
@@ -31,6 +31,10 @@ import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-fi
 import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
 import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resource-search-dialog.component';
 import {LoginDialogComponent} from './navigation/login/login-dialog.component';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpInterceptorService} from './http/http-interceptor.service';
+import {CurrentUserProvider} from 'hateoas-navigator/hal-navigator/resource-services/current-user-provider';
+import {CurrentUserProviderService} from './navigation/login/current-user-provider.service';
 
 @NgModule({
   imports: [
@@ -57,7 +61,7 @@ import {LoginDialogComponent} from './navigation/login/login-dialog.component';
     NavigationComponent,
     ResourceListComponent,
     ResourceSearchDialogComponent,
-    ConfirmationDialogComponent,
+    MessageDialogComponent,
     SendDataDialogComponent,
     ResourceFormComponent,
     ResourceItemComponent,
@@ -73,7 +77,11 @@ import {LoginDialogComponent} from './navigation/login/login-dialog.component';
     LoginDialogComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
-  entryComponents: [ConfirmationDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent, LoginDialogComponent]
+  entryComponents: [MessageDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent, LoginDialogComponent],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true},
+    {provide: CurrentUserProvider, useClass: CurrentUserProviderService}
+  ]
 })
 export class ResourceComponentsModule {
 }
