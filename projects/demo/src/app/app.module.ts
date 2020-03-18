@@ -42,7 +42,8 @@ const halNavConfig: ModuleConfiguration = {
         .withTitle('Get next suggestions')
         .withParam('numOfWeeks', {title: 'Num. of weeks', type: FormFieldType.INTEGER})
         .build())
-      .build()
+      .build(),
+    users: {permissionDeniedFallback: 'findByCreatedBy?createdBy={userId}'}
   }
 };
 
