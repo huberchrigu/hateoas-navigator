@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
+import {MessageDialogData} from '../message-dialog/message-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
@@ -13,6 +11,7 @@ import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 import {ResourceListComponent} from '../resource-list/resource-list.component';
+import {MessageService} from '../message-dialog/message.service';
 
 @Component({
   selector: 'lib-resource-item',
@@ -24,7 +23,8 @@ export class ResourceItemComponent implements OnInit {
   resourceObject: VersionedResourceObjectProperty;
 
   constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
-              private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService) {
+              private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService,
+              private messageService: MessageService) {
   }
 
   ngOnInit() {
@@ -38,14 +38,11 @@ export class ResourceItemComponent implements OnInit {
   }
 
   onDelete() {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '250px',
-      data: {
-        title: 'Are you sure?',
-        text: 'The deletion cannot be undone.'
-      } as ConfirmationDialogData
-    });
-    dialogRef.afterClosed().subscribe((result: ConfirmationDialogResult) => {
+    const data = {
+      title: 'Are you sure?',
+      text: 'The deletion cannot be undone.'
+    } as MessageDialogData;
+    this.messageService.openConfirmationDialog(data, (result) => {
       if (result && result.confirmed) {
         this.resourceService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
           .subscribe(() => {

@@ -1,16 +1,16 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ConfirmationDialogComponent} from './confirmation-dialog.component';
+import {MessageDialogComponent} from './message-dialog.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-describe('ConfirmationDialogComponent', () => {
-  let component: ConfirmationDialogComponent;
-  let fixture: ComponentFixture<ConfirmationDialogComponent>;
+describe('MessageDialogComponent', () => {
+  let component: MessageDialogComponent;
+  let fixture: ComponentFixture<MessageDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ConfirmationDialogComponent],
+      declarations: [MessageDialogComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {
@@ -24,7 +24,7 @@ describe('ConfirmationDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmationDialogComponent);
+    fixture = TestBed.createComponent(MessageDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
