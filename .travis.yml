@@ -1,5 +1,4 @@
 dist: trusty
-sudo: false
 
 language: node_js
 node_js:
@@ -17,15 +16,15 @@ jobs:
   include:
     - stage: lint
       script: npm run lint hateoas-navigator
-      name: "hateoas-navigator"
+      name: "hateoas-navigator lint"
     - script: npm run lint resource-components
-      name: "resource-components"
+      name: "resource-components lint"
     - script: npm run lint demo
-      name: "demo"
+      name: "demo lint"
     - stage: test
       script: npm run test -- hateoas-navigator --no-watch --no-progress --browsers=ChromeHeadlessCI
-      name: "hateoas-navigator"
+      name: "hateoas-navigator test"
     - script: npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
-      name: "resource-components"
+      name: "resource-components test"
     - script: npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
-      name: "demo"
+      name: "demo test"
