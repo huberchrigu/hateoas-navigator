@@ -13,7 +13,7 @@ export class NavigationComponent implements OnInit {
   items: Array<NavigationItem>;
 
   @Input()
-  private enableLogin = false;
+  enableLogin = false;
 
   constructor(private halDocumentService: ResourceService, private loginService: LoginService) {
   }

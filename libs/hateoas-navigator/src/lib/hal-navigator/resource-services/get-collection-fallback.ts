@@ -1,7 +1,8 @@
 import {HttpHeaders, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
-import {CollectionAdapter, ModuleConfiguration, PropertyConfig} from 'hateoas-navigator';
+import {CollectionAdapter} from '../collection/collection-adapter';
 import {CurrentUserProvider} from './current-user-provider';
+import {ModuleConfiguration, PropertyConfig} from '../config/module-configuration';
 
 /**
  * Allows fetching another endpoint if the user has no permission to get all items of a resource.

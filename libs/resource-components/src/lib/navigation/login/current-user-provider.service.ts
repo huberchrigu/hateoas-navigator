@@ -1,4 +1,4 @@
-import {CurrentUserProvider} from 'hateoas-navigator/hal-navigator/resource-services/current-user-provider';
+import {CurrentUserProvider} from 'hateoas-navigator';
 import {LoginService} from './login.service';
 import {Injectable} from '@angular/core';
 

@@ -1,6 +1,6 @@
 import {MessageDialogComponent} from './message-dialog.component';
 import {MessageDialogResult} from './message-dialog-result';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {MessageDialogData} from './message-dialog-data';
 import {Injectable} from '@angular/core';
 

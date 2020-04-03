@@ -4,7 +4,7 @@ import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {MessageService} from '../message-dialog/message.service';
 import {LoginService} from '../navigation/login/login.service';
-import {GetCollectionFallback} from 'hateoas-navigator/hal-navigator/resource-services/get-collection-fallback';
+import {GetCollectionFallback} from 'hateoas-navigator';
 
 /**
  * An {@link HttpInterceptor} that

@@ -1,4 +1,4 @@
-import {RelativeLink} from 'hateoas-navigator/hal-navigator/link-object/relative-link';
+import {RelativeLink} from './relative-link';
 
 export class AbsoluteLink extends RelativeLink {
 

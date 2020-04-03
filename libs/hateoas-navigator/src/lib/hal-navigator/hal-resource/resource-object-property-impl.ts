@@ -9,7 +9,7 @@ import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from '../../decorators/not-null';
 import {HalResourceFactory} from './factory/hal-resource-factory';
 import {HalProperty} from '../json-property/hal/hal-property';
-import {ResourceObjectFactory} from 'hateoas-navigator/hal-navigator/hal-resource/resource-object-factory';
+import {ResourceObjectFactory} from './resource-object-factory';
 
 /**
  * A resource representing a HAL resource with links and - if any - embedded resource objects.

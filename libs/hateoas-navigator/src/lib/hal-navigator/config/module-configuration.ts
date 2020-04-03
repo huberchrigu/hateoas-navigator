@@ -1,5 +1,5 @@
 import {InjectionToken} from '@angular/core';
-import {FormFieldType} from 'hateoas-navigator/hal-navigator';
+import {FormFieldType} from '../form/form-field-type';
 
 export interface ModuleConfiguration {
   /**

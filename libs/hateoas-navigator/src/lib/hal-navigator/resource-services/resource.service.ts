@@ -26,7 +26,7 @@ export class ResourceService {
 
   private static getOptions(headers?: HttpHeaders): { headers: HttpHeaders, observe: 'response' } {
     return {
-      headers: headers,
+      headers,
       observe: 'response'
     };
   }

@@ -12,7 +12,7 @@ import {StaticDescriptorMapper} from '../static/static-descriptor-mapper';
 import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
 import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 import {DefaultMapperConfigs} from '../combining/mapper-config';
-import {ResourceDescriptorProvider} from 'hateoas-navigator/hal-navigator/descriptor/provider/resource-descriptor-provider';
+import {ResourceDescriptorProvider} from './resource-descriptor-provider';
 
 export class DefaultDescriptorProvider extends ResourceDescriptorProvider {
 

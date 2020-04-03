@@ -13,7 +13,7 @@ class ProxyFactory<T> {
 
   getProxy(): (...args) => Observable<T> {
     const self = this;
-    return function (...args) {
+    return function(...args) {
       const key = ProxyFactory.getKey(args);
       const value = self.cache[key];
       if (value) {
@@ -32,9 +32,11 @@ class ProxyFactory<T> {
 }
 
 export function Cacheable(): MethodDecorator {
-  return <(...args) => any>function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args) => any>) {
+  return cacheableFunction as (...args) => any;
+
+  function cacheableFunction(target: object, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args) => any>) {
     const proxyTarget = descriptor.value;
     descriptor.value = new ProxyFactory(proxyTarget).getProxy();
     return descriptor;
-  };
+  }
 }

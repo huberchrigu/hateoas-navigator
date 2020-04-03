@@ -13,7 +13,7 @@ import {
   ResourceObjectDescriptor,
   ResourceLink, FormFieldBuilder
 } from 'hateoas-navigator';
-import {LOGGER} from 'hateoas-navigator/logging/logger';
+import {LOGGER} from 'hateoas-navigator';
 
 @Component({
   templateUrl: './resource-search-dialog.component.html',

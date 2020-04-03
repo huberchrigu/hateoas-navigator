@@ -33,8 +33,8 @@ import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resou
 import {LoginDialogComponent} from './navigation/login/login-dialog.component';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpInterceptorService} from './http/http-interceptor.service';
-import {CurrentUserProvider} from 'hateoas-navigator/hal-navigator/resource-services/current-user-provider';
 import {CurrentUserProviderService} from './navigation/login/current-user-provider.service';
+import {CurrentUserProvider} from 'hateoas-navigator';
 
 @NgModule({
   imports: [
@@ -77,7 +77,6 @@ import {CurrentUserProviderService} from './navigation/login/current-user-provid
     LoginDialogComponent
   ],
   exports: [NavigationComponent, ResourceListComponent],
-  entryComponents: [MessageDialogComponent, SendDataDialogComponent, ResourceSearchDialogComponent, LoginDialogComponent],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true},
     {provide: CurrentUserProvider, useClass: CurrentUserProviderService}

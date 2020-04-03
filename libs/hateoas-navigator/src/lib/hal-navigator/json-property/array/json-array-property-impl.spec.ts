@@ -1,7 +1,8 @@
 import {PropertyFactory} from '../factory/property-factory';
 import {JsonValueType} from '../value-type/json-value-type';
 import {ArrayPropertyImpl} from './array-property-impl';
-import {GenericProperty, GenericPropertyDescriptor} from 'hateoas-navigator/hal-navigator';
+import {GenericProperty} from '../generic-property';
+import {GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
 
 describe('ArrayPropertyImpl', () => {
   it('should transform an array to a display value', () => {

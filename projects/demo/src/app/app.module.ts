@@ -7,7 +7,7 @@ import {AppRoutingModule} from './app-routing/app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateTimeType, FormFieldType, HalNavigatorModule, ModuleConfiguration, PropertyConfigBuilder} from 'hateoas-navigator';
 import {ResourceComponentsModule} from 'resource-components';
-import {QueryConfigBuilder} from 'hateoas-navigator/hal-navigator/config/query-config-builder';
+import {QueryConfigBuilder} from 'hateoas-navigator';
 
 const halNavConfig: ModuleConfiguration = {
   updateMethod: 'PATCH',

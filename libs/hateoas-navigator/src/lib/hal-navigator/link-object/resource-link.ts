@@ -6,8 +6,8 @@ import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descri
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
 import {GenericPropertyDescriptor} from '../descriptor';
-import {RelativeLink} from 'hateoas-navigator/hal-navigator/link-object/relative-link';
-import {AbsoluteLink} from 'hateoas-navigator/hal-navigator/link-object/absolute-link';
+import {RelativeLink} from './relative-link';
+import {AbsoluteLink} from './absolute-link';
 
 export class ResourceLink extends AbsoluteLink {
 

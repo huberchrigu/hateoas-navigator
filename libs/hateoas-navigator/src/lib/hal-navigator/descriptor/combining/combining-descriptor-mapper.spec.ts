@@ -115,8 +115,8 @@ describe('CombiningDescriptorMapper', () => {
         .withTitle('Object');
       return descriptorMapper({
         name: 'object',
-        fieldProcessor: fieldProcessor,
-        children: children
+        fieldProcessor,
+        children
       } as DescriptorBuilder<any>);
     }
 

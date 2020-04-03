@@ -1,6 +1,6 @@
 import {GenericPropertyDescriptor} from '../descriptor';
 import {AbstractProperty} from './abstract-property';
-import {EmptyProperty} from 'hateoas-navigator/hal-navigator/json-property/generic-property';
+import {EmptyProperty} from './generic-property';
 
 export class EmptyPropertyImpl<D extends GenericPropertyDescriptor> extends AbstractProperty<empty, D> implements EmptyProperty<D> {
 

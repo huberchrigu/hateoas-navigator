@@ -4,9 +4,11 @@
  * @throws an error if the return value is empty.
  */
 export function NotNull(messageFactory?: (obj: any, args: any[]) => string): MethodDecorator {
-  return <(args: string[]) => any>function (target: any, propertyKey: string, descriptor) {
+  return notNullFunction as (args: string[]) => any;
+
+  function notNullFunction(target: any, propertyKey: string, descriptor) {
     const oldMethod = descriptor.value;
-    descriptor.value = function (...args) {
+    descriptor.value = function(...args) {
       const returnValue: any = oldMethod.apply(this, args);
       if (returnValue) {
         return returnValue;
@@ -17,5 +19,5 @@ export function NotNull(messageFactory?: (obj: any, args: any[]) => string): Met
       throw new Error(errorMessage);
     };
     return descriptor;
-  };
+  }
 }

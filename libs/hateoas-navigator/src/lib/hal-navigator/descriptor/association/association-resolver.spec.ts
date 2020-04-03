@@ -8,7 +8,7 @@ import {AssociationResolver} from './association-resolver';
 import {Observable, of} from 'rxjs';
 import {AssociationDescriptor} from '../generic-property-descriptor';
 import {fakeAsync} from '@angular/core/testing';
-import {ResourceObjectDescriptor} from 'hateoas-navigator/hal-navigator';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
 describe('AssociationResolver', () => {
   let testee: AssociationResolver;

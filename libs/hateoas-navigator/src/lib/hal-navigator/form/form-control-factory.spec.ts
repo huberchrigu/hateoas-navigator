@@ -19,9 +19,9 @@ describe('FormControlFactory', () => {
       })
     ];
     const resourceProperty = createSpyObj<JsonArrayProperty>('resourceProperty', ['getFormValue']);
-    resourceProperty.getFormValue.and.returnValue([{'value': 1}, {'value': 2}]);
+    resourceProperty.getFormValue.and.returnValue([{value: 1}, {value: 2}]);
     const properties = {
-      'array': resourceProperty
+      array: resourceProperty
     };
     const item = {
       getChildProperty: (name) => properties[name]
@@ -29,10 +29,10 @@ describe('FormControlFactory', () => {
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);
-    const arrayControl = result['array'] as FormArray;
+    const arrayControl = result.array as FormArray;
     expect(arrayControl).not.toBeNull();
     expect(arrayControl.controls.length).toBe(2);
-    expect(arrayControl.controls[0].value).toEqual({'value': 1});
+    expect(arrayControl.controls[0].value).toEqual({value: 1});
   });
 });
 
