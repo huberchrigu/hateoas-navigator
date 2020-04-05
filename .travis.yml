@@ -28,7 +28,7 @@ jobs:
     - stage: test
       script: npm run test -- hateoas-navigator --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "hateoas-navigator test"
-    - script: npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
+    - script: npm run ng build hateoas-navigator && npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "resource-components test"
-    - script: npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
+    - script: npm run ng build hateoas-navigator && npm run ng build resource-components && npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
       name: "demo test"
