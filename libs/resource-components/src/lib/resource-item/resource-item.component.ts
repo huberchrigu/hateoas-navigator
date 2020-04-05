@@ -74,7 +74,7 @@ export class ResourceItemComponent implements OnInit {
     }
   }
 
-  isLinkDisabled(link: ResourceLink): Boolean {
+  isLinkDisabled(link: ResourceLink): boolean {
     const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
     return resources && resources.length === 0;
   }
@@ -85,7 +85,7 @@ export class ResourceItemComponent implements OnInit {
     return options.subscribe(o => this.openDialogForCustomLink(uri, o));
   }
 
-  private goToResourceList(resources: ResourceObjectProperty[]): Promise<Boolean> {
+  private goToResourceList(resources: ResourceObjectProperty[]): Promise<boolean> {
     const queryParams = {};
     queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().extractId());
     if (resources.length === 0) {

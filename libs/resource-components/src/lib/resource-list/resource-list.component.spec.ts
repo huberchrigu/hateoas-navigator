@@ -33,7 +33,7 @@ describe('ResourceListComponent', () => {
         {
           provide: ActivatedRoute, useValue: {
             data: of({
-              collectionAdapter: collectionAdapter,
+              collectionAdapter,
               schemaAdapter: jasmine.createSpyObj('schemaAdapter', ['getTitle'])
             } as Data),
             queryParams: of({} as Params)
