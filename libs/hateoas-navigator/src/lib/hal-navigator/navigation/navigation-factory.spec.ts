@@ -1,8 +1,9 @@
 import {NavigationFactory} from './navigation-factory';
 import {NavigationItem} from './navigation-item';
 import {ResourceLink} from '../link-object/resource-link';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 import {ResourceObjectPropertyImpl} from '../hal-resource/resource-object-property-impl';
+import {RelativeLink} from '../link-object/relative-link';
 
 describe('NavigationFactory', () => {
   it('should get navigation items', () => {
@@ -21,10 +22,10 @@ describe('NavigationFactory', () => {
     const descriptorMock = jasmine.createSpyObj('resourceDescriptor', ['getTitle', 'getName']);
     descriptorMock.getTitle.and.returnValue(title);
     const linkMock = jasmine.createSpyObj<ResourceLink>('resourceLink',
-      ['getRelationType', 'getResourceDescriptor', 'getRelativeUriWithoutTemplatedPart']);
+      ['getRelationType', 'getResourceDescriptor', 'toRelativeLink']);
     linkMock.getRelationType.and.returnValue(relationType);
     linkMock.getResourceDescriptor.and.returnValue(of(descriptorMock));
-    linkMock.getRelativeUriWithoutTemplatedPart.and.returnValue(uri);
+    linkMock.toRelativeLink.and.returnValue({getUri: () => uri} as RelativeLink);
     return linkMock;
   }
 });

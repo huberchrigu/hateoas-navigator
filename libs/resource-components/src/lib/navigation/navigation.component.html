@@ -9,6 +9,7 @@
     <a mat-button routerLink="/{{item.link}}">{{item.title}}</a>
   </span>
   <span class="cmp-fill"></span>
+  <span>{{getUserName()}}</span>
   <span *ngIf="enableLogin">
     <button mat-icon-button aria-label="Login button" (click)="loginOrLogout()">
       <mat-icon>{{getLoginIcon()}}</mat-icon>

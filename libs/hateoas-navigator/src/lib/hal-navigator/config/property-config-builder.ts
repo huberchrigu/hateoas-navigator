@@ -1,11 +1,16 @@
 import {PropertyConfig, QueryConfig} from './module-configuration';
 
+/**
+ * The property can be an array or an object. In the first case, the array item configuration is considered,
+ * in the latter case the registered 'properties'.
+ */
 export class PropertyConfigBuilder {
   properties: { [propertyName: string]: PropertyConfig } = {};
   queries: { [queryName: string]: QueryConfig } = {};
   actionLinks: { [actionName: string]: PropertyConfig } = {};
-  private title: string;
 
+  private title: string;
+  private custom: PropertyConfig = {};
   private items: PropertyConfig;
 
   withProperty(propertyName: string, config: PropertyConfig): PropertyConfigBuilder {
@@ -34,10 +39,18 @@ export class PropertyConfigBuilder {
   }
 
   /**
-   * The property can be an array or an object. In the first case, the array item configuration is considered,
-   * in the latter case the registered 'properties'.
+   * Set a custom attribute.
    */
+  with<KEY extends keyof PropertyConfig>(key: KEY, value: PropertyConfig[KEY]): this {
+    this.custom[key] = value;
+    return this;
+  }
+
   build(): PropertyConfig {
+    return {...this.custom, ...this.buildDefinedProperties()};
+  }
+
+  private buildDefinedProperties(): PropertyConfig {
     if (this.items) {
       return {
         items: this.items

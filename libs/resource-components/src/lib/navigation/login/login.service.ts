@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {LoginData, LoginForm} from './login-form';
 import {LoginDialogComponent} from './login-dialog.component';
 
@@ -40,6 +40,10 @@ export class LoginService {
     return this.token ? headers.append(LoginService.TOKEN_HEADER, this.token) : headers;
   }
 
+  sessionExpired() {
+    this.resetSession();
+  }
+
   private login() {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe((loginForm: LoginForm) => {
@@ -63,9 +67,13 @@ export class LoginService {
 
   private logout() {
     this.httpClient.post('/logout', null).subscribe(() => {
-      this.token = undefined;
-      this.loggedIn = false;
-      this.username = undefined;
+      this.resetSession();
     });
+  }
+
+  private resetSession() {
+    this.token = undefined;
+    this.loggedIn = false;
+    this.username = undefined;
   }
 }

@@ -56,6 +56,9 @@ export class HttpInterceptorService implements HttpInterceptor {
             text: HttpInterceptorService.getText(error)
           });
         }
+        if (error.status === 401 && this.loginService.isLoggedIn()) {
+          this.loginService.sessionExpired();
+        }
         return throwError(error);
       })
     );

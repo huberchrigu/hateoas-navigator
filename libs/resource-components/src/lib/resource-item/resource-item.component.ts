@@ -63,7 +63,7 @@ export class ResourceItemComponent implements OnInit {
   clickLink(link: ResourceLink) {
     const resource = this.resourceObject.getEmbeddedResourceOrNull(link.getRelationType());
     if (resource) {
-      return this.router.navigate([resource.getSelfLink().getRelativeUriWithoutTemplatedPart()]);
+      return this.router.navigate([resource.getSelfLink().toRelativeLink().getUri()]);
     } else {
       const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
       if (resources) {
@@ -80,18 +80,18 @@ export class ResourceItemComponent implements OnInit {
   }
 
   private openDialogForLink(link: ResourceLink): Subscription {
-    const uri = link.getRelativeUriWithoutTemplatedPart();
+    const uri = link.toRelativeLink().getUri();
     const options = this.resourceService.getOptionsForCustomUri(uri);
     return options.subscribe(o => this.openDialogForCustomLink(uri, o));
   }
 
   private goToResourceList(resources: ResourceObjectProperty[]): Promise<boolean> {
     const queryParams = {};
-    queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().extractId());
+    queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().getResourceId());
     if (resources.length === 0) {
       throw new Error('Cannot got to empty list');
     } else {
-      return this.router.navigate(['/' + resources[0].getSelfLink().extractResourceName()], {queryParams});
+      return this.router.navigate(['/' + resources[0].getSelfLink().getResourceName()], {queryParams});
     }
   }
 

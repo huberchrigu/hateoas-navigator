@@ -36,7 +36,13 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
     return this.linkFactory.getAll();
   }
 
+  /**
+   * @return An empty array, if the resource object has no _embedded object or if the _embedded object has the right key with empty value.
+   */
   getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceObjectProperty[] {
+    if (!this.getValue()._embedded) {
+      return [];
+    }
     const embedded = this.getEmbedded(linkRelationType);
     if (Array.isArray(embedded)) {
       return embedded.map(resource =>
@@ -75,7 +81,7 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
     if (!link) {
       throw new Error(`Cannot get form value for resource object  ${this.getName()} -> self link is required?`);
     }
-    return link.getFullUriWithoutTemplatedPart();
+    return link.toAbsoluteLink().getUri();
   }
 
   /**
@@ -88,7 +94,7 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
   getOtherLinks(): ResourceLink[] {
     const all = this.linkFactory.getAll();
     if (this.getSelfLink()) {
-      return all.filter(link => link.getFullUriWithoutTemplatedPart() !== this.getSelfLink().getFullUriWithoutTemplatedPart());
+      return all.filter(link => link.toAbsoluteLink() !== this.getSelfLink().toAbsoluteLink());
     } else {
       return all;
     }

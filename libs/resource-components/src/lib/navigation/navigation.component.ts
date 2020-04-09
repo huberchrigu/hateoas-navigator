@@ -31,4 +31,8 @@ export class NavigationComponent implements OnInit {
   loginOrLogout() {
     this.loginService.loginOrLogout();
   }
+
+  getUserName() {
+    return this.loginService.getUserId();
+  }
 }
