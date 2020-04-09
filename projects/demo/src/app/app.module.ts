@@ -21,6 +21,7 @@ const halNavConfig: ModuleConfiguration = {
             .build())
           .build())
         .build())
+      .with('permissionDeniedFallback', 'findByMembersCreatedBy?createdBy={userId}')
       .build(),
     suggestions: new PropertyConfigBuilder()
       .withProperty('userReactions', new PropertyConfigBuilder()
@@ -42,8 +43,10 @@ const halNavConfig: ModuleConfiguration = {
         .withTitle('Get next suggestions')
         .withParam('numOfWeeks', {title: 'Num. of weeks', type: FormFieldType.INTEGER})
         .build())
+      .with('permissionDeniedFallback', 'findByForGroupMembersCreatedBy?createdBy={userId}')
       .build(),
-    users: {permissionDeniedFallback: 'findByCreatedBy?createdBy={userId}'}
+    users: {permissionDeniedFallback: 'findByCreatedBy?createdBy={userId}'},
+    userCalendars: {permissionDeniedFallback: 'findByOwnerCreatedBy?createdBy={userId}'}
   }
 };
 
