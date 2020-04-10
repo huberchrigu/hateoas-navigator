@@ -15,7 +15,7 @@ describe('NavigationComponent', () => {
     } as NavigationFactory)
   } as ResourceService;
 
-  const loginMock = jasmine.createSpyObj<LoginService>(['isLoggedIn']);
+  const loginMock = jasmine.createSpyObj<LoginService>(['isLoggedIn', 'getUserId']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
