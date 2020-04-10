@@ -4,7 +4,7 @@ import {PropertyCombiner} from '../mapper/property-combiner';
 import {ResourceActions} from '../actions/resource-actions';
 import {MapperConfigs} from './mapper-config';
 import {LOGGER} from '../../../logging/logger';
-import {TwoArrays} from 'hateoas-navigator/js/two-arrays';
+import {TwoArrays} from '../../../js/two-arrays';
 
 /**
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.

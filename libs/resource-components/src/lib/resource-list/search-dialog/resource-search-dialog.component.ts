@@ -13,7 +13,7 @@ import {
   ResourceObjectDescriptor,
   ResourceLink, FormFieldBuilder
 } from 'hateoas-navigator';
-import {LOGGER} from 'hateoas-navigator/logging/logger';
+import {LOGGER} from 'hateoas-navigator';
 
 @Component({
   templateUrl: './resource-search-dialog.component.html',
@@ -77,7 +77,7 @@ export class ResourceSearchDialogComponent implements OnInit {
   private getFinalUrl() {
     const values: { [param: string]: string } = this.fieldControls.value;
     const url = this.urls[this.queryControl.value];
-    return url.getRelativeUriWithReplacedTemplatedParts(values);
+    return url.replaceTemplatedParams(values).toRelativeLink().getUri();
   }
 
   /**
@@ -94,7 +94,7 @@ export class ResourceSearchDialogComponent implements OnInit {
    */
   private updateParameters() {
     const value = this.queryControl.value;
-    const newParams = this.urls[value].getTemplatedParts();
+    const newParams = this.urls[value].getTemplatedParams();
 
     this.fields.splice(0, this.fields.length, ...this.toFields(newParams, this.getQueryConfig(this.urls[value].getRelationType())));
     const newControls = new FormControlFactory().getControls(this.fields);

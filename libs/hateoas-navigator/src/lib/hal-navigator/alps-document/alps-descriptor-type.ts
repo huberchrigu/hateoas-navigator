@@ -1,6 +1,6 @@
 export enum AlpsDescriptorType {
-  UNSAFE = <any> 'UNSAFE',
-  SAFE = <any> 'SAFE',
-  IDEMPOTENT = <any> 'IDEMPOTENT',
-  SEMANTIC = <any> 'SEMANTIC'
+  UNSAFE = 'UNSAFE' as any,
+  SAFE = 'SAFE' as any,
+  IDEMPOTENT = 'IDEMPOTENT' as any,
+  SEMANTIC = 'SEMANTIC' as any
 }

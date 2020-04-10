@@ -2,36 +2,35 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "downlevelIteration": true,
-    "importHelpers": true,
-    "module": "esnext",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
+    "downlevelIteration": true,
     "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
     "target": "es2015",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
     "paths": {
       "hateoas-navigator": [
-        "libs/hateoas-navigator/src/lib"
-      ],
-      "hateoas-navigator/*": [
-        "libs/hateoas-navigator/src/lib/*"
+        "dist/hateoas-navigator/hateoas-navigator",
+        "dist/hateoas-navigator"
       ],
       "resource-components": [
-        "libs/resource-components/src/lib"
-      ],
-      "resource-components/*": [
-        "libs/resource-components/src/lib/*"
+        "dist/resource-components/resource-components",
+        "dist/resource-components"
       ]
     }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

@@ -1,5 +1,6 @@
-import {HalResourceFactory} from 'hateoas-navigator/hal-navigator/hal-resource/factory/hal-resource-factory';
-import {HalResourceObject, ResourceObjectDescriptor} from 'hateoas-navigator';
+import {HalResourceFactory} from './factory/hal-resource-factory';
+import {HalResourceObject} from './value-type/hal-value-type';
+import {ResourceObjectDescriptor} from '../descriptor/resource-object-descriptor';
 
 /**
  * {@link ResourceObjectDescriptor}-aware implementation of a {@link HalResourceFactory}.

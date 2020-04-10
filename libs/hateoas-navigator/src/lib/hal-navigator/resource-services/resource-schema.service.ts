@@ -32,6 +32,6 @@ export class ResourceSchemaService {
 
   @Validate
   private getFromApi<T>(@Required resourceUrl: string, headers?: HttpHeaders): Observable<T> {
-    return this.httpClient.get<T>(Api.PREFIX + resourceUrl, {headers: headers});
+    return this.httpClient.get<T>(Api.PREFIX + resourceUrl, {headers});
   }
 }

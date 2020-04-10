@@ -1,4 +1,4 @@
-import {TwoAny} from 'hateoas-navigator/js/two-any';
+import {TwoAny} from './two-any';
 
 export class TwoArrays {
   constructor(private a1: Array<any>, private a2: Array<any>) {

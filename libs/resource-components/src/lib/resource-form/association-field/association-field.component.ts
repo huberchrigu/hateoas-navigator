@@ -59,7 +59,7 @@ export class AssociationFieldComponent implements OnInit {
       map(collection => collection.getItems()),
       map(items => items.map(item => {
         return {
-          name: item.getSelfLink().getUri(),
+          name: item.getSelfLink().getHref(),
           title: '' + item.getDisplayValue()
         };
       })));

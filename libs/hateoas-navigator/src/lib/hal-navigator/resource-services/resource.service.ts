@@ -1,6 +1,6 @@
-import {map, catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {Inject, Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {CollectionAdapter} from '../collection/collection-adapter';
 import {NavigationFactory} from '../navigation/navigation-factory';
@@ -15,15 +15,18 @@ import {HeaderOptions} from '../http/header-options';
 import {ResourceLink} from '../link-object/resource-link';
 import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
 import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
+import {CurrentUserProvider} from './current-user-provider';
+import {GetCollectionFallback} from './get-collection-fallback';
 
 /**
  * This is the module's core service providing functionality to access resources (only HAL documents supported yet).
  */
 @Injectable()
 export class ResourceService {
+
   private static getOptions(headers?: HttpHeaders): { headers: HttpHeaders, observe: 'response' } {
     return {
-      headers: headers,
+      headers,
       observe: 'response'
     };
   }
@@ -31,7 +34,8 @@ export class ResourceService {
   constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
               @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration,
               private descriptorResolver: ResourceDescriptorProvider,
-              private resourceFactory: ResourceObjectPropertyFactoryService) {
+              private resourceFactory: ResourceObjectPropertyFactoryService,
+              @Optional() private currentUserProvider?: CurrentUserProvider) {
   }
 
   @Cacheable()
@@ -43,20 +47,25 @@ export class ResourceService {
 
   @Validate
   getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
-    return this.getCustomCollection(resourceName, '/' + resourceName);
+    const fallback = new GetCollectionFallback(resourceName, this.moduleConfig,
+      uri => this.getCustomCollection(resourceName, uri), this.currentUserProvider);
+    return this.getCustomCollection(resourceName, '/' + resourceName, fallback);
   }
 
   @Validate
-  getCustomCollection(@Required resourceName: string, @Required uri: string): Observable<CollectionAdapter> {
-    return this.getFromApi<HalResourceObject>(uri).pipe(
+  getCustomCollection(@Required resourceName: string, @Required uri: string,
+                      fallback?: GetCollectionFallback): Observable<CollectionAdapter> {
+    const headers = fallback ? fallback.getFallbackHeaders() : undefined;
+    const response = this.getFromApi<HalResourceObject>(uri, headers).pipe(
       map(collectionHalDocument => this.resourceFactory.create(resourceName, collectionHalDocument, undefined)),
       map(resource => new CollectionAdapter(this.resourceFactory, resource)));
+    return fallback ? response.pipe(catchError(r => fallback.handleError(r))) : response;
   }
 
   @Validate
   deleteResource(@Required document: HalResourceObject, version: string): Observable<HttpResponse<void>> {
     const resourceLink = ResourceLink.fromResourceObject(document, undefined).toRelativeLink();
-    return this.removeFromBackendAndCache(resourceLink, version);
+    return this.removeFromBackendAndCache(resourceLink.getUri(), version);
   }
 
   @Validate
@@ -106,7 +115,7 @@ export class ResourceService {
       map(response => this.resourceCacheService.getItemFromModifyingResponse(resourceName, response)));
   }
 
-  private removeFromBackendAndCache(resourceLink, version: string): Observable<HttpResponse<any>> {
+  private removeFromBackendAndCache(resourceLink: string, version: string): Observable<HttpResponse<any>> {
     return this.deleteFromApi(resourceLink, version).pipe(
       map(response => this.resourceCacheService.removeFromResponse(resourceLink, response))
     );

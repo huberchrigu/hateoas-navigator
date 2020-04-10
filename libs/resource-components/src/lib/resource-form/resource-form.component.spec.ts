@@ -35,7 +35,7 @@ describe('ResourceFormComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               data: of({
-                resourceDescriptor: resourceDescriptor
+                resourceDescriptor
               } as Data)
             } as ActivatedRoute
           }

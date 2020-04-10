@@ -28,7 +28,7 @@ import {ResourceObjectPropertyFactoryService} from './hal-resource/resource-obje
 export class HalNavigatorModule {
   static forRoot(configuration: ModuleConfiguration,
                  descriptorResolverFactory?: () => ResourceDescriptorProvider,
-                 descriptorResolverDeps?: any[]): ModuleWithProviders {
+                 descriptorResolverDeps?: any[]): ModuleWithProviders<HalNavigatorModule> {
     const factory = descriptorResolverFactory ? descriptorResolverFactory :
       (schemaService: ResourceSchemaService) => new DefaultDescriptorProvider(configuration, schemaService);
     const deps = descriptorResolverDeps ? descriptorResolverDeps : [ResourceSchemaService];
@@ -37,7 +37,7 @@ export class HalNavigatorModule {
       providers: [{
         provide: MODULE_CONFIG, useValue: configuration
       }, {
-        provide: ResourceDescriptorProvider, useFactory: factory, deps: deps
+        provide: ResourceDescriptorProvider, useFactory: factory, deps
       },
         ResourceObjectPropertyFactoryService]
     };

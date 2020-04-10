@@ -2,8 +2,8 @@ import {DateConverter} from './converter/date-converter';
 import {PrimitiveValueType} from './value-type/json-value-type';
 import {GenericPropertyDescriptor} from '../descriptor';
 import {AbstractProperty} from './abstract-property';
-import {AssociationDescriptor} from 'hateoas-navigator/hal-navigator/descriptor/generic-property-descriptor';
-import {PrimitiveProperty} from 'hateoas-navigator/hal-navigator/json-property/generic-property';
+import {AssociationDescriptor} from '../descriptor/generic-property-descriptor';
+import {PrimitiveProperty} from './generic-property';
 
 export class PrimitivePropertyImpl extends AbstractProperty<PrimitiveValueType, DescriptorType> implements PrimitiveProperty {
   private dateConverter = new DateConverter();

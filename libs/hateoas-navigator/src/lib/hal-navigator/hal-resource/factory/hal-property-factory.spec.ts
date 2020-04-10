@@ -33,7 +33,7 @@ describe('HalPropertyFactory', () => {
   it('should resolve associations', () => {
     const testee = new HalPropertyFactory(resourceFactory, resourceDesc);
     const result = testee.createEmbedded('array', [{
-      'item': 1
+      item: 1
     }]) as JsonArrayProperty;
 
     const items = result.getArrayItems();

@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {ConfirmationDialogData} from '../confirmation-dialog/confirmation-dialog-data';
+import {MessageDialogData} from '../message-dialog/message-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmationDialogResult} from '../confirmation-dialog/confirmation-dialog-result';
 import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
 import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
 import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
@@ -13,6 +11,7 @@ import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 import {ResourceListComponent} from '../resource-list/resource-list.component';
+import {MessageService} from '../message-dialog/message.service';
 
 @Component({
   selector: 'lib-resource-item',
@@ -24,7 +23,8 @@ export class ResourceItemComponent implements OnInit {
   resourceObject: VersionedResourceObjectProperty;
 
   constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
-              private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService) {
+              private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService,
+              private messageService: MessageService) {
   }
 
   ngOnInit() {
@@ -38,14 +38,11 @@ export class ResourceItemComponent implements OnInit {
   }
 
   onDelete() {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '250px',
-      data: {
-        title: 'Are you sure?',
-        text: 'The deletion cannot be undone.'
-      } as ConfirmationDialogData
-    });
-    dialogRef.afterClosed().subscribe((result: ConfirmationDialogResult) => {
+    const data = {
+      title: 'Are you sure?',
+      text: 'The deletion cannot be undone.'
+    } as MessageDialogData;
+    this.messageService.openConfirmationDialog(data, (result) => {
       if (result && result.confirmed) {
         this.resourceService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
           .subscribe(() => {
@@ -66,7 +63,7 @@ export class ResourceItemComponent implements OnInit {
   clickLink(link: ResourceLink) {
     const resource = this.resourceObject.getEmbeddedResourceOrNull(link.getRelationType());
     if (resource) {
-      return this.router.navigate([resource.getSelfLink().getRelativeUriWithoutTemplatedPart()]);
+      return this.router.navigate([resource.getSelfLink().toRelativeLink().getUri()]);
     } else {
       const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
       if (resources) {
@@ -77,24 +74,24 @@ export class ResourceItemComponent implements OnInit {
     }
   }
 
-  isLinkDisabled(link: ResourceLink): Boolean {
+  isLinkDisabled(link: ResourceLink): boolean {
     const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
     return resources && resources.length === 0;
   }
 
   private openDialogForLink(link: ResourceLink): Subscription {
-    const uri = link.getRelativeUriWithoutTemplatedPart();
+    const uri = link.toRelativeLink().getUri();
     const options = this.resourceService.getOptionsForCustomUri(uri);
     return options.subscribe(o => this.openDialogForCustomLink(uri, o));
   }
 
-  private goToResourceList(resources: ResourceObjectProperty[]): Promise<Boolean> {
+  private goToResourceList(resources: ResourceObjectProperty[]): Promise<boolean> {
     const queryParams = {};
-    queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().extractId());
+    queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().getResourceId());
     if (resources.length === 0) {
       throw new Error('Cannot got to empty list');
     } else {
-      return this.router.navigate(['/' + resources[0].getSelfLink().extractResourceName()], {queryParams});
+      return this.router.navigate(['/' + resources[0].getSelfLink().getResourceName()], {queryParams});
     }
   }
 

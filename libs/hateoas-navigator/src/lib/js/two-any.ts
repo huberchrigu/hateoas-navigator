@@ -1,5 +1,5 @@
-import {TwoObjects} from 'hateoas-navigator/js/two-objects';
-import {TwoArrays} from 'hateoas-navigator/js/two-arrays';
+import {TwoObjects} from './two-objects';
+import {TwoArrays} from './two-arrays';
 
 export class TwoAny {
   constructor(private a: any, private b: any) {

@@ -18,7 +18,7 @@ export class NavigationFactory {
 
   private toNavigationItem(link: ResourceLink) {
     return link.getResourceDescriptor().pipe(
-      map(descriptor => new NavigationItem(link.getRelativeUriWithoutTemplatedPart(), descriptor.getTitle()))
+      map(descriptor => new NavigationItem(link.toRelativeLink().getUri(), descriptor.getTitle()))
     );
   }
 }

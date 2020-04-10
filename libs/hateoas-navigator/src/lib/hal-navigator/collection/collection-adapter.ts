@@ -47,12 +47,12 @@ export class CollectionAdapter {
     return properties;
   }
 
-  getSearchUrls(resourceService: ResourceService) {
+    getSearchUrls(resourceService: ResourceService) {
     return resourceService.getItem(this.resourceObject.getName(), 'search').pipe(map(obj => obj.getOtherLinks()));
   }
 
   filterByIds(ids: string[]): ResourceObjectProperty[] {
-    return this.getItems().filter(item => ids.some(id => item.getSelfLink().extractId() === id));
+    return this.getItems().filter(item => ids.some(id => item.getSelfLink().getResourceId() === id));
   }
 
   private getEmbeddedContent(): ResourceObjectProperty[] {

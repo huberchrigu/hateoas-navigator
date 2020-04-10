@@ -5,9 +5,10 @@ import {LinkFactory} from '../link-object/link-factory';
 import {HalPropertyFactory} from './factory/hal-property-factory';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 import SpyObj = jasmine.SpyObj;
-import {ResourceLink, ResourceObjectProperty} from 'hateoas-navigator';
+import {ResourceLink} from '../link-object/resource-link';
 import {HalResourceFactory} from './factory/hal-resource-factory';
 import {PrimitiveProperty} from '../json-property/generic-property';
+import {ResourceObjectProperty} from './resource-object-property';
 
 describe('ResourceObjectPropertyImpl', () => {
   let linkFactory: SpyObj<LinkFactory>;
@@ -50,11 +51,11 @@ describe('ResourceObjectPropertyImpl', () => {
 
   it('should get embedded object without associations', () => {
     const array = [{
-      'item': 1
+      item: 1
     }];
     const json = {
-      '_embedded': {
-        'array': array
+      _embedded: {
+        array
       }
     };
 

@@ -12,6 +12,7 @@ and a sample Angular frontend and Spring backend.
 ## Features
 ### HATEOAS Navigator Features
 * Customize interface with [`ModuleConfiguration`](libs/hateoas-navigator/src/lib/hal-navigator/config/module-configuration.ts) (since _0.1.0_) ([Example](projects/demo/src/app/app.module.ts))
+  * `permissionDeniedFallback` and `unauthorizedFallback` allow alternative resource collection requests if the current user does not have sufficient permissions
 * Resolvers that prefetch [a collection of resources](libs/hateoas-navigator/src/lib/hal-navigator/collection/collection-resolver.service.ts), [a single resource object](libs/hateoas-navigator/src/lib/hal-navigator/item/resource-object-resolver.service.ts) or
   [a resource descriptor](libs/hateoas-navigator/src/lib/hal-navigator/descriptor/resolver/resource-descriptor-resolver.service.ts) (since _0.1.0_) ([Example](libs/resource-components/src/lib/generic-routes.ts))
 * [`ResourceService`](libs/hateoas-navigator/src/lib/hal-navigator/resource-services/resource.service.ts) that fetches resources from the API and handles cross-concerns like resource caching (since _0.1.0_)
@@ -22,6 +23,8 @@ and a sample Angular frontend and Spring backend.
 ### Resource Components Features
 * [Wild card routes](libs/resource-components/src/lib/generic-routes.ts) that handle all provided resources (since _0.1.0_) ([Example](projects/demo/src/app/app-routing/app-routing.module.ts))
 * Components that [list resources](libs/resource-components/src/lib/resource-list/resource-list.component.ts), [display single resources](libs/resource-components/src/lib/resource-item/resource-item.component.ts) and [generates forms for editing them](libs/resource-components/src/lib/resource-form/resource-form.component.ts) (since _0.1.0_) ([Example](libs/resource-components/src/lib/generic-routes.ts))
+* [Login dialog and state service](libs/resource-components/src/lib/navigation/login) that allow login, logout, authentication against a standard Spring project
+* [HTTP interceptor](libs/resource-components/src/lib/http/http-interceptor.service.ts) that sends the *X-Auth-Token* header and handles errors
 
 ### Planned Features
 * Replacing generic `Resource Components` by custom components
@@ -39,6 +42,8 @@ Yet the [architecture is documented](documentation) as [PlantUML](http://plantum
 ## Release Notes
 ### Release 0.2.0
 * New property type system
+* Login, logout and authentication with fallback requests when the current user has not enough permissions
+* Built with Angular 9
 
 # Angular CLI
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.

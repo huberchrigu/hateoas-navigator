@@ -1,3 +1,3 @@
-export class ConfirmationDialogResult {
+export class MessageDialogResult {
   constructor(public confirmed: boolean) {}
 }

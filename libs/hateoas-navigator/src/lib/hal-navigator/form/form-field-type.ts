@@ -1,8 +1,8 @@
 import {JsonSchema} from '../schema/json-schema';
 
 export enum FormFieldType {
-  LINK = <any> 'LINK', TEXT = <any> 'TEXT', DATE_PICKER = <any> 'DATE_PICKER', ARRAY = <any> 'ARRAY', SUB_FORM = <any> 'SUB_FORM',
-  NUMBER = <any> 'NUMBER', INTEGER = <any> 'INTEGER', SELECT = <any> 'SELECT', BOOLEAN = <any> 'BOOLEAN'
+  LINK = 'LINK' as any, TEXT = 'TEXT' as any, DATE_PICKER = 'DATE_PICKER' as any, ARRAY = 'ARRAY' as any, SUB_FORM = 'SUB_FORM' as any,
+  NUMBER = 'NUMBER' as any, INTEGER = 'INTEGER' as any, SELECT = 'SELECT' as any, BOOLEAN = 'BOOLEAN' as any
 }
 
 export function getFormType(propertySchema: JsonSchema): FormFieldType {

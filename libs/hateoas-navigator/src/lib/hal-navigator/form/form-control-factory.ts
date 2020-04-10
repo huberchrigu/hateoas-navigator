@@ -50,7 +50,7 @@ export class FormControlFactory {
     } else if (FormControlFactory.STANDARD_CONTROLS.some(type => type === formField.getType())) {
       return new FormControl({
           disabled: formField.isReadOnly(),
-          value: value
+          value
         },
         FormControlFactory.getValidatorFunctions(formField));
     } else if (formField.getType() === FormFieldType.SUB_FORM) {
@@ -60,7 +60,7 @@ export class FormControlFactory {
     }
   }
 
-  private getFormGroup(parentFormField: SubFormField, obj: Object): FormGroup {
+  private getFormGroup(parentFormField: SubFormField, obj: object): FormGroup {
     const formGroup: FormGroup = new FormGroup({});
     parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName(), this.getControlWithValue(f,
       obj ? obj[f.getName()] : undefined)));

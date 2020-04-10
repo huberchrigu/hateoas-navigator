@@ -14,7 +14,7 @@ import {
 import {ResourceObjectProperty} from '../resource-object-property';
 import {HalProperty} from '../../json-property/hal/hal-property';
 import {ArrayProperty} from '../../json-property/array/array-property';
-import {EmptyPropertyImpl} from 'hateoas-navigator/hal-navigator/json-property/empty-property-impl';
+import {EmptyPropertyImpl} from '../../json-property/empty-property-impl';
 
 export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;
