@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ModuleWithProviders, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ResourceListComponent} from './resource-list/resource-list.component';
 import {NavigationComponent} from './navigation/navigation.component';
@@ -35,6 +35,10 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpInterceptorService} from './http/http-interceptor.service';
 import {CurrentUserProviderService} from './navigation/login/current-user-provider.service';
 import {CurrentUserProvider} from 'hateoas-navigator';
+import {CustomizableComponent} from './customizable/customizable.component';
+import {CustomizableDirective} from './customizable/customizable.directive';
+import {ResourceComponentsConfiguration} from './resource-components-configuration';
+import {CustomComponentService} from './customizable/custom-component.service';
 
 @NgModule({
   imports: [
@@ -74,13 +78,23 @@ import {CurrentUserProvider} from 'hateoas-navigator';
     AssociationFieldComponent,
     FormFieldComponent,
     CheckboxFieldComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+
+    CustomizableComponent, CustomizableDirective
   ],
-  exports: [NavigationComponent, ResourceListComponent],
+  exports: [NavigationComponent],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true},
     {provide: CurrentUserProvider, useClass: CurrentUserProviderService}
   ]
 })
 export class ResourceComponentsModule {
+  static forRoot(configuration = new ResourceComponentsConfiguration([])): ModuleWithProviders<ResourceComponentsModule> {
+    return {
+      ngModule: ResourceComponentsModule,
+      providers: [
+        {provide: CustomComponentService, useFactory: () => new CustomComponentService(configuration.customComponents)}
+      ]
+    };
+  }
 }
