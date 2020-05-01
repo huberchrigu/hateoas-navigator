@@ -24,6 +24,9 @@
         "dist/hateoas-navigator"
       ],
       "resource-components": [
+        // Uncomment to following line to test changes with "ng serve"
+        //        "libs/resource-components/src/public_api.ts"
+        // Comment the following two lines instead
         "dist/resource-components/resource-components",
         "dist/resource-components"
       ]
