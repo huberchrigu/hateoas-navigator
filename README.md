@@ -25,9 +25,14 @@ and a sample Angular frontend and Spring backend.
 * Components that [list resources](libs/resource-components/src/lib/resource-list/resource-list.component.ts), [display single resources](libs/resource-components/src/lib/resource-item/resource-item.component.ts) and [generates forms for editing them](libs/resource-components/src/lib/resource-form/resource-form.component.ts) (since _0.1.0_) ([Example](libs/resource-components/src/lib/generic-routes.ts))
 * [Login dialog and state service](libs/resource-components/src/lib/navigation/login) that allow login, logout, authentication against a standard Spring project
 * [HTTP interceptor](libs/resource-components/src/lib/http/http-interceptor.service.ts) that sends the *X-Auth-Token* header and handles errors
+* [View and dialog component can be replaced by custom implementations](libs/resource-components/src/lib/customizable/custom-component-configuration.ts).
+  Example: To customize the form field for associations, initialize the module like this:
+  ```
+  const customComponent = new CustomComponentConfiguration(CustomizableComponentType.ASSOCIATION_FIELD, CustomFieldComponent)
+  ResourceComponentsModule.forRoot(new ResourceComponentsConfiguration([customComponent]))
+  ```
 
 ### Planned Features
-* Replacing generic `Resource Components` by custom components
 * API simplifications
 * Improved debugging
 
@@ -44,6 +49,7 @@ Yet the [architecture is documented](documentation) as [PlantUML](http://plantum
 * New property type system
 * Login, logout and authentication with fallback requests when the current user has not enough permissions
 * Built with Angular 9
+* Customizable resource-components
 
 # Angular CLI
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.
