@@ -5,8 +5,16 @@ import {AppComponent} from './app.component';
 import {StaticComponentsModule} from './static-components/static-components.module';
 import {AppRoutingModule} from './app-routing/app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DateTimeType, FormFieldType, HalNavigatorModule, ModuleConfiguration, PropertyConfigBuilder} from 'hateoas-navigator';
-import {ResourceComponentsModule} from 'resource-components';
+import {
+  DateTimeType,
+  FormFieldType,
+  HalNavigatorModule,
+  ModuleConfiguration,
+  PropertyConfigBuilder,
+} from 'hateoas-navigator';
+import {
+  ResourceComponentsModule
+} from 'resource-components';
 import {QueryConfigBuilder} from 'hateoas-navigator';
 
 const halNavConfig: ModuleConfiguration = {
@@ -57,7 +65,7 @@ const halNavConfig: ModuleConfiguration = {
   imports: [
     StaticComponentsModule,
     AppRoutingModule,
-    ResourceComponentsModule,
+    ResourceComponentsModule.forRoot(),
     HalNavigatorModule.forRoot(halNavConfig),
 
     BrowserModule,

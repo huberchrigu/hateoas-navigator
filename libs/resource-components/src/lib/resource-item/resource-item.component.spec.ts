@@ -12,6 +12,7 @@ import {ResourceObjectDescriptor} from 'hateoas-navigator';
 import {of} from 'rxjs';
 import {PrimitivePropertyImpl} from 'hateoas-navigator';
 import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
+import {CustomComponentService} from '../customizable/custom-component.service';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
@@ -49,7 +50,8 @@ describe('ResourceItemComponent', () => {
         {provide: MatDialog, useValue: {}},
         {provide: Router, useValue: {}},
         {provide: ResourceService, useValue: {}},
-        {provide: ResourceObjectPropertyFactoryService, useValue: {}}
+        {provide: ResourceObjectPropertyFactoryService, useValue: {}},
+        {provide: CustomComponentService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

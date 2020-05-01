@@ -7,7 +7,7 @@
         <mat-option *ngFor="let opt of options" [value]="opt.key">{{opt.title}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <lib-form-group [fields]="fields" [formGroup]="fieldControls"></lib-form-group>
+    <lib-customizable [type]="getFormGroupType()" [input]="getFormGroupInput()"></lib-customizable>
   </div>
   <div mat-dialog-actions>
     <a mat-raised-button (click)="onCancel()">Cancel</a>

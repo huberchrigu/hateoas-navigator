@@ -57,7 +57,7 @@ function addModuleToImports(options: any): Rule {
     const project = getProject(tree, options);
 
     addModuleImportToRootModule(tree, 'HalNavigatorModule.forRoot(undefined)', 'hateoas-navigator', project);
-    addModuleImportToRootModule(tree, 'ResourceComponentsModule', 'resource-components', project);
+    addModuleImportToRootModule(tree, 'ResourceComponentsModule.forRoot()', 'resource-components', project);
     context.logger.log('info', `✅️ "HalNavigatorModule and ResourceComponentsModule are imported`);
 
     return tree;

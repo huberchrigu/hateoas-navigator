@@ -1,19 +1,20 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {ResourceService} from 'hateoas-navigator';
+import {LinkField, ResourceService} from 'hateoas-navigator';
 import {combineLatest, Observable} from 'rxjs';
-import {LinkField} from 'hateoas-navigator';
 import {map} from 'rxjs/operators';
+import {CustomComponentService} from '../../customizable/custom-component.service';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {AssociationFieldComponentInput} from './association-field-component-input';
 
 /**
  * Currently the input's title is not shown due to https://github.com/angular/material2/issues/4863.
  */
 @Component({
-  selector: 'lib-association-field',
   templateUrl: './association-field.component.html',
   styleUrls: ['./association-field.component.sass', '../form-fields.sass']
 })
-export class AssociationFieldComponent implements OnInit {
+export class AssociationFieldComponent implements OnInit, AssociationFieldComponentInput {
   @Input()
   field: LinkField;
 
@@ -78,3 +79,5 @@ export interface LinkItem {
   name: string;
   title: string;
 }
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.ASSOCIATION_FIELD, AssociationFieldComponent);

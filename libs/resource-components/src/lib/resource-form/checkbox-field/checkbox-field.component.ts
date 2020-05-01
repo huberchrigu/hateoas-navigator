@@ -1,13 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {FormField} from 'hateoas-navigator';
+import {CustomComponentService} from '../../customizable/custom-component.service';
+import {CheckboxFieldComponentInput} from './checkbox-field-component-input';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 
 @Component({
-  selector: 'lib-checkbox-field',
   templateUrl: './checkbox-field.component.html',
   styleUrls: ['../form-fields.sass', './checkbox-field.component.sass']
 })
-export class CheckboxFieldComponent {
+export class CheckboxFieldComponent implements CheckboxFieldComponentInput {
   @Input()
   field: FormField;
 
@@ -15,3 +17,5 @@ export class CheckboxFieldComponent {
   control: FormControl;
 
 }
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.CHECKBOX_FIELD, CheckboxFieldComponent);

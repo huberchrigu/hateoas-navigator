@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ResourceService} from 'hateoas-navigator';
-import {NavigationItem} from 'hateoas-navigator';
+import {NavigationItem, ResourceService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {LoginService} from './login/login.service';
 

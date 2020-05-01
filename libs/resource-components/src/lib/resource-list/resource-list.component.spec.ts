@@ -10,6 +10,7 @@ import {MatTableModule} from '@angular/material/table';
 import {ResourceObjectDescriptor, ResourceService} from 'hateoas-navigator';
 import {ResourceActions} from 'hateoas-navigator';
 import {CollectionAdapter} from 'hateoas-navigator';
+import {CustomComponentService} from '../customizable/custom-component.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -41,7 +42,8 @@ describe('ResourceListComponent', () => {
         },
         {provide: Router, useValue: {}},
         {provide: MatDialog, useValue: {}},
-        {provide: ResourceService, useValue: {}}
+        {provide: ResourceService, useValue: {}},
+        {provide: CustomComponentService, useValue: {}}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

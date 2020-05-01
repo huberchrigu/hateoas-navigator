@@ -1,13 +1,13 @@
 import {Component, Input} from '@angular/core';
-import {HalProperty, JsonArrayProperty, ResourceObjectProperty} from 'hateoas-navigator';
-import {ArrayPropertyImpl} from 'hateoas-navigator';
+import {ArrayPropertyImpl, HalProperty, JsonArrayProperty, ResourceObjectProperty} from 'hateoas-navigator';
+import {CustomComponentService} from '../../customizable/custom-component.service';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 
 @Component({
-  selector: 'lib-item-properties',
   templateUrl: './item-properties.component.html',
   styleUrls: ['./item-properties.component.sass']
 })
-export class ItemPropertiesComponent {
+export class ItemPropertiesComponent implements ItemPropertiesComponentInput {
 
   @Input()
   properties: HalProperty[];
@@ -23,4 +23,18 @@ export class ItemPropertiesComponent {
   getChildProperties(property: HalProperty) {
     return (property as ResourceObjectProperty).getChildProperties();
   }
+
+  getItemPropertiesType() {
+    return CustomizableComponentType.ITEM_PROPERTIES;
+  }
+
+  getItemPropertiesInput(child: HalProperty): ItemPropertiesComponentInput {
+    return {properties: this.getChildProperties(child)};
+  }
+}
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.ITEM_PROPERTIES, ItemPropertiesComponent);
+
+export interface ItemPropertiesComponentInput {
+  properties: HalProperty[];
 }

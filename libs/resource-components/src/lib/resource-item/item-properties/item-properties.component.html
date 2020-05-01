@@ -6,7 +6,7 @@
   <div class="cmp-sub-object" *ngIf="isArray(property)">
     <h2 class="mat-h2">{{property.getDescriptor().getTitle()}}</h2>
       <div class="cmp-array-item" *ngFor="let child of getArrayItems(property)">
-        <lib-item-properties [properties]="getChildProperties(child)"></lib-item-properties>
+        <lib-customizable [type]="getItemPropertiesType()" [input]="getItemPropertiesInput(child)"></lib-customizable>
       </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
   <h1 mat-dialog-title>{{title}}</h1>
   <div mat-dialog-content>
-    <lib-form-group [fields]="fields" [formGroup]="form"></lib-form-group>
+    <lib-customizable [type]="getFormGroupType()" [input]="getFormGroupInput()"></lib-customizable>
   </div>
   <div mat-dialog-actions>
     <a mat-raised-button (click)="onCancel()">Cancel</a>

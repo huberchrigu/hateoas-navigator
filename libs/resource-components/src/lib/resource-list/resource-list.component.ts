@@ -14,6 +14,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dialog.component';
 import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';
+import {CustomComponentService} from '../customizable/custom-component.service';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -21,7 +22,9 @@ import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog
 })
 export class ResourceListComponent implements OnInit {
 
-  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, private resourceService: ResourceService) {
+  constructor(private router: Router, private route: ActivatedRoute,
+              private dialog: MatDialog, private customComponentService: CustomComponentService,
+              private resourceService: ResourceService) {
   }
 
   static FILTER_PARAM = 'filter';
@@ -77,7 +80,7 @@ export class ResourceListComponent implements OnInit {
 
   clickSearchModal() {
     this.collection.getSearchUrls(this.resourceService).subscribe(urls => {
-      const dialogRef = this.dialog.open(ResourceSearchDialogComponent, {
+      const dialogRef = this.dialog.open(this.customComponentService.getByDefaultComponent(ResourceSearchDialogComponent), {
         data: new ResourceSearchDialogData(urls, this.collection.getDescriptor())
       });
       dialogRef.afterClosed().subscribe((result: ResourceSearchDialogResult) => {

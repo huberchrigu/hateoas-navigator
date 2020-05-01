@@ -1,4 +1,4 @@
-export class LoginForm {
+export class LoginDialogResult {
   constructor(public loginData: LoginData) {
   }
 

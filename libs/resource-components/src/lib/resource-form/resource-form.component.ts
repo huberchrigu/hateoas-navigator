@@ -9,9 +9,10 @@ import {FormControlFactory} from 'hateoas-navigator';
 import {GenericPropertyDescriptor} from 'hateoas-navigator';
 import {SubFormField} from 'hateoas-navigator';
 import {Subscription} from 'rxjs';
+import {CustomizableComponentType} from '../customizable/custom-component-configuration';
+import {FormGroupComponentInput} from './form-group/form-group-component-input';
 
 @Component({
-  selector: 'lib-new-resource',
   templateUrl: './resource-form.component.html',
   styleUrls: ['./resource-form.component.sass']
 })
@@ -47,6 +48,14 @@ export class ResourceFormComponent implements OnInit {
     return submitFunction(this.route.snapshot.url[0].path, this.form.value).subscribe((item: VersionedResourceObjectProperty) => {
       return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue(), undefined).toRelativeLink().getUri());
     });
+  }
+
+  getFormGroupType() {
+    return CustomizableComponentType.FORM_GROUP;
+  }
+
+  getFormGroupInput(): FormGroupComponentInput {
+    return {fields: this.fields, formGroup: this.form};
   }
 }
 
