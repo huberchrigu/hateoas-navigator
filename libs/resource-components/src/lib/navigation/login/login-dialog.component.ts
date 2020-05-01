@@ -1,7 +1,9 @@
 import {FormControl, FormGroup} from '@angular/forms';
-import {LoginForm} from './login-form';
+import {LoginDialogResult} from './login-dialog-result';
 import {Component} from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomComponentService} from '../../customizable/custom-component.service';
 
 @Component({
   templateUrl: './login-dialog.component.html'
@@ -17,10 +19,12 @@ export class LoginDialogComponent {
   });
 
   onCancel() {
-    this.dialogRef.close(new LoginForm(null));
+    this.dialogRef.close(new LoginDialogResult(null));
   }
 
   onSubmit() {
-    this.dialogRef.close(new LoginForm(this.form.value));
+    this.dialogRef.close(new LoginDialogResult(this.form.value));
   }
 }
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.LOGIN_DIALOG, LoginDialogComponent);

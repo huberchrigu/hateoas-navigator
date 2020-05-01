@@ -1,1 +1,1 @@
-export {FormFieldComponent} from './form-field.component';
+export {FormFieldComponentInput} from './form-field.component';

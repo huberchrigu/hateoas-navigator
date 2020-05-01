@@ -28,7 +28,7 @@ import {FormFieldComponent} from './resource-form/form-field/form-field.componen
 import {RouterModule} from '@angular/router';
 import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
-import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
+import {SendDataDialogComponent} from './resource-item/send-data-dialog/send-data-dialog.component';
 import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resource-search-dialog.component';
 import {LoginDialogComponent} from './navigation/login/login-dialog.component';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';

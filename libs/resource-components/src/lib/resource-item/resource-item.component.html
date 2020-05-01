@@ -6,7 +6,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <lib-item-properties [properties]="resourceObject.getChildProperties()"></lib-item-properties>
+      <lib-customizable [type]="getItemPropertiesType()" [input]="getItemPropertiesInput()"></lib-customizable>
     </mat-card-content>
     <mat-toolbar color="accent">
       <a mat-button routerLink=".." color="primary">Back to list</a>

@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
-import {LoginData, LoginForm} from './login-form';
+import {LoginData, LoginDialogResult} from './login-dialog-result';
 import {LoginDialogComponent} from './login-dialog.component';
+import {CustomComponentService} from '../../customizable/custom-component.service';
 
 /**
  * Manages the login state and executes the login and logout.
@@ -17,7 +18,7 @@ export class LoginService {
   private loggedIn = false;
   private token: string;
 
-  constructor(private httpClient: HttpClient, private dialog: MatDialog) {
+  constructor(private httpClient: HttpClient, private dialog: MatDialog, private customComponentService: CustomComponentService) {
   }
 
   isLoggedIn() {
@@ -45,8 +46,8 @@ export class LoginService {
   }
 
   private login() {
-    const dialogRef = this.dialog.open(LoginDialogComponent);
-    dialogRef.afterClosed().subscribe((loginForm: LoginForm) => {
+    const dialogRef = this.dialog.open(this.customComponentService.getByDefaultComponent(LoginDialogComponent));
+    dialogRef.afterClosed().subscribe((loginForm: LoginDialogResult) => {
       if (loginForm && !loginForm.isCancelled()) {
         this.loginRequest(loginForm.loginData);
       }

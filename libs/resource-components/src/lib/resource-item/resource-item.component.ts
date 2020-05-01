@@ -1,20 +1,22 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
-import {MessageDialogData} from '../message-dialog/message-dialog-data';
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material/dialog';
-import {SendDataDialogComponent} from '../send-data-dialog/send-data-dialog.component';
-import {SendDataDialogData} from '../send-data-dialog/send-data-dialog-data';
-import {SendDataDialogResult} from '../send-data-dialog/send-data-dialog-result';
+import {SendDataDialogData} from './send-data-dialog/send-data-dialog-data';
+import {SendDataDialogResult} from './send-data-dialog/send-data-dialog-result';
 import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 import {ResourceListComponent} from '../resource-list/resource-list.component';
+import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
 import {MessageService} from '../message-dialog/message.service';
+import {MessageDialogData} from '../message-dialog/message-dialog-data';
+import {CustomComponentService} from '../customizable/custom-component.service';
+import {CustomizableComponentType} from '../customizable/custom-component-configuration';
+import {ItemPropertiesComponentInput} from './item-properties/item-properties.component';
 
 @Component({
-  selector: 'lib-resource-item',
   templateUrl: './resource-item.component.html',
   styleUrls: ['./resource-item.component.sass']
 })
@@ -22,7 +24,8 @@ export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
   resourceObject: VersionedResourceObjectProperty;
 
-  constructor(private route: ActivatedRoute, private resourceService: ResourceService, private dialog: MatDialog,
+  constructor(private route: ActivatedRoute, private resourceService: ResourceService,
+              private dialog: MatDialog, private customComponentService: CustomComponentService,
               private router: Router, private resourceFactory: ResourceObjectPropertyFactoryService,
               private messageService: MessageService) {
   }
@@ -79,6 +82,14 @@ export class ResourceItemComponent implements OnInit {
     return resources && resources.length === 0;
   }
 
+  getItemPropertiesType() {
+    return CustomizableComponentType.ITEM_PROPERTIES;
+  }
+
+  getItemPropertiesInput(): ItemPropertiesComponentInput {
+    return {properties: this.resourceObject.getChildProperties()};
+  }
+
   private openDialogForLink(link: ResourceLink): Subscription {
     const uri = link.toRelativeLink().getUri();
     const options = this.resourceService.getOptionsForCustomUri(uri);
@@ -104,7 +115,7 @@ export class ResourceItemComponent implements OnInit {
   }
 
   private openDialogForCustomLink(uri: string, methods: string[]) {
-    const dialogRef = this.dialog.open(SendDataDialogComponent, {
+    const dialogRef = this.dialog.open(this.customComponentService.getByDefaultComponent(SendDataDialogComponent), {
       width: '600px',
       data: new SendDataDialogData(methods, this.resourceObject.getDescriptor().getDescriptorForLink(uri))
     });

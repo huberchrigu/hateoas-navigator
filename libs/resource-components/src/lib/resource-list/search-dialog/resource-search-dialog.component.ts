@@ -6,14 +6,19 @@ import {ResourceSearchDialogResult} from './resource-search-dialog-result';
 import {
   FormControlFactory,
   FormField,
+  FormFieldBuilder,
+  FormFieldSupport,
+  LOGGER,
   MODULE_CONFIG,
   ModuleConfiguration,
-  FormFieldSupport, PropertyConfig,
+  PropertyConfig,
   QueryConfig,
-  ResourceObjectDescriptor,
-  ResourceLink, FormFieldBuilder
+  ResourceLink,
+  ResourceObjectDescriptor
 } from 'hateoas-navigator';
-import {LOGGER} from 'hateoas-navigator';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomComponentService} from '../../customizable/custom-component.service';
+import {FormGroupComponentInput} from '../../resource-form/form-group/form-group-component-input';
 
 @Component({
   templateUrl: './resource-search-dialog.component.html',
@@ -52,6 +57,14 @@ export class ResourceSearchDialogComponent implements OnInit {
 
   onSubmit() {
     this.dialogRef.close(new ResourceSearchDialogResult(this.getFinalUrl()));
+  }
+
+  getFormGroupType() {
+    return CustomizableComponentType.FORM_GROUP;
+  }
+
+  getFormGroupInput(): FormGroupComponentInput {
+    return {fields: this.fields, formGroup: this.fieldControls};
   }
 
   private initOptions() {
@@ -124,3 +137,5 @@ export class ResourceSearchDialogComponent implements OnInit {
     return config && config.queries ? config.queries[query] : null;
   }
 }
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.RESOURCE_SEARCH_DIALOG, ResourceSearchDialogComponent);

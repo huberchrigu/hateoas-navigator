@@ -1,13 +1,15 @@
 import {Component, Input} from '@angular/core';
 import {FormField} from 'hateoas-navigator';
 import {FormControl} from '@angular/forms';
+import {CustomComponentService} from '../../customizable/custom-component.service';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {InputFieldComponentInput, TypeType} from './input-field-component-input';
 
 @Component({
-  selector: 'lib-input-field',
   templateUrl: './input-field.component.html',
   styleUrls: ['./input-field.component.sass', '../form-fields.sass']
 })
-export class InputFieldComponent {
+export class InputFieldComponent implements InputFieldComponentInput {
   @Input()
   field: FormField;
 
@@ -15,5 +17,7 @@ export class InputFieldComponent {
   control: FormControl;
 
   @Input()
-  type = 'text';
+  type: TypeType = 'text';
 }
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.INPUT_FIELD, InputFieldComponent);

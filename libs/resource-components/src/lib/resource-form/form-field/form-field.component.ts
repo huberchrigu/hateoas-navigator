@@ -1,15 +1,24 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {AbstractControl} from '@angular/forms';
-import {FormFieldType, SubFormField} from 'hateoas-navigator';
+import {FormField, FormFieldType, SubFormField} from 'hateoas-navigator';
+import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {InputFieldComponentInput} from '../input-field/input-field-component-input';
+import {FormGroupComponentInput} from '../form-group/form-group-component-input';
+import {FieldComponentInput} from '../field-component-input';
+import {CheckboxFieldComponentInput} from '../checkbox-field/checkbox-field-component-input';
+import {DateTimeFieldComponentInput} from '../date-time-field/date-time-field-component-input';
+import {SelectFieldComponentInput} from '../select-field/select-field-component-input';
+import {AssociationFieldComponentInput} from '../association-field/association-field-component-input';
+import {FormListComponentInput} from '../form-list/form-list-component-input';
+import {CustomComponentService} from '../../customizable/custom-component.service';
 
 @Component({
-  selector: 'lib-form-field',
   templateUrl: './form-field.component.html',
   encapsulation: ViewEncapsulation.None
 })
-export class FormFieldComponent implements OnInit {
+export class FormFieldComponent implements OnInit, FormFieldComponentInput {
   @Input()
-  field: SubFormField;
+  field: FormField;
 
   @Input()
   control: AbstractControl;
@@ -39,7 +48,53 @@ export class FormFieldComponent implements OnInit {
     return this.field.getType() === FormFieldType.INTEGER;
   }
 
+  getFormGroupComponentType(): FieldComponentType<FormGroupComponentInput> {
+    return new FieldComponentType(CustomizableComponentType.FORM_GROUP, {
+      formGroup: this.control,
+      fields: (this.field as SubFormField).getSubFields()
+    } as FormGroupComponentInput);
+  }
+
+  getFieldComponentType(): FieldComponentType<FieldComponentInput<FormField, AbstractControl>> {
+    const input = {control: this.control, field: this.field} as FieldComponentInput<FormField, AbstractControl>;
+    switch (this.field.getType()) {
+      case FormFieldType.TEXT:
+        return new FieldComponentType(CustomizableComponentType.INPUT_FIELD, input as InputFieldComponentInput);
+      case FormFieldType.NUMBER:
+      case FormFieldType.INTEGER:
+        return new FieldComponentType(CustomizableComponentType.INPUT_FIELD, {...input, type: 'number'} as InputFieldComponentInput);
+      case FormFieldType.BOOLEAN:
+        return new FieldComponentType(CustomizableComponentType.CHECKBOX_FIELD, input as CheckboxFieldComponentInput);
+      case FormFieldType.DATE_PICKER:
+        return new FieldComponentType(CustomizableComponentType.DATE_TIME_FIELD, input as DateTimeFieldComponentInput);
+      case FormFieldType.SELECT:
+        return new FieldComponentType(CustomizableComponentType.SELECT_FIELD, input as SelectFieldComponentInput);
+      case FormFieldType.LINK:
+        return new FieldComponentType(CustomizableComponentType.ASSOCIATION_FIELD, input as AssociationFieldComponentInput);
+      case FormFieldType.ARRAY:
+        return new FieldComponentType(CustomizableComponentType.FORM_LIST, input as FormListComponentInput);
+      case FormFieldType.SUB_FORM:
+        throw Error('Invalid state');
+      default:
+        throw Error('Unknown type ' + this.field.getType() + ' of form field ' + this.field.getName());
+    }
+  }
+
+  isSubForm() {
+    return this.field.getType() === FormFieldType.SUB_FORM;
+  }
+
   private showError(errorCode: string) {
     return this.control.touched && this.control.hasError(errorCode);
+  }
+}
+
+CustomComponentService.registerCustomizableComponent(CustomizableComponentType.FORM_FIELD, FormFieldComponent);
+
+export interface FormFieldComponentInput extends FieldComponentInput<FormField, AbstractControl> {
+}
+
+class FieldComponentType<T> {
+  constructor(public customizableType: CustomizableComponentType, public input: T) {
   }
 }

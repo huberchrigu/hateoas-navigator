@@ -21,7 +21,7 @@ describe('FormListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FormListComponent);
     component = fixture.componentInstance;
-    component.formArray = {} as FormArray;
+    component.control = {} as FormArray;
     component.field = new ArrayField('field', undefined, true, 'Field', {} as FormField);
     fixture.detectChanges();
   });

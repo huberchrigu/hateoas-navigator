@@ -1,21 +1,10 @@
-<div [ngSwitch]="field.getType()">
-  <lib-input-field *ngSwitchCase="'TEXT'" [control]="control" [field]="field"></lib-input-field>
-  <lib-input-field *ngSwitchCase="'NUMBER'" [control]="control" [field]="field" type="number"></lib-input-field>
-  <lib-input-field *ngSwitchCase="'INTEGER'" [control]="control" [field]="field" type="number"></lib-input-field>
-
-  <lib-checkbox-field *ngSwitchCase="'BOOLEAN'" [control]="control" [field]="field"></lib-checkbox-field>
-  <lib-date-time-field *ngSwitchCase="'DATE_PICKER'" [control]="control" [field]="field"></lib-date-time-field>
-  <lib-select-field *ngSwitchCase="'SELECT'" [control]="control" [field]="field"></lib-select-field>
-  <lib-association-field *ngSwitchCase="'LINK'" [control]="control" [field]="field"></lib-association-field>
-
-  <lib-form-list *ngSwitchCase="'ARRAY'" [formArray]="control" [field]="field"></lib-form-list>
-  <div *ngSwitchCase="'SUB_FORM'" class="cmp-container">
-    <h2 class="mat-h2">{{field.getTitle()}}</h2>
-    <lib-form-group [formGroup]="control" [fields]="field.getSubFields()"></lib-form-group>
-  </div>
-
-  <div *ngSwitchDefault>{{field.getType()}} is an unknown type. Therefore {{field.getName()}} cannot be edited.</div>
+<div *ngIf="isSubForm()" class="cmp-container">
+  <h2 class="mat-h2">{{field.getTitle()}}</h2>
+  <lib-customizable [type]="getFormGroupComponentType().customizableType" [input]="getFormGroupComponentType().input"></lib-customizable>
 </div>
+<ng-container *ngIf="!isSubForm()">
+  <lib-customizable [type]="getFieldComponentType().customizableType" [input]="getFieldComponentType().input"></lib-customizable>
+</ng-container>
 
 <mat-error *ngIf="showRequiredError()">
   {{field.getTitle()}} is <strong>required</strong>
