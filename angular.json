@@ -46,8 +46,6 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -136,7 +134,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "libs/hateoas-navigator/tsconfig.lib.json",
             "project": "libs/hateoas-navigator/ng-package.json"
@@ -176,7 +174,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "libs/resource-components/tsconfig.lib.json",
             "project": "libs/resource-components/ng-package.json"

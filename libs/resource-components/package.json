@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "schematics": "schematics/collection.json",
   "license": "Apache-2.0",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "peerDependencies": {
     "@angular/common": "^9.0.7",
     "@angular/core": "^9.0.7",
-    "tslib": "^1.10.0",
     "@angular/material": "^8.1.2",
     "moment": "^2.24.0",
     "hateoas-navigator": "^0.1.0"

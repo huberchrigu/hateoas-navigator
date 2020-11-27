@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {FormListComponent} from './form-list.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
@@ -10,7 +10,7 @@ describe('FormListComponent', () => {
   let component: FormListComponent;
   let fixture: ComponentFixture<FormListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FormListComponent],
       schemas: [NO_ERRORS_SCHEMA]

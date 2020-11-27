@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {FormFieldComponent} from './form-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
@@ -13,7 +13,7 @@ describe('FormFieldComponent', () => {
   let fixture: ComponentFixture<FormFieldComponent>;
   let control: SpyObj<FormControl>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FormFieldComponent],
       schemas: [NO_ERRORS_SCHEMA]

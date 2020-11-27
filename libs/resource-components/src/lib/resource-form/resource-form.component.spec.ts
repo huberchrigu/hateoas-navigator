@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ResourceFormComponent} from './resource-form.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
@@ -14,7 +14,7 @@ describe('ResourceFormComponent', () => {
   let component: ResourceFormComponent;
   let fixture: ComponentFixture<ResourceFormComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
       const resourceDescriptor = jasmine.createSpyObj<GenericPropertyDescriptor>('resourceDescriptor',
         ['toFormFieldBuilder', 'getTitle']);
       const form = {

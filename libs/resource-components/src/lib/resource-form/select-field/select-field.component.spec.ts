@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormControl} from '@angular/forms';
@@ -10,7 +10,7 @@ describe('SelectFieldComponent', () => {
   let component: SelectFieldComponent;
   let fixture: ComponentFixture<SelectFieldComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SelectFieldComponent],
       schemas: [NO_ERRORS_SCHEMA]

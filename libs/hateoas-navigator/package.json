@@ -2,9 +2,11 @@
   "name": "hateoas-navigator",
   "version": "0.1.0",
   "license": "Apache-2.0",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "peerDependencies": {
     "@angular/common": "^9.0.7",
-    "@angular/core": "^9.0.7",
-    "tslib": "^1.10.0"
+    "@angular/core": "^9.0.7"
   }
 }

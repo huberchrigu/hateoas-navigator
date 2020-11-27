@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
 import {By} from '@angular/platform-browser';
@@ -10,7 +10,7 @@ describe('ItemPropertiesComponent', () => {
   let fixture: ComponentFixture<ItemPropertiesComponent>;
   let arrayProperty: JsonArrayProperty;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ItemPropertiesComponent]
     })

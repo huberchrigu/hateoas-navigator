@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
@@ -24,7 +24,7 @@ describe('ResourceItemComponent', () => {
     isUpdateEnabled: () => true
   } as ResourceActions;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     versionedResourceObject = jasmine.createSpyObj<VersionedResourceObjectProperty>('resourceObject',
       ['getChildProperties', 'getDescriptor', 'getOtherLinks']);
     versionedResourceObject.getChildProperties.and.returnValue([

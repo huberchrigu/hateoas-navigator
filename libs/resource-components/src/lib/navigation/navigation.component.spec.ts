@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {NavigationComponent} from './navigation.component';
 import {ResourceService, NavigationFactory} from 'hateoas-navigator';
@@ -17,7 +17,7 @@ describe('NavigationComponent', () => {
 
   const loginMock = jasmine.createSpyObj<LoginService>(['isLoggedIn', 'getUserId']);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NavigationComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -29,7 +29,7 @@ describe('NavigationComponent', () => {
       .compileComponents();
   }));
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NavigationComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();

@@ -1,4 +1,4 @@
-import {async} from '@angular/core/testing';
+import { waitForAsync } from '@angular/core/testing';
 import {ResourceSchemaService} from '../../resource-services/resource-schema.service';
 import {JsonSchema, JsonSchemaDocument} from '../../schema/json-schema';
 import {of} from 'rxjs';
@@ -34,7 +34,7 @@ describe('DefaultDescriptorProvider', () => {
     getAllDescriptors: () => [alpsDescriptor]
   } as AlpsDocumentAdapter));
 
-  it('should resolve titles', async(() => {
+  it('should resolve titles', waitForAsync(() => {
     const testee = new DefaultDescriptorProvider({} as ModuleConfiguration, schemaService);
     testee.resolve('a').subscribe(desc => {
       expect(schemaService.getJsonSchema).toHaveBeenCalledWith('a');

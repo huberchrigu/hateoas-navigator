@@ -32,8 +32,8 @@ export class PropertyDescriptorMockBuilder<T extends GenericPropertyDescriptor> 
   }
 
   protected postConstruct(spy: SpyObj<T>): SpyObj<T> {
-    (spy.orNull as Spy).and.callFake((factory, ...args) => factory(spy) ? factory(spy)(...args) : null);
-    (spy.orEmpty as Spy).and.callFake(factory => factory(spy) ? factory(spy)() : []);
+    (spy.orNull as any as Spy).and.callFake((factory, ...args) => factory(spy) ? factory(spy)(...args) : null);
+    (spy.orEmpty as any as Spy).and.callFake(factory => factory(spy) ? factory(spy)() : []);
     return spy;
   }
 }
