@@ -239,7 +239,7 @@ export class DescriptorBuilder<T> {
         descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor);
       }
     } else if (this.isType('association', !!this.association)) {
-      descriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor);
+      descriptor = this.getDescriptorForAssociationType();
     } else {
       if (this.type !== 'primitive') {
         LOGGER.warn(`Type 'primitive' was auto-guessed in ${this.mapperName}. Try to set type explicitly.`);
@@ -250,6 +250,18 @@ export class DescriptorBuilder<T> {
       LOGGER.debug(this.mapperName + ' -> ' + JSON.stringify(descriptor));
     }
     return descriptor;
+  }
+
+  /**
+   * An association can point to a single resource item or to an array of resource items.
+   */
+  private getDescriptorForAssociationType() {
+    const associationDescriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor);
+    if (this.name.endsWith('s')) { // TODO: Add configuration and show warning if guesses this way
+      return new ArrayDescriptorImpl(this.name, this.title, associationDescriptor, this.fieldProcessor);
+    } else {
+      return associationDescriptor;
+    }
   }
 
   private isType(type: DescriptorType, guess?: boolean) {
