@@ -20,8 +20,11 @@
     ],
     "paths": {
       "hateoas-navigator": [
-        "dist/hateoas-navigator/hateoas-navigator",
-        "dist/hateoas-navigator"
+        // Uncomment to following line to test changes with "ng serve"
+        "libs/hateoas-navigator/src/public_api.ts"
+        // Comment the following two lines instead
+        //        "dist/hateoas-navigator/hateoas-navigator",
+        //        "dist/hateoas-navigator"
       ],
       "resource-components": [
         // Uncomment to following line to test changes with "ng serve"
