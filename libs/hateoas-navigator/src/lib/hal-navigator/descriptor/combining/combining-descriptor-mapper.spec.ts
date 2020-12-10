@@ -19,8 +19,9 @@ import {ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-d
 import {JsonSchemaDescriptorMapper} from '../json-schema/json-schema-descriptor-mapper';
 import {AlpsDescriptorMapper} from '../alps/alps-descriptor-mapper';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
-import {DescriptorBuilder, FieldProcessor} from '../mapper/descriptor-builder';
+import {DescriptorBuilder} from '../mapper/descriptor-builder';
 import {DefaultMapperConfigs} from './mapper-config';
+import {FieldProcessor} from '../mapper/internal/field-processor';
 
 describe('CombiningDescriptorMapper', () => {
   it('should not contain "update" action', () => {

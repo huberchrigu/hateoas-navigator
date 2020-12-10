@@ -3,8 +3,9 @@ import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
 import {FormFieldBuilder} from '../../form/form-field-builder';
 import {getFormType} from '../../form/form-field-type';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
-import {DescriptorBuilder, DescriptorType} from '../mapper/descriptor-builder';
+import {DescriptorBuilder} from '../mapper/descriptor-builder';
 import {LOGGER} from '../../../logging/logger';
+import {DescriptorType} from '../mapper/internal/descriptor-type';
 
 class NamedJsonSchema {
   constructor(public name, public schema: JsonSchema) {

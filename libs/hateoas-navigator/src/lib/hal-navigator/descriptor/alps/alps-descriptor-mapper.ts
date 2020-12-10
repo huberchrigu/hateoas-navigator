@@ -5,7 +5,8 @@ import {ResourceAction} from '../actions/resource-action';
 import {Required, Validate} from '../../../decorators/required';
 import {ActionType} from '../actions/action-type';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
-import {DescriptorBuilder, DescriptorType} from '../mapper/descriptor-builder';
+import {DescriptorBuilder} from '../mapper/descriptor-builder';
+import {DescriptorType} from '../mapper/internal/descriptor-type';
 
 export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
   private static readonly REPRESENTATION_PREFIX = '-representation';

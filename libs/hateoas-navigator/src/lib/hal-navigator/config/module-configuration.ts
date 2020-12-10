@@ -17,6 +17,7 @@ export interface FormFieldSupport {
 }
 
 export interface PropertyConfig extends FormFieldSupport {
+  isArrayOfAssociations?: boolean;
   actionLinks?: { [actionName: string]: PropertyConfig };
   associatedResourceName?: string;
   properties?: { [propertyName: string]: PropertyConfig };

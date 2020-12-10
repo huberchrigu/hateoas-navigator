@@ -22,7 +22,8 @@ export class StaticDescriptorMapper extends DescriptorMapper<NamedConfig> {
       .withAssociation(this.getAssociatedResourceName())
       .withLinkFunction(this.config.actionLinks ? uri => this.getDescriptorForLink(uri) : undefined)
       .withFieldProcessor(field => this.addFormFieldDetails(field))
-      .withBuilder(named => new StaticDescriptorMapper(named.name, named.config, this.itemConfigs));
+      .withBuilder(named => new StaticDescriptorMapper(named.name, named.config, this.itemConfigs))
+      .withIsArrayOfAssociations(this.config.isArrayOfAssociations);
   }
 
   getTitle(): string {

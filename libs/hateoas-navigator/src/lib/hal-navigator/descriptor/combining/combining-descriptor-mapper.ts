@@ -1,10 +1,11 @@
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
-import {DescriptorBuilder, FieldProcessor} from '../mapper/descriptor-builder';
+import {DescriptorBuilder} from '../mapper/descriptor-builder';
 import {PropertyCombiner} from '../mapper/property-combiner';
 import {ResourceActions} from '../actions/resource-actions';
 import {MapperConfigs} from './mapper-config';
 import {LOGGER} from '../../../logging/logger';
 import {TwoArrays} from '../../../js/two-arrays';
+import {FieldProcessor} from '../mapper/internal/field-processor';
 
 /**
  * Accepts a list of descriptors. Each request is forwarded to any item of this list.
@@ -51,7 +52,8 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
         this.verifyNoLoop(mappers);
         return new CombiningDescriptorMapper(mappers, this.mapperConfigs);
       })
-      .withTitle(combiner.getFirst('title'));
+      .withTitle(combiner.getFirst('title'))
+      .withIsArrayOfAssociations(combiner.getFirst('isArrayOfAssociations'));
     if (!type || type === 'resource' || type === 'object') {
       builder.withActions(combiner.reduce('actions', (previous, current) => previous.include(current), new ResourceActions([])))
         .withLinkFunction(builders.some(b => !!b.linkFunction) ? this.getLinkFunction(combiner) : undefined)

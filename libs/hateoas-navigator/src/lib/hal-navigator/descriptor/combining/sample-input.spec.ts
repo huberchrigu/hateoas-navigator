@@ -22,12 +22,8 @@ export const jsonSchema: JsonSchemaDocument = JSON.parse(`
     "members" : {
       "title" : "Members",
       "readOnly" : false,
-      "type" : "array",
-      "uniqueItems" : true,
-      "items" : {
-        "format" : "uri",
-        "type" : "string"
-      }
+      "type" : "string",
+      "format" : "uri"
     },
     "name" : {
       "title" : "Name",
