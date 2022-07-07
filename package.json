@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "^11.0.2",
     "@angular/router": "^11.0.2",
     "@coachcare/datepicker": "^1.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.23",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
