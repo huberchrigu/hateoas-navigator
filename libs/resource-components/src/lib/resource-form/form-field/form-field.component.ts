@@ -11,9 +11,17 @@ import {SelectFieldComponentInput} from '../select-field/select-field-component-
 import {AssociationFieldComponentInput} from '../association-field/association-field-component-input';
 import {FormListComponentInput} from '../form-list/form-list-component-input';
 import {CustomComponentService} from '../../customizable/custom-component.service';
+import {CustomizableComponent} from '../../customizable';
+import {MatError} from '@angular/material/form-field';
+import {NgIf} from '@angular/common';
 
 @Component({
   templateUrl: './form-field.component.html',
+  imports: [
+    CustomizableComponent,
+    MatError,
+    NgIf
+  ],
   encapsulation: ViewEncapsulation.None
 })
 export class FormFieldComponent implements OnInit, FormFieldComponentInput {

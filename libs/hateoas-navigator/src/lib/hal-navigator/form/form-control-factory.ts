@@ -1,4 +1,4 @@
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
 import {ArrayField} from './array-field';
@@ -46,9 +46,9 @@ export class FormControlFactory {
       if (Array.isArray(value)) {
         array = value.map(item => this.getControlWithValue((formField as ArrayField).getArraySpec(), item));
       }
-      return new FormArray(array);
+      return new UntypedFormArray(array);
     } else if (FormControlFactory.STANDARD_CONTROLS.some(type => type === formField.getType())) {
-      return new FormControl({
+      return new UntypedFormControl({
           disabled: formField.isReadOnly(),
           value
         },
@@ -60,8 +60,8 @@ export class FormControlFactory {
     }
   }
 
-  private getFormGroup(parentFormField: SubFormField, obj: object): FormGroup {
-    const formGroup: FormGroup = new FormGroup({});
+  private getFormGroup(parentFormField: SubFormField, obj: object): UntypedFormGroup {
+    const formGroup: UntypedFormGroup = new UntypedFormGroup({});
     parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName(), this.getControlWithValue(f,
       obj ? obj[f.getName()] : undefined)));
     return formGroup;

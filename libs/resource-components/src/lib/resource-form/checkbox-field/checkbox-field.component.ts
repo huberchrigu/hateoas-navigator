@@ -1,12 +1,17 @@
 import {Component, Input} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
 import {FormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CheckboxFieldComponentInput} from './checkbox-field-component-input';
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
   templateUrl: './checkbox-field.component.html',
+  imports: [
+    MatCheckbox,
+    ReactiveFormsModule
+  ],
   styleUrls: ['../form-fields.sass', './checkbox-field.component.sass']
 })
 export class CheckboxFieldComponent implements CheckboxFieldComponentInput {
@@ -14,7 +19,7 @@ export class CheckboxFieldComponent implements CheckboxFieldComponentInput {
   field: FormField;
 
   @Input()
-  control: FormControl;
+  control: UntypedFormControl;
 
 }
 

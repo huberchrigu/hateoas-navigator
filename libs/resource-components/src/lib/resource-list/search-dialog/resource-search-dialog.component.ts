@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import {ReactiveFormsModule, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ResourceSearchDialogData} from './resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './resource-search-dialog-result';
 import {
@@ -19,9 +19,27 @@ import {
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {FormGroupComponentInput} from '../../resource-form/form-group/form-group-component-input';
+import {MatFormField} from '@angular/material/form-field';
+import {MatOption, MatSelect} from '@angular/material/select';
+import {CustomizableComponent} from '../../customizable';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {NgForOf} from '@angular/common';
 
 @Component({
   templateUrl: './resource-search-dialog.component.html',
+  imports: [
+    ReactiveFormsModule,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    CustomizableComponent,
+    MatDialogActions,
+    MatAnchor,
+    MatButton,
+    MatDialogTitle,
+    MatDialogContent,
+    NgForOf
+  ],
   styleUrls: ['../../resource-form/form-fields.sass']
 })
 export class ResourceSearchDialogComponent implements OnInit {
@@ -38,9 +56,9 @@ export class ResourceSearchDialogComponent implements OnInit {
   options = [];
   urls: ResourceLink[];
   title = 'Select query';
-  queryControl = new FormControl();
-  fieldControls = new FormGroup({});
-  form = new FormGroup({
+  queryControl = new UntypedFormControl();
+  fieldControls = new UntypedFormGroup({});
+  form = new UntypedFormGroup({
     query: this.queryControl,
     params: this.fieldControls
   });

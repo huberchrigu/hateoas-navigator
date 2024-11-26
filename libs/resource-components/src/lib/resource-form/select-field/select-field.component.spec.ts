@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {SelectFieldComponent} from './select-field.component';
 import {By} from '@angular/platform-browser';
 import {SelectField} from 'hateoas-navigator';
@@ -22,7 +22,7 @@ describe('SelectFieldComponent', () => {
     fixture = TestBed.createComponent(SelectFieldComponent);
     component = fixture.componentInstance;
     component.field = new SelectField('field', undefined, undefined, 'Field', [1, 2, 3]);
-    component.control = {} as FormControl;
+    component.control = {} as UntypedFormControl;
     fixture.detectChanges();
   });
 

@@ -1,21 +1,34 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {SendDataDialogData} from './send-data-dialog-data';
 import {SendDataDialogResult} from './send-data-dialog-result';
-import {FormGroup} from '@angular/forms';
+import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {FormControlFactory, FormField, SubFormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 import {FormGroupComponentInput} from '../../resource-form/form-group/form-group-component-input';
+import {CustomizableComponent} from '../../customizable';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {NgIf} from '@angular/common';
 
 @Component({
+  imports: [
+    CustomizableComponent,
+    ReactiveFormsModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatAnchor,
+    MatButton,
+    NgIf
+  ],
   templateUrl: './send-data-dialog.component.html'
 })
 export class SendDataDialogComponent {
 
   fields: FormField[];
   title: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   private readonly methods: string[];
 
@@ -27,7 +40,7 @@ export class SendDataDialogComponent {
       this.title = '';
       this.fields = [];
     }
-    this.form = new FormGroup(new FormControlFactory().getControls(this.fields));
+    this.form = new UntypedFormGroup(new FormControlFactory().getControls(this.fields));
     this.methods = data.methods;
   }
 

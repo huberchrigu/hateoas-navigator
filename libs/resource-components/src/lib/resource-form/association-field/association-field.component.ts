@@ -1,17 +1,29 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
 import {LinkField, ResourceService} from 'hateoas-navigator';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 import {AssociationFieldComponentInput} from './association-field-component-input';
+import {MatFormField} from '@angular/material/form-field';
+import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
+import {AsyncPipe, NgForOf} from '@angular/common';
 
 /**
  * Currently the input's title is not shown due to https://github.com/angular/material2/issues/4863.
  */
 @Component({
   templateUrl: './association-field.component.html',
+  imports: [
+    MatFormField,
+    ReactiveFormsModule,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    AsyncPipe,
+    NgForOf
+  ],
   styleUrls: ['./association-field.component.sass', '../form-fields.sass']
 })
 export class AssociationFieldComponent implements OnInit, AssociationFieldComponentInput {
@@ -19,7 +31,7 @@ export class AssociationFieldComponent implements OnInit, AssociationFieldCompon
   field: LinkField;
 
   @Input()
-  control: FormControl;
+  control: UntypedFormControl;
 
   filteredItems: Observable<Array<LinkItem>>;
   private resolvedItems: Array<LinkItem> = [];

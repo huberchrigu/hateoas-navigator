@@ -1,10 +1,9 @@
 <form (ngSubmit)="onSubmit()" [formGroup]="form">
-  <h1 mat-dialog-title>{{title}}</h1>
+  <h1 mat-dialog-title>{{ title }}</h1>
   <div mat-dialog-content>
     <mat-form-field class="cmp-full-width">
-      <mat-label>Query</mat-label>
       <mat-select [formControl]="queryControl" required>
-        <mat-option *ngFor="let opt of options" [value]="opt.key">{{opt.title}}</mat-option>
+        <mat-option *ngFor="let opt of options" [value]="opt.key">{{ opt.title }}</mat-option>
       </mat-select>
     </mat-form-field>
     <lib-customizable [type]="getFormGroupType()" [input]="getFormGroupInput()"></lib-customizable>

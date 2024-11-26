@@ -1,13 +1,12 @@
-import {throwError as observableThrowError} from 'rxjs';
+import {throwError} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {VersionedResourceObjectPropertyImpl} from '../versioned-resource-object-property-impl';
 import {HttpHeaders, HttpResponse} from '@angular/common/http';
-import {HalResourceObject} from '../../hal-resource/value-type/hal-value-type';
+import {HalResourceObject} from '../../hal-resource';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {HeaderOptions} from '../../http/header-options';
-import {ResourceLink} from '../../link-object/resource-link';
-import {ResourceObjectPropertyFactoryService} from '../../hal-resource/resource-object-property-factory.service';
-import {VersionedResourceObjectProperty} from '../../hal-resource/resource-object-property';
+import {ResourceLink} from '../../link-object';
+import {ResourceObjectPropertyFactoryService} from '../../hal-resource';
+import {VersionedResourceObjectProperty} from '../../hal-resource';
 
 /**
  * Caches the returned items and saves them together with the <code>ETag</code>. The next time this resource is requested,
@@ -30,11 +29,11 @@ export class ItemCacheService {
   }
 
   getItemFromErroneousGetResponse(resource: string, id: string,
-                                  response: HttpResponse<HalResourceObject>): ObservableInput<VersionedResourceObjectPropertyImpl> {
+                                  response: HttpResponse<HalResourceObject>): ObservableInput<VersionedResourceObjectProperty> {
     if (response.status === 304) {
       return this.handleNotModifiedResponse(resource, id);
     }
-    return observableThrowError(response);
+    return throwError(() => new Error('Received error response: ' + response.status));
   }
 
   removeFromResponse<T>(resourceLink: string, response: HttpResponse<T>): HttpResponse<T> {
@@ -63,7 +62,7 @@ export class ItemCacheService {
     if (cachedObject) {
       return of(cachedObject);
     } else {
-      return observableThrowError('There is no resource ' + resource + ' with ID ' + id);
+      return throwError(() => new Error('There is no resource ' + resource + ' with ID ' + id));
     }
   }
 

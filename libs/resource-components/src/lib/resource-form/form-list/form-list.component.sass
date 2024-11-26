@@ -1,11 +1,12 @@
+@use '@angular/material' as mat
 @import '../../material'
 
 .cmp-item
   margin: 10px 0
   padding: 10px
-  border-bottom: 1px dashed mat-color($theme-accent)
+  border-bottom: 1px dashed mat.m2-get-color-from-palette($theme-accent)
 
 .cmp-container
   margin: 10px 0
   padding: 10px
-  border: 1px dashed mat-color($theme-accent)
+  border: 1px dashed mat.m2-get-color-from-palette($theme-accent)

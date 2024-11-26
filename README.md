@@ -20,7 +20,7 @@ to start a new project and a sample Angular frontend and Spring backend.
 
 * Customize interface
   with [`ModuleConfiguration`](libs/hateoas-navigator/src/lib/hal-navigator/config/module-configuration.ts) (since _
-  0.1.0_) ([Example](projects/demo/src/app/app.module.ts))
+  0.1.0_) ([Example](projects/demo/src/app/app.component.ts))
   * `permissionDeniedFallback` and `unauthorizedFallback` allow alternative resource collection requests if the current
     user does not have sufficient permissions
 * Resolvers that

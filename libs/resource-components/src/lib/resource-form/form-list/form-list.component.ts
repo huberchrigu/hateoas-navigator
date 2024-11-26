@@ -1,13 +1,23 @@
 import {Component, Input} from '@angular/core';
-import {AbstractControl, FormArray} from '@angular/forms';
+import {AbstractControl, UntypedFormArray} from '@angular/forms';
 import {ArrayField, FormControlFactory, FormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {FormListComponentInput} from './form-list-component-input';
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 import {FormFieldComponentInput} from '../form-field/form-field.component';
+import {MatToolbar} from '@angular/material/toolbar';
+import {CustomizableComponent} from '../../customizable';
+import {MatButton} from '@angular/material/button';
+import {NgForOf} from '@angular/common';
 
 @Component({
   templateUrl: './form-list.component.html',
+  imports: [
+    MatToolbar,
+    CustomizableComponent,
+    MatButton,
+    NgForOf
+  ],
   styleUrls: ['./form-list.component.sass']
 })
 export class FormListComponent implements FormListComponentInput {
@@ -15,7 +25,7 @@ export class FormListComponent implements FormListComponentInput {
   private formControlFactory = new FormControlFactory();
 
   @Input()
-  control: FormArray;
+  control: UntypedFormArray;
 
   @Input()
   field: ArrayField;

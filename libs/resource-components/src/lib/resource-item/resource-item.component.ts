@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material/dialog';
@@ -15,9 +15,27 @@ import {MessageDialogData} from '../message-dialog/message-dialog-data';
 import {CustomComponentService} from '../customizable/custom-component.service';
 import {CustomizableComponentType} from '../customizable/custom-component-configuration';
 import {ItemPropertiesComponentInput} from './item-properties/item-properties.component';
+import {MatToolbar} from '@angular/material/toolbar';
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitleGroup} from '@angular/material/card';
+import {CustomizableComponent} from '../customizable';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   templateUrl: './resource-item.component.html',
+  imports: [
+    MatToolbar,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    CustomizableComponent,
+    MatAnchor,
+    RouterLink,
+    MatButton,
+    NgIf,
+    NgForOf,
+    MatCardTitleGroup
+  ],
   styleUrls: ['./resource-item.component.sass']
 })
 export class ResourceItemComponent implements OnInit {

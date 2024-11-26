@@ -1,6 +1,6 @@
 import {FieldComponentInput} from '../field-component-input';
 import {FormField} from 'hateoas-navigator';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
-export interface CheckboxFieldComponentInput extends FieldComponentInput<FormField, FormControl> {
+export interface CheckboxFieldComponentInput extends FieldComponentInput<FormField, UntypedFormControl> {
 }

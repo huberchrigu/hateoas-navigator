@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {FormFieldComponent} from './form-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormField} from 'hateoas-navigator';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;
 import {SubFormField} from 'hateoas-navigator';
@@ -11,7 +11,7 @@ import {SubFormField} from 'hateoas-navigator';
 describe('FormFieldComponent', () => {
   let component: FormFieldComponent;
   let fixture: ComponentFixture<FormFieldComponent>;
-  let control: SpyObj<FormControl>;
+  let control: SpyObj<UntypedFormControl>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -22,7 +22,7 @@ describe('FormFieldComponent', () => {
   }));
 
   beforeEach(() => {
-    control = jasmine.createSpyObj<FormControl>('FormControl', ['hasError']);
+    control = jasmine.createSpyObj<UntypedFormControl>('FormControl', ['hasError']);
     fixture = TestBed.createComponent(FormFieldComponent);
     component = fixture.componentInstance;
     component.field = new SubFormField('field', true, false, 'Field', [{} as FormField]);

@@ -1,11 +1,11 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {ResourceListComponent} from './resource-list/resource-list.component';
-import {NavigationComponent} from './navigation/navigation.component';
+import {ResourceListComponent} from './resource-list';
+import {NavigationComponent} from './navigation';
 import {MessageDialogComponent} from './message-dialog/message-dialog.component';
-import {ResourceFormComponent} from './resource-form/resource-form.component';
+import {ResourceFormComponent} from './resource-form';
 import {ReactiveFormsModule} from '@angular/forms';
-import {ResourceItemComponent} from './resource-item/resource-item.component';
+import {ResourceItemComponent} from './resource-item';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
@@ -26,7 +26,6 @@ import {SelectFieldComponent} from './resource-form/select-field/select-field.co
 import {AssociationFieldComponent} from './resource-form/association-field/association-field.component';
 import {FormFieldComponent} from './resource-form/form-field/form-field.component';
 import {RouterModule} from '@angular/router';
-import {MatDatepickerModule, MatMomentDateModule} from '@coachcare/datepicker';
 import {CheckboxFieldComponent} from './resource-form/checkbox-field/checkbox-field.component';
 import {SendDataDialogComponent} from './resource-item/send-data-dialog/send-data-dialog.component';
 import {ResourceSearchDialogComponent} from './resource-list/search-dialog/resource-search-dialog.component';
@@ -35,10 +34,11 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpInterceptorService} from './http/http-interceptor.service';
 import {CurrentUserProviderService} from './navigation/login/current-user-provider.service';
 import {CurrentUserProvider} from 'hateoas-navigator';
-import {CustomizableComponent} from './customizable/customizable.component';
+import {CustomizableComponent} from './customizable';
 import {CustomizableDirective} from './customizable/customizable.directive';
 import {ResourceComponentsConfiguration} from './resource-components-configuration';
 import {CustomComponentService} from './customizable/custom-component.service';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   imports: [
@@ -59,9 +59,6 @@ import {CustomComponentService} from './customizable/custom-component.service';
     MatNativeDateModule,
 
     MatDatepickerModule,
-    MatMomentDateModule
-  ],
-  declarations: [
     NavigationComponent,
     ResourceListComponent,
     ResourceSearchDialogComponent,
@@ -79,9 +76,10 @@ import {CustomComponentService} from './customizable/custom-component.service';
     FormFieldComponent,
     CheckboxFieldComponent,
     LoginDialogComponent,
-
-    CustomizableComponent, CustomizableDirective
+    CustomizableComponent,
+    CustomizableDirective
   ],
+  declarations: [],
   exports: [NavigationComponent],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true},

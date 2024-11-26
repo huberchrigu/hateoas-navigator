@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
 import {
   ResourceObjectProperty,
@@ -15,9 +15,33 @@ import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dia
 import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
 import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';
 import {CustomComponentService} from '../customizable/custom-component.service';
+import {MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable} from '@angular/material/table';
+import {MatToolbar} from '@angular/material/toolbar';
+import {MatAnchor, MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   templateUrl: './resource-list.component.html',
+  imports: [
+    MatHeaderCell,
+    MatCell,
+    MatHeaderRow,
+    MatRow,
+    MatRowDef,
+    MatToolbar,
+    MatAnchor,
+    RouterLink,
+    MatIconButton,
+    MatIcon,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRowDef,
+    NgForOf,
+    NgIf
+  ],
   styleUrls: ['./resource-list.component.css']
 })
 export class ResourceListComponent implements OnInit {

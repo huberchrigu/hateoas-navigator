@@ -1,6 +1,7 @@
+@use '@angular/material' as mat
 @import '../../material'
 
-$config: mat-typography-config()
+$config: mat.m2-define-typography-config()
 
 .cmp-property
   display: flex
@@ -10,7 +11,7 @@ $config: mat-typography-config()
 
   .cmp-property-title
     width: 150px
-    @include mat-typography-level-to-styles($config, body-2)
+    @include mat.m2-typography-level($config, body-2)
 
   .cmp-property-value
     padding-left: 50px
@@ -18,8 +19,8 @@ $config: mat-typography-config()
 
   .cmp-sub-object
     padding-left: 15px
-    border-left: 2px solid mat-color($theme-accent)
+    border-left: 2px solid mat.m2-get-color-from-palette($theme-accent)
 
     .cmp-array-item
       padding: 10px 0
-      border-bottom: 1px dashed mat-color($theme-accent)
+      border-bottom: 1px dashed mat.m2-get-color-from-palette($theme-accent)

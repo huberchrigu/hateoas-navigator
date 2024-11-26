@@ -1,7 +1,7 @@
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {FormField} from 'hateoas-navigator';
 
 export interface FormGroupComponentInput {
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   fields: FormField[];
 }

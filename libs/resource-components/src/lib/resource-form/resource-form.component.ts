@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormField} from 'hateoas-navigator';
-import {FormGroup} from '@angular/forms';
+import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {ResourceLink} from 'hateoas-navigator';
@@ -11,15 +11,26 @@ import {SubFormField} from 'hateoas-navigator';
 import {Subscription} from 'rxjs';
 import {CustomizableComponentType} from '../customizable/custom-component-configuration';
 import {FormGroupComponentInput} from './form-group/form-group-component-input';
+import {CustomizableComponent} from '../customizable';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {NgIf} from '@angular/common';
 
 @Component({
   templateUrl: './resource-form.component.html',
+  imports: [
+    CustomizableComponent,
+    ReactiveFormsModule,
+    MatAnchor,
+    RouterLink,
+    MatButton,
+    NgIf
+  ],
   styleUrls: ['./resource-form.component.sass']
 })
 export class ResourceFormComponent implements OnInit {
   fields: FormField[];
   title: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   private newItem: boolean;
   private version: string;
 
@@ -33,7 +44,7 @@ export class ResourceFormComponent implements OnInit {
       this.fields = (descriptor.toFormFieldBuilder().build() as SubFormField).getSubFields();
       this.title = descriptor.getTitle();
       const controls = new FormControlFactory(resourceObject).getControls(this.fields);
-      this.form = new FormGroup(controls);
+      this.form = new UntypedFormGroup(controls);
       this.newItem = !data.resourceObject;
       if (!this.newItem) {
         this.version = data.resourceObject.getVersion();

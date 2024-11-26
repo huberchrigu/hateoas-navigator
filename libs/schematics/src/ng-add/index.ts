@@ -26,7 +26,6 @@ export function schematics(options: any): Rule {
 function addPackageJsonDependencies() {
   return (host: Tree, context: SchematicContext) => {
     const dependencies = [
-      {version: '^1.0.0', name: '@coachcare/datepicker'},
       {version: '^0.5.23', name: 'moment-timezone'},
       {version: '^2.24.0', name: 'moment'},
       {version: `~${hateoasNavigatorVersion}`, name: 'hateoas-navigator'},

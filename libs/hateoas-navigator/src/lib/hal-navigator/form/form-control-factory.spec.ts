@@ -1,4 +1,4 @@
-import {FormArray} from '@angular/forms';
+import {UntypedFormArray} from '@angular/forms';
 import {FormControlFactory} from './form-control-factory';
 import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
@@ -29,7 +29,7 @@ describe('FormControlFactory', () => {
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);
-    const arrayControl = result.array as FormArray;
+    const arrayControl = result.array as UntypedFormArray;
     expect(arrayControl).not.toBeNull();
     expect(arrayControl.controls.length).toBe(2);
     expect(arrayControl.controls[0].value).toEqual({value: 1});

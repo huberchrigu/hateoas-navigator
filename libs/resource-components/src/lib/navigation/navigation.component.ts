@@ -1,11 +1,25 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NavigationItem, ResourceService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
-import {LoginService} from './login/login.service';
+import {LoginService} from './login';
+import {MatIcon} from '@angular/material/icon';
+import {MatToolbar} from '@angular/material/toolbar';
+import {RouterLink} from '@angular/router';
+import {MatAnchor, MatIconButton} from '@angular/material/button';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'lib-navigation',
   templateUrl: './navigation.component.html',
+  imports: [
+    MatIcon,
+    MatToolbar,
+    RouterLink,
+    MatIconButton,
+    MatAnchor,
+    NgForOf,
+    NgIf
+  ],
   styleUrls: ['./navigation.component.sass']
 })
 export class NavigationComponent implements OnInit {

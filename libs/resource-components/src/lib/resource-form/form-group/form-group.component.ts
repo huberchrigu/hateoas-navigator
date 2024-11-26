@@ -1,13 +1,20 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormField} from 'hateoas-navigator';
-import {FormGroup} from '@angular/forms';
+import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {FormGroupComponentInput} from './form-group-component-input';
 import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
 import {FormFieldComponentInput} from '../form-field/form-field.component';
+import {CustomizableComponent} from '../../customizable';
+import {NgForOf} from '@angular/common';
 
 @Component({
   templateUrl: './form-group.component.html',
+  imports: [
+    ReactiveFormsModule,
+    CustomizableComponent,
+    NgForOf
+  ],
   styleUrls: ['./form-group.component.sass']
 })
 export class FormGroupComponent implements OnInit, FormGroupComponentInput {
@@ -15,7 +22,7 @@ export class FormGroupComponent implements OnInit, FormGroupComponentInput {
   fields: FormField[];
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   ngOnInit(): void {
     if (!this.formGroup.controls) {

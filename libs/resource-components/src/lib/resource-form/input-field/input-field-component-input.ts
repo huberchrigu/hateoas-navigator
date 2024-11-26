@@ -1,8 +1,8 @@
 import {FieldComponentInput} from '../field-component-input';
 import {FormField} from 'hateoas-navigator';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
-export interface InputFieldComponentInput extends FieldComponentInput<FormField, FormControl> {
+export interface InputFieldComponentInput extends FieldComponentInput<FormField, UntypedFormControl> {
   type: TypeType;
 }
 
