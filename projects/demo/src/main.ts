@@ -1,5 +1,4 @@
-import {enableProdMode, importProvidersFrom} from '@angular/core';
-import {environment} from './environments/environment';
+import {importProvidersFrom} from '@angular/core';
 import {bootstrapApplication} from '@angular/platform-browser';
 import {AppComponent} from './app/app.component';
 import {ResourceComponentsModule} from '../../../libs/resource-components/src/lib';
@@ -45,10 +44,6 @@ const halNavConfig: ModuleConfiguration = {
     userCalendars: {permissionDeniedFallback: 'findByOwnerCreatedBy?createdBy={userId}'}
   }
 };
-
-if (environment.production) {
-  enableProdMode();
-}
 
 bootstrapApplication(AppComponent, {providers: [importProvidersFrom(ResourceComponentsModule.forRoot(), HalNavigatorModule.forRoot(halNavConfig))]})
   .catch(err => console.error(err));

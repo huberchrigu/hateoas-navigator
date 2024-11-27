@@ -3,7 +3,7 @@ import {StaticComponentsModule} from './static-components/static-components.modu
 import {AppRoutingModule} from './app-routing/app-routing.module';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NavigationComponent} from '../../../../libs/resource-components/src/lib';
+import {NavigationComponent} from 'resource-components';
 
 @Component({
   selector: 'app-setty',

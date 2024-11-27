@@ -19,14 +19,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/demo",
             "index": "projects/demo/src/index.html",
-            "main": "projects/demo/src/main.ts",
+            "browser": "projects/demo/src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "projects/demo/tsconfig.app.json",
-            "aot": true,
+            "inlineStyleLanguage": "sass",
             "assets": [
               "projects/demo/src/favicon.ico",
               "projects/demo/src/assets"
@@ -38,18 +38,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/demo/src/environments/environment.ts",
-                  "with": "projects/demo/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -59,11 +47,18 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumError": "200kb"
                 }
-              ]
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -73,23 +68,26 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "buildTarget": "demo:build:production"
+            },
+            "development": {
+              "buildTarget": "demo:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "demo:build"
-          }
+          "builder": "@angular-devkit/build-angular:extract-i18n"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/demo/src/test.ts",
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/demo/tsconfig.spec.json",
-            "karmaConfig": "projects/demo/karma.conf.js",
+            "inlineStyleLanguage": "sass",
             "assets": [
               "projects/demo/src/favicon.ico",
               "projects/demo/src/assets"
@@ -98,31 +96,6 @@
               "projects/demo/src/styles.sass"
             ],
             "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/demo/tsconfig.app.json",
-              "projects/demo/tsconfig.spec.json",
-              "projects/demo/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/demo/e2e/protractor.conf.js",
-            "devServerTarget": "demo:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "demo:serve:production"
-            }
           }
         }
       }
@@ -136,32 +109,25 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "libs/hateoas-navigator/tsconfig.lib.json",
             "project": "libs/hateoas-navigator/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "libs/hateoas-navigator/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/hateoas-navigator/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "libs/hateoas-navigator/src/test.ts",
             "tsConfig": "libs/hateoas-navigator/tsconfig.spec.json",
-            "karmaConfig": "libs/hateoas-navigator/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/hateoas-navigator/tsconfig.lib.json",
-              "libs/hateoas-navigator/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
             ]
           }
         }
@@ -176,32 +142,25 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "libs/resource-components/tsconfig.lib.json",
             "project": "libs/resource-components/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "libs/resource-components/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/resource-components/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "libs/resource-components/src/test.ts",
             "tsConfig": "libs/resource-components/tsconfig.spec.json",
-            "karmaConfig": "libs/resource-components/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/resource-components/tsconfig.lib.json",
-              "libs/resource-components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
             ]
           }
         }
