@@ -1,15 +1,15 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
-import {ResourceService} from './resource-services/resource.service';
-import {CollectionResolverService} from './collection/collection-resolver.service';
-import {ResourceObjectResolverService} from './item/resource-object-resolver.service';
+import {ResourceService} from './resource-services';
+import {CollectionResolverService} from './collection';
+import {ResourceObjectResolverService} from './item';
 import {ItemCacheService} from './item/cache/item-cache.service';
-import {MODULE_CONFIG, ModuleConfiguration} from './config/module-configuration';
+import {MODULE_CONFIG, ModuleConfiguration} from './config';
 import {ResourceDescriptorProvider} from './descriptor/provider/resource-descriptor-provider';
 import {DefaultDescriptorProvider} from './descriptor/provider/default-descriptor-provider';
-import {ResourceDescriptorResolverService} from './descriptor/resolver/resource-descriptor-resolver.service';
+import {ResourceDescriptorResolverService} from './descriptor';
 import {ResourceSchemaService} from './resource-services/resource-schema.service';
-import {ResourceObjectPropertyFactoryService} from './hal-resource/resource-object-property-factory.service';
+import {ResourceObjectPropertyFactoryService} from './hal-resource';
 
 @NgModule({
   imports: [
