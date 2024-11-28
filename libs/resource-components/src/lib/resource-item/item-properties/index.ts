@@ -1,1 +1,1 @@
-export {ItemPropertiesComponentInput} from './item-properties.component';
+export type {ItemPropertiesComponentInput} from './item-properties.component';

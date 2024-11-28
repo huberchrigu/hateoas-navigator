@@ -1,4 +1,4 @@
 export * from './actions';
 export * from './resolver';
-export {GenericPropertyDescriptor, ArrayDescriptor} from './generic-property-descriptor';
-export {ResourceObjectDescriptor} from './resource-object-descriptor';
+export type {GenericPropertyDescriptor, ArrayDescriptor} from './generic-property-descriptor';
+export type {ResourceObjectDescriptor} from './resource-object-descriptor';

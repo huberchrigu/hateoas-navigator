@@ -1,4 +1,4 @@
-import {GenericObjectValueType, JsonValueType} from '../value-type/json-value-type';
+import {GenericObjectValueType, JsonValueType} from '../value-type';
 import {GenericProperty} from '../generic-property';
 import {ObjectDescriptor, GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
 
@@ -11,7 +11,7 @@ export interface ObjectProperty<V extends JsonValueType> extends GenericProperty
    */
   getChildProperties(): GenericProperty<V, GenericPropertyDescriptor>[];
 
-  getChildProperty(propertyName: string): GenericProperty<V, GenericPropertyDescriptor>;
+  getChildProperty(propertyName: string): GenericProperty<V, GenericPropertyDescriptor> | null;
 }
 
 /**

@@ -2,8 +2,8 @@ import {map} from 'rxjs/operators';
 import {NavigationItem} from './navigation-item';
 import {LinkFactory} from '../link-object/link-factory';
 import {forkJoin, Observable} from 'rxjs';
-import {ResourceObjectProperty} from '../hal-resource/resource-object-property';
-import {ResourceLink} from '../link-object/resource-link';
+import {ResourceObjectProperty} from '../hal-resource';
+import {ResourceLink} from '../link-object';
 
 export class NavigationFactory {
 
@@ -18,7 +18,7 @@ export class NavigationFactory {
 
   private toNavigationItem(link: ResourceLink) {
     return link.getResourceDescriptor().pipe(
-      map(descriptor => new NavigationItem(link.toRelativeLink().getUri(), descriptor.getTitle()))
+      map(descriptor => new NavigationItem(link.toRelativeLink().getUri(), descriptor.getTitle()!))
     );
   }
 }

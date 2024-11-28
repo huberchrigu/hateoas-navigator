@@ -6,7 +6,7 @@ export abstract class DescriptorMapper<T> {
     return this.toBuilder().toDescriptor();
   }
 
-  abstract map(builder: DescriptorBuilder<T>);
+  abstract map(builder: DescriptorBuilder<T>): any;
 
   toBuilder() {
     const builder = new DescriptorBuilder<T>(this.getMapperName());

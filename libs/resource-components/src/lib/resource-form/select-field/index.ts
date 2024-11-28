@@ -1,1 +1,1 @@
-export {SelectFieldComponentInput} from './select-field-component-input';
+export type {SelectFieldComponentInput} from './select-field-component-input';

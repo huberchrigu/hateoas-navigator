@@ -5,7 +5,7 @@ import {GenericProperty} from './generic-property';
 // @dynamic
 export abstract class AbstractProperty<V, D extends GenericPropertyDescriptor> implements GenericProperty<V, D> {
 
-  protected constructor(private name: string, private value: V, private descriptor?: D) {
+  protected constructor(private name: string, private value: V | null, private descriptor?: D | null) {
   }
 
   getName() {
@@ -14,10 +14,10 @@ export abstract class AbstractProperty<V, D extends GenericPropertyDescriptor> i
 
   @NotNull((obj, args) => `The resource descriptor for ${obj.getName()} must be resolved before it can be used`)
   getDescriptor(): D {
-    return this.descriptor;
+    return this.descriptor!;
   }
 
-  getValue(): V {
+  getValue(): V | null {
     return this.value;
   }
 
@@ -28,11 +28,11 @@ export abstract class AbstractProperty<V, D extends GenericPropertyDescriptor> i
   /**
    * Use this internally if null/undefined values are ok.
    */
-  protected getDescriptorIfAny(): D {
+  protected getDescriptorIfAny(): D | null | undefined {
     return this.descriptor;
   }
 
-  abstract getDisplayValue(): string | number;
+  abstract getDisplayValue(): number | null | string;
 
   abstract getFormValue(): any;
 }

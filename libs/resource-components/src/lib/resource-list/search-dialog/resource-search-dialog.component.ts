@@ -53,7 +53,7 @@ export class ResourceSearchDialogComponent implements OnInit {
 
   private descriptor: ResourceObjectDescriptor;
 
-  options = [];
+  options: { key: number, title: string }[] = [];
   urls: ResourceLink[];
   title = 'Select query';
   queryControl = new UntypedFormControl();
@@ -133,11 +133,11 @@ export class ResourceSearchDialogComponent implements OnInit {
     Object.keys(newControls).forEach(control => this.fieldControls.addControl(control, newControls[control]));
   }
 
-  private toFields(newParams: string[], queryConfig: QueryConfig): FormField[] {
+  private toFields(newParams: string[], queryConfig: QueryConfig): (FormField | null)[] {
     return newParams.map(param => this.toField(param, queryConfig && queryConfig.params ? queryConfig.params[param] : null));
   }
 
-  private toField(param: string, config: FormFieldSupport): FormField {
+  private toField(param: string, config: FormFieldSupport | null): FormField | null {
     const childDescriptor = this.descriptor.getChildDescriptor(param);
     const builder = childDescriptor ? childDescriptor.toFormFieldBuilder() : new FormFieldBuilder(param);
     return builder.withRequired(true)

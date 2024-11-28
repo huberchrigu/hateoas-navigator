@@ -30,7 +30,7 @@ export class ResourceSchemaService {
       .pipe(map(document => new AlpsDocumentAdapter(document)));
   }
 
-  @Validate
+  @Validate()
   private getFromApi<T>(@Required resourceUrl: string, headers?: HttpHeaders): Observable<T> {
     return this.httpClient.get<T>(Api.PREFIX + resourceUrl, {headers});
   }

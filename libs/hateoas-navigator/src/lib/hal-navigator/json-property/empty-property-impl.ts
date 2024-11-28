@@ -4,11 +4,11 @@ import {EmptyProperty} from './generic-property';
 
 export class EmptyPropertyImpl<D extends GenericPropertyDescriptor> extends AbstractProperty<empty, D> implements EmptyProperty<D> {
 
-  constructor(name: string, value: empty, descriptor: D) {
+  constructor(name: string, value: empty, descriptor: D | null) {
     super(name, value, descriptor);
   }
 
-  getDisplayValue(): string | number {
+  getDisplayValue(): number | null | string {
     return '';
   }
 

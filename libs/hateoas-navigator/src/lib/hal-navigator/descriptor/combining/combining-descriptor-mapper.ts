@@ -1,9 +1,9 @@
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {DescriptorBuilder} from '../mapper/descriptor-builder';
 import {PropertyCombiner} from '../mapper/property-combiner';
-import {ResourceActions} from '../actions/resource-actions';
+import {ResourceActions} from '../actions';
 import {MapperConfigs} from './mapper-config';
-import {LOGGER} from '../../../logging/logger';
+import {LOGGER} from '../../../logging';
 import {TwoArrays} from '../../../js/two-arrays';
 import {FieldProcessor} from '../mapper/internal/field-processor';
 
@@ -19,7 +19,7 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
    */
   constructor(private mappers: Array<DescriptorMapper<any>>, private mapperConfigs: MapperConfigs) {
     super();
-    if (mappers.length === 0) {
+    if (mappers!!.length === 0) {
       throw new Error('Invalid descriptor: No descriptors to combine');
     }
   }
@@ -31,10 +31,10 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
 
   private static getLinkedResource<T>(uri: string, builder: DescriptorBuilder<T>, linkFunction: (uri: string) => T) {
     const value: T = linkFunction(uri);
-    return value ? builder.builderFunction(value) : null;
+    return value ? builder.builderFunction!(value) : null;
   }
 
-  private static logResult(name: string) {
+  private static logResult(name: string | null | undefined) {
     return new URLSearchParams(window.location.search).get(CombiningDescriptorMapper.DEBUG_DESCRIPTOR_PARAM) === name;
   }
 
@@ -42,7 +42,7 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
    * Skip properties that can be ignored due to the type.
    */
   map(builder: DescriptorBuilder<Array<DescriptorMapper<any>>>) {
-    const builders = this.mappers.map(mapper => mapper.toBuilder());
+    const builders = this.mappers!.map(mapper => mapper.toBuilder());
     const combiner = new PropertyCombiner<DescriptorBuilder<any>>(builders);
     const type = combiner.getFirst('type');
     const name = combiner.getFirst('name');
@@ -50,24 +50,24 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
       .withType(type)
       .withBuilder(mappers => {
         this.verifyNoLoop(mappers);
-        return new CombiningDescriptorMapper(mappers, this.mapperConfigs);
+        return new CombiningDescriptorMapper(mappers!, this.mapperConfigs);
       })
       .withTitle(combiner.getFirst('title'))
       .withIsArrayOfAssociations(combiner.getFirst('isArrayOfAssociations'));
     if (!type || type === 'resource' || type === 'object') {
-      builder.withActions(combiner.reduce('actions', (previous, current) => previous.include(current), new ResourceActions([])))
+      builder.withActions(combiner.reduce('actions', (previous, current) => previous!.include(current!), new ResourceActions([]))!)
         .withLinkFunction(builders.some(b => !!b.linkFunction) ? this.getLinkFunction(combiner) : undefined)
         .withChildren(combiner.groupValuesBy(b => this.mapChildren(b),
-          (mapper: DescriptorMapper<any>) => mapper.toBuilder().name, b => this.ignoreChildren(b)));
+          (mapper: DescriptorMapper<any>) => mapper.toBuilder().name!, b => this.ignoreChildren(b))!);
     }
     if (!type || type === 'array') {
-      builder.withArrayItems(combiner.map('arrayItems', (b, value) => b.builderFunction(value)));
+      builder.withArrayItems(combiner.map('arrayItems', (b, value) => b.builderFunction!(value)!));
     }
     if (!type || type === 'association') {
       builder.withAssociation(combiner.getFirst('association'));
     }
     builder.withFieldProcessor(combiner.reduce('fieldProcessor',
-      (a: FieldProcessor, b: FieldProcessor) => (fieldBuilder) => a(b(fieldBuilder)), builder.fieldProcessor));
+      (a: FieldProcessor, b: FieldProcessor) => (fieldBuilder) => a(b(fieldBuilder)), builder.fieldProcessor)!);
 
     if (CombiningDescriptorMapper.logResult(name)) {
       builder.setLogResult();
@@ -75,8 +75,8 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
     }
   }
 
-  getMapperName(): string {
-    return super.getMapperName() + ` (${this.mappers.map(mapper => mapper.getMapperName()).reduce((a, b) => a + ', ' + b)})`;
+  override getMapperName(): string {
+    return super.getMapperName() + ` (${this.mappers!.map(mapper => mapper.getMapperName()).reduce((a, b) => a + ', ' + b)})`;
   }
 
   private ignoreChildren(builder: DescriptorBuilder<any>) {
@@ -84,14 +84,14 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
     return config ? config.ignoreChildren : false;
   }
 
-  private getLinkFunction(combiner) {
+  private getLinkFunction(combiner: any) {
     return (uri: string) => combiner.map('linkFunction',
-      (builder, linkFunction) => CombiningDescriptorMapper.getLinkedResource(uri, builder, linkFunction));
+      (builder: DescriptorBuilder<unknown>, linkFunction: (uri: string) => unknown) => CombiningDescriptorMapper.getLinkedResource(uri, builder, linkFunction));
   }
 
-  private mapChildren(builder: DescriptorBuilder<DescriptorMapper<any>>) {
+  private mapChildren(builder: DescriptorBuilder<DescriptorMapper<any>>): (DescriptorMapper<DescriptorMapper<any>>)[] | undefined {
     if (builder.children) {
-      return builder.children.map(child => builder.builderFunction(child));
+      return builder.children.map(child => builder.builderFunction!(child)!);
     } else {
       return undefined;
     }
@@ -100,7 +100,7 @@ export class CombiningDescriptorMapper extends DescriptorMapper<DescriptorMapper
   /**
    * Avoid infinite loops by preventing new mappers to be the same as its parent (this).
    */
-  private verifyNoLoop(mappers: Array<DescriptorMapper<any>>) {
+  private verifyNoLoop(mappers: Array<DescriptorMapper<any>> | null) {
     if (new TwoArrays(mappers, this.mappers).areEqual()) {
       throw new Error(`New combining descriptor mapper should not have the same input as the parent ${this.getMapperName()}`);
     }

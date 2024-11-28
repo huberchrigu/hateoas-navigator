@@ -1,4 +1,4 @@
-import {FormFieldBuilder} from '../form/form-field-builder';
+import {FormFieldBuilder} from '../form';
 import {ResourceObjectDescriptor} from './resource-object-descriptor';
 import {Observable} from 'rxjs';
 import {ResourceDescriptorProvider} from './provider/resource-descriptor-provider';
@@ -18,12 +18,12 @@ export interface GenericPropertyDescriptor {
    * This is a title describing the property.
    * @returns <code>undefined</code> if the descriptor does not know the title.
    */
-  getTitle(): string;
+  getTitle(): string | undefined;
 
   /**
    * This is the resource or property name.
    */
-  getName(): string;
+  getName(): string | null | undefined;
 
   /**
    * Provides a form field provider, which can be extended by custom configuration.
@@ -35,37 +35,38 @@ export interface GenericPropertyDescriptor {
    * @param fct The function of T
    * @param args The function's arguments
    */
-  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (T) => T[F], ...args: Parameters<ToFunction<T[F]>>):
-    ReturnType<ToFunction<T[F]>>;
+  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Parameters<ToFunction<T[F]>>): ReturnType<ToFunction<T[F]>> | null;
 
   /**
    * Convenience method that returns the function's result, if this descriptor is of the given type.
    * @param fct The function of T
    * @return Empty array if other type
    */
-  orEmpty<T extends GenericPropertyDescriptor>(fct: (T) => ArrayFunc<T>): Array<GenericPropertyDescriptor>;
+  orEmpty<T extends GenericPropertyDescriptor>(fct: (name: T) => ArrayFunc<T>): Array<GenericPropertyDescriptor>;
 }
 
 export abstract class AbstractPropDescriptor implements GenericPropertyDescriptor {
-  orNull<T extends GenericPropertyDescriptor, F extends ToFunction<T>>(fct: (T) => F, ...args: Parameters<F>): ReturnType<F> {
+  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Parameters<ToFunction<T[F]>>): ReturnType<ToFunction<T[F]>> | null {
     try {
+      // @ts-ignore
       return apply(fct(this), this, args);
     } catch (e) {
       return null;
     }
   }
 
-  orEmpty<T extends GenericPropertyDescriptor>(fct: (T) => ArrayFunc<T>): Array<GenericPropertyDescriptor> {
+  orEmpty<T extends GenericPropertyDescriptor>(fct: (name: T) => ArrayFunc<T>): Array<GenericPropertyDescriptor> {
     try {
+      // @ts-ignore
       return apply(fct(this), this, []);
     } catch (e) {
       return [];
     }
   }
 
-  abstract getName(): string;
+  abstract getName(): string | null | undefined;
 
-  abstract getTitle(): string;
+  abstract getTitle(): string | undefined;
 
   abstract toFormFieldBuilder(): FormFieldBuilder;
 }

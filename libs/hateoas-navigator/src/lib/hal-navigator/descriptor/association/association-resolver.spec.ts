@@ -45,6 +45,7 @@ describe('AssociationResolver', () => {
     let wasCalled = false;
     testee.fetchDescriptorWithAssociations('rootResource').subscribe(descriptor => {
       expect(descriptor.getChildDescriptors().length).toBe(1);
+      // @ts-ignore
       expect(descriptor.getChildDescriptors()[0].orNull(d => d.getAssociatedResourceName)).toEqual('rootResource');
       wasCalled = true;
     });

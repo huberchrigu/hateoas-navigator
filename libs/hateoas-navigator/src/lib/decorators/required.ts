@@ -8,18 +8,20 @@ export function Required(target: object, propertyKey: string | symbol, parameter
   Reflect.defineMetadata(requiredMetadataKey, existingParameters, target, propertyKey);
 }
 
-// tslint:disable-next-line:ban-types
-export function Validate(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<Function>) {
-  const method = descriptor.value;
-  descriptor.value = function() {
-    const parameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);
-    if (parameters) {
-      for (const parameterIndex of parameters) {
-        if (parameterIndex >= arguments.length || arguments[parameterIndex] === undefined || arguments[parameterIndex] === null) {
-          throw new Error(`Missing argument (index ${parameterIndex}) in ${this.constructor.name}#${propertyName}()`);
+export function Validate(): MethodDecorator {
+  return function (target: any, propertyName: string | symbol, descriptor: PropertyDescriptor) {
+    const method = descriptor.value!;
+    descriptor.value = function (this: any, ...args: any[]) {
+      const parameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName as string);
+      if (parameters) {
+        for (const parameterIndex of parameters) {
+          if (parameterIndex >= args.length || args[parameterIndex] === undefined || args[parameterIndex] === null) {
+            throw new Error(`Missing argument (index ${parameterIndex}) in ${this.constructor.name}#${String(propertyName)}()`);
+          }
         }
       }
-    }
-    return method.apply(this, arguments);
+      return method.apply(this, args);
+    };
+    return descriptor;
   };
 }

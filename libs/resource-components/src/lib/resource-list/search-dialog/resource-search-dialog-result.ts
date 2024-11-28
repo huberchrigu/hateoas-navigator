@@ -1,5 +1,5 @@
 export class ResourceSearchDialogResult {
-  constructor(public uri: string) {
+  constructor(public uri: string | null) {
 
   }
 

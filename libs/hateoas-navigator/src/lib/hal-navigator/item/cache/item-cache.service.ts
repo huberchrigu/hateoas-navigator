@@ -15,7 +15,7 @@ import {VersionedResourceObjectProperty} from '../../hal-resource';
 @Injectable()
 export class ItemCacheService {
   private static E_TAG_HEADER = 'ETag';
-  private cache: { [key: string]: VersionedResourceObjectProperty } = {};
+  private cache: { [key: string]: VersionedResourceObjectProperty | undefined } = {};
 
   constructor(private resourceAdapterFactoryService: ResourceObjectPropertyFactoryService) {
   }
@@ -74,7 +74,7 @@ export class ItemCacheService {
     this.cache[resourceLink] = undefined;
   }
 
-  private getFromCache(resource: string, id: string): VersionedResourceObjectProperty {
+  private getFromCache(resource: string, id: string): VersionedResourceObjectProperty | undefined {
     return this.cache[ResourceLink.linkFromId(resource, id).getUri()];
   }
 }

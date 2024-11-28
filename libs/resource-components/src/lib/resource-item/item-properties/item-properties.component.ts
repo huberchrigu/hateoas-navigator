@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {ArrayPropertyImpl, HalProperty, JsonArrayProperty, ResourceObjectProperty} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomizableComponentType} from '../../customizable';
 import {CustomizableComponent} from '../../customizable';
 import {NgForOf, NgIf} from '@angular/common';
 
@@ -17,7 +17,7 @@ import {NgForOf, NgIf} from '@angular/common';
 export class ItemPropertiesComponent implements ItemPropertiesComponentInput {
 
   @Input()
-  properties: HalProperty[];
+  properties!: HalProperty[];
 
   isArray(property: HalProperty) {
     return property instanceof ArrayPropertyImpl;

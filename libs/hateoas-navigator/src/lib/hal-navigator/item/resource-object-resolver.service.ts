@@ -2,12 +2,12 @@ import {tap, mergeMap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
-import {LOGGER} from '../../logging/logger';
+import {LOGGER} from '../../logging';
 import {VersionedResourceObjectPropertyImpl} from './versioned-resource-object-property-impl';
-import {ResourceService} from '../resource-services/resource.service';
-import {RouteParams} from '../routing/route-params';
-import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
-import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
+import {ResourceService} from '../resource-services';
+import {RouteParams} from '../routing';
+import {VersionedResourceObjectProperty} from '../hal-resource';
+import {ResourceObjectPropertyFactoryService} from '../hal-resource';
 
 @Injectable()
 export class ResourceObjectResolverService implements Resolve<VersionedResourceObjectProperty> {
@@ -15,8 +15,7 @@ export class ResourceObjectResolverService implements Resolve<VersionedResourceO
   constructor(private resourceService: ResourceService, private resourceFactory: ResourceObjectPropertyFactoryService) {
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceObjectProperty> |
-    Promise<VersionedResourceObjectPropertyImpl> | VersionedResourceObjectPropertyImpl {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<VersionedResourceObjectProperty> | Promise<VersionedResourceObjectPropertyImpl> | VersionedResourceObjectPropertyImpl {
     const resourceName = route.params[RouteParams.RESOURCE_PARAM];
     return this.resourceService
       .getItem(resourceName, route.params[RouteParams.ID_PARAM])

@@ -3,7 +3,7 @@ import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
 import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
-import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
+import {VersionedResourceObjectProperty} from '../hal-resource';
 
 export class FormControlFactory {
   private static STANDARD_CONTROLS = [FormFieldType.TEXT, FormFieldType.DATE_PICKER, FormFieldType.BOOLEAN,
@@ -27,15 +27,15 @@ export class FormControlFactory {
   }
 
   getControls(fields: FormField[]): { [key: string]: AbstractControl } {
-    const controls = {};
+    const controls: { [key: string]: any } = {};
     fields.forEach(f => {
-      controls[f.getName()] = this.getControl(f);
+      controls[f.getName()!] = this.getControl(f);
     });
     return controls;
   }
 
   getControl(formField: FormField) {
-    const property = this.item ? this.item.getChildProperty(formField.getName()) : undefined;
+    const property = this.item ? this.item.getChildProperty(formField.getName()!) : undefined;
     const value = property ? property.getFormValue() : undefined;
     return this.getControlWithValue(formField, value);
   }
@@ -60,10 +60,10 @@ export class FormControlFactory {
     }
   }
 
-  private getFormGroup(parentFormField: SubFormField, obj: object): UntypedFormGroup {
+  private getFormGroup(parentFormField: SubFormField, obj: { [key: string]: any }): UntypedFormGroup {
     const formGroup: UntypedFormGroup = new UntypedFormGroup({});
-    parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName(), this.getControlWithValue(f,
-      obj ? obj[f.getName()] : undefined)));
+    parentFormField.getSubFields().forEach(f => formGroup.addControl(f.getName()!, this.getControlWithValue(f,
+      obj ? obj[f.getName()!] : undefined)));
     return formGroup;
   }
 }

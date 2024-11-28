@@ -5,8 +5,8 @@ import {SendDataDialogResult} from './send-data-dialog-result';
 import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {FormControlFactory, FormField, SubFormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
-import {FormGroupComponentInput} from '../../resource-form/form-group/form-group-component-input';
+import {CustomizableComponentType} from '../../customizable';
+import {FormGroupComponentInput} from '../../resource-form';
 import {CustomizableComponent} from '../../customizable';
 import {MatAnchor, MatButton} from '@angular/material/button';
 import {NgIf} from '@angular/common';
@@ -34,7 +34,7 @@ export class SendDataDialogComponent {
 
   constructor(private dialogRef: MatDialogRef<SendDataDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: SendDataDialogData) {
     if (data.descriptor) {
-      this.title = data.descriptor.getTitle();
+      this.title = data.descriptor.getTitle()!;
       this.fields = (data.descriptor.toFormFieldBuilder().build() as SubFormField).getSubFields();
     } else {
       this.title = '';

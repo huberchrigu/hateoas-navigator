@@ -1,5 +1,5 @@
 export {ResourceFormComponent} from './resource-form.component';
-export {FieldComponentInput} from './field-component-input';
+export type {FieldComponentInput} from './field-component-input';
 export * from './input-field';
 export * from './association-field';
 export * from './checkbox-field';

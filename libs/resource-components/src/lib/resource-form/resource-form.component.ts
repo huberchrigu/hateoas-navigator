@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Data, Router, RouterLink} from '@angular/router';
 import {FormField} from 'hateoas-navigator';
 import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {ResourceService} from 'hateoas-navigator';
@@ -9,8 +9,8 @@ import {FormControlFactory} from 'hateoas-navigator';
 import {GenericPropertyDescriptor} from 'hateoas-navigator';
 import {SubFormField} from 'hateoas-navigator';
 import {Subscription} from 'rxjs';
-import {CustomizableComponentType} from '../customizable/custom-component-configuration';
-import {FormGroupComponentInput} from './form-group/form-group-component-input';
+import {CustomizableComponentType} from '../customizable';
+import {FormGroupComponentInput} from './form-group';
 import {CustomizableComponent} from '../customizable';
 import {MatAnchor, MatButton} from '@angular/material/button';
 import {NgIf} from '@angular/common';
@@ -28,17 +28,17 @@ import {NgIf} from '@angular/common';
   styleUrls: ['./resource-form.component.sass']
 })
 export class ResourceFormComponent implements OnInit {
-  fields: FormField[];
-  title: string;
-  form: UntypedFormGroup;
-  private newItem: boolean;
-  private version: string;
+  fields!: FormField[];
+  title: string | undefined;
+  form!: UntypedFormGroup;
+  private newItem!: boolean;
+  private version!: string;
 
   constructor(private route: ActivatedRoute, private router: Router, private halDocumentService: ResourceService) {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: RouteData) => {
+    this.route.data.subscribe((data: Data | RouteData) => {
       const resourceObject = data.resourceObject;
       const descriptor = resourceObject ? resourceObject.getDescriptor() : data.resourceDescriptor;
       this.fields = (descriptor.toFormFieldBuilder().build() as SubFormField).getSubFields();
@@ -54,10 +54,10 @@ export class ResourceFormComponent implements OnInit {
 
   onSubmit(): Subscription {
     const submitFunction = this.newItem ?
-      (resourceName, object) => this.halDocumentService.create(resourceName, object) :
-      (resourceName, object) => this.halDocumentService.update(resourceName, this.route.snapshot.url[1].path, object, this.version);
+      (resourceName: string, object: any) => this.halDocumentService.create(resourceName, object) :
+      (resourceName: string, object: any) => this.halDocumentService.update(resourceName, this.route.snapshot.url[1].path, object, this.version);
     return submitFunction(this.route.snapshot.url[0].path, this.form.value).subscribe((item: VersionedResourceObjectProperty) => {
-      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue(), undefined).toRelativeLink().getUri());
+      return this.router.navigateByUrl(ResourceLink.fromResourceObject(item.getValue()!, undefined).toRelativeLink().getUri());
     });
   }
 
@@ -70,7 +70,7 @@ export class ResourceFormComponent implements OnInit {
   }
 }
 
-interface RouteData {
+interface RouteData extends Data {
   resourceObject: VersionedResourceObjectProperty;
   resourceDescriptor: GenericPropertyDescriptor;
 }

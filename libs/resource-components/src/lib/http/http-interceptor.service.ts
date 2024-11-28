@@ -3,7 +3,7 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {MessageService} from '../message-dialog/message.service';
-import {LoginService} from '../navigation/login/login.service';
+import {LoginService} from '../navigation';
 import {GetCollectionFallback} from 'hateoas-navigator';
 
 /**

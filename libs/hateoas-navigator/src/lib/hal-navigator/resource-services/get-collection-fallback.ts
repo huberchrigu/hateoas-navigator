@@ -1,8 +1,8 @@
 import {HttpHeaders, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
-import {CollectionAdapter} from '../collection/collection-adapter';
+import {CollectionAdapter} from '../collection';
 import {CurrentUserProvider} from './current-user-provider';
-import {ModuleConfiguration, PropertyConfig} from '../config/module-configuration';
+import {ModuleConfiguration, PropertyConfig} from '../config';
 
 /**
  * Allows fetching another endpoint if the user has no permission to get all items of a resource.
@@ -12,7 +12,7 @@ export class GetCollectionFallback {
   private static USER_ID_PLACEHOLDER = '{userId}';
   private static IGNORE_ERRORS_HEADER = 'X-Ignore-Errors';
 
-  private readonly itemConfig: PropertyConfig;
+  private readonly itemConfig!: PropertyConfig;
 
   constructor(private resourceName: string, config: ModuleConfiguration,
               private retryRequest: (uri: string) => Observable<CollectionAdapter>,
@@ -38,7 +38,7 @@ export class GetCollectionFallback {
    */
   handleError(response: HttpResponse<any>): Observable<CollectionAdapter> {
     const code = response.status;
-    let searchUri: string;
+    let searchUri: string | undefined;
     if (this.itemConfig) {
       switch (code) {
         case 401:

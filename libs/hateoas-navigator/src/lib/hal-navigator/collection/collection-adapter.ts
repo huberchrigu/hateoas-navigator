@@ -1,8 +1,8 @@
 import {Observable} from 'rxjs';
 import {ResourceObjectDescriptor} from '../descriptor';
 import {HalResourceFactory} from '../hal-resource/factory/hal-resource-factory';
-import {ResourceObjectProperty} from '../hal-resource/resource-object-property';
-import {ResourceService} from '../resource-services/resource.service';
+import {ResourceObjectProperty} from '../hal-resource';
+import {ResourceService} from '../resource-services';
 import {map} from 'rxjs/operators';
 
 export class CollectionAdapter {
@@ -18,7 +18,7 @@ export class CollectionAdapter {
   }
 
   resolve(): Observable<CollectionAdapter> {
-    return this.factory.resolveDescriptor(this.resourceObject.getName(), this.resourceObject.getValue()).pipe(
+    return this.factory.resolveDescriptor(this.resourceObject.getName(), this.resourceObject.getValue()!).pipe(
       map(resource => new CollectionAdapter(this.factory, resource))
     );
   }
@@ -28,7 +28,7 @@ export class CollectionAdapter {
   }
 
   getDescriptor(): ResourceObjectDescriptor {
-    return this.resourceObject.getDescriptor();
+    return this.resourceObject.getDescriptor()!;
   }
 
   getItems(): Array<ResourceObjectProperty> {
@@ -36,7 +36,7 @@ export class CollectionAdapter {
   }
 
   getPropertyNames(): Array<string> {
-    const properties = [];
+    const properties: any[] = [];
     this.getItems().forEach(item => {
       for (const property of CollectionAdapter.getNamesOfItem(item)) {
         if (properties.indexOf(property) < 0) {
@@ -47,7 +47,7 @@ export class CollectionAdapter {
     return properties;
   }
 
-    getSearchUrls(resourceService: ResourceService) {
+  getSearchUrls(resourceService: ResourceService) {
     return resourceService.getItem(this.resourceObject.getName(), 'search').pipe(map(obj => obj.getOtherLinks()));
   }
 

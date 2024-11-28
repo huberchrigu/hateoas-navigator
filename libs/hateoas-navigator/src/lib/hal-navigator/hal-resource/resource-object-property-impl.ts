@@ -1,14 +1,14 @@
 import {ResourceObjectDescriptor} from '../descriptor';
 import {LinkFactory} from '../link-object/link-factory';
-import {HalResourceObject, HalValueType} from './value-type/hal-value-type';
-import {JsonObjectProperty} from '../json-property/object/object-property';
-import {ResourceLink} from '../link-object/resource-link';
+import {HalObject, HalResourceObject, HalValueType} from './value-type';
+import {JsonObjectProperty} from '../json-property';
+import {ResourceLink} from '../link-object';
 import {ObjectPropertyImpl} from '../json-property/object/object-property-impl';
 import {ResourceObjectProperty} from './resource-object-property';
 import {PropertyFactory} from '../json-property/factory/property-factory';
 import {NotNull} from '../../decorators/not-null';
 import {HalResourceFactory} from './factory/hal-resource-factory';
-import {HalProperty} from '../json-property/hal/hal-property';
+import {HalProperty} from '../json-property';
 import {ResourceObjectFactory} from './resource-object-factory';
 
 /**
@@ -25,11 +25,11 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
 
   private resourceFactory: ResourceObjectFactory;
 
-  constructor(name: string, resourceObject: HalResourceObject, propertyFactory: PropertyFactory<HalValueType>,
+  constructor(name: string, resourceObject: HalResourceObject | null, propertyFactory: PropertyFactory<HalValueType>,
               resourceFactory: HalResourceFactory,
-              private linkFactory: LinkFactory, descriptor: ResourceObjectDescriptor = null) {
+              private linkFactory: LinkFactory, descriptor: ResourceObjectDescriptor | null = null) {
     super(name, resourceObject, descriptor, propertyFactory);
-    this.resourceFactory = new ResourceObjectFactory(resourceFactory, this.getDescriptorIfAny());
+    this.resourceFactory = new ResourceObjectFactory(resourceFactory, this.getDescriptorIfAny()!);
   }
 
   getLinks(): ResourceLink[] {
@@ -40,7 +40,7 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
    * @return An empty array, if the resource object has no _embedded object or if the _embedded object has the right key with empty value.
    */
   getEmbeddedResources(linkRelationType: string, useMainDescriptor: boolean): ResourceObjectProperty[] {
-    if (!this.getValue()._embedded) {
+    if (!this.getValue()!['_embedded']) {
       return [];
     }
     const embedded = this.getEmbedded(linkRelationType);
@@ -52,21 +52,21 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
     }
   }
 
-  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty {
+  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty | null {
     const resource = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resource)) {
       return null;
     }
     return resource ?
-      this.resourceFactory.createResourceObjectProperty(linkRelationType, resource, false) :
+      this.resourceFactory.createResourceObjectProperty(linkRelationType, resource as HalResourceObject, false) :
       undefined;
   }
 
-  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[] {
+  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[] | undefined {
     const resources = this.getEmbeddedNullSafe(linkRelationType);
     if (Array.isArray(resources)) {
       return resources.map(resource =>
-        this.resourceFactory.createResourceObjectProperty(linkRelationType, resource, false));
+        this.resourceFactory.createResourceObjectProperty(linkRelationType, resource as HalResourceObject, false));
     }
     return undefined;
   }
@@ -76,7 +76,7 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
    *
    * @throws Error if there is no {@link getSelfLink self link}.
    */
-  getFormValue(): string {
+  override getFormValue(): string {
     const link = this.linkFactory.getLink(LinkFactory.SELF_RELATION_TYPE);
     if (!link) {
       throw new Error(`Cannot get form value for resource object  ${this.getName()} -> self link is required?`);
@@ -103,14 +103,14 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
   /**
    * Overrides {@link ObjectPropertyImpl}'s implementation to also return the embedded resource objects.
    */
-  getChildProperties(): HalProperty[] {
+  override getChildProperties(): HalProperty[] {
     const stateKeys = this.getStateKeys();
 
-    const embedded = this.getValue()._embedded;
+    const embedded = this.getEmbeddedObject();
     const embeddedKeys = embedded ? Object.keys(embedded) : [];
 
-    return stateKeys.map(k => this.getPropertyFactory().create(k, this.getValue()[k])).concat(
-      embeddedKeys.map(k => this.getPropertyFactory().createEmbedded(k, embedded[k]))
+    return stateKeys.map(k => this.getPropertyFactory().create(k, this.getValue()![k])).concat(
+      embeddedKeys.map(k => this.getPropertyFactory().createEmbedded(k, embedded![k]))
     );
   }
 
@@ -119,11 +119,11 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
    *
    * @return `null` if this resource object contains no child property (but may still have a child descriptor)
    */
-  getChildProperty(propertyName: string): HalProperty {
+  override getChildProperty(propertyName: string): HalProperty | null {
     if (this.getStateKeys().some(k => k === propertyName)) {
       return super.getChildProperty(propertyName);
     }
-    const embedded = this.getValue()._embedded;
+    const embedded = this.getEmbeddedObject();
     if (embedded && embedded[propertyName]) {
       return this.getPropertyFactory().create(propertyName, embedded[propertyName]);
     }
@@ -131,29 +131,33 @@ export class ResourceObjectPropertyImpl extends ObjectPropertyImpl<HalValueType,
   }
 
   toRawObjectState(): JsonObjectProperty {
-    const obj = {};
-    Object.keys(this.getValue()).filter(k => this.filterOutMetadata(k)).forEach(k => obj[k] = this.getValue()[k]);
-    return new ObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny(), this.getPropertyFactory());
+    const obj: { [key: string]: any } = {};
+    Object.keys(this.getValue()!).filter(k => this.filterOutMetadata(k)).forEach(k => obj[k] = this.getValue()![k]);
+    return new ObjectPropertyImpl(this.getName(), obj, this.getDescriptorIfAny()!, this.getPropertyFactory());
   }
 
-  getDisplayValue(): string | number {
+  override getDisplayValue(): number | null | string {
     return this.toRawObjectState().getDisplayValue();
   }
 
   private getEmbeddedNullSafe(linkRelationType: string) {
-    return this.getValue()._embedded ? this.getValue()._embedded[linkRelationType] : undefined;
+    return this.getEmbeddedObject() ? this.getEmbeddedObject()[linkRelationType] : undefined;
   }
 
   private getStateKeys() {
-    return Object.keys(this.getValue()).filter(key => this.filterOutMetadata(key));
+    return Object.keys(this.getValue()!).filter(key => this.filterOutMetadata(key));
   }
 
   /**
    * @throws an error if embedded resource does not exist.
    */
   @NotNull((obj, args) => `Embedded object ${args[0]} does not exist.`)
-  private getEmbedded(linkRelationType: string): HalResourceObject | HalResourceObject[] {
-    return this.getValue()._embedded[linkRelationType];
+  private getEmbedded(linkRelationType: string): HalResourceObject | HalResourceObject[] | undefined | null {
+    return this.getEmbeddedObject()[linkRelationType] as HalResourceObject | HalResourceObject[];
+  }
+
+  private getEmbeddedObject() {
+    return this.getValue()!['_embedded'] as HalObject;
   }
 
   private filterOutMetadata(key: string): boolean {

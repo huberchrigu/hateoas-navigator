@@ -8,19 +8,19 @@ import {FieldProcessor} from './field-processor';
  * A resource descriptor might know only links OR actions.
  */
 export class ResourceDescriptorImpl extends ObjectDescriptorImpl implements ResourceObjectDescriptor {
-    constructor(name: string, title: string, children: GenericPropertyDescriptor[], private actions: ResourceActions,
-                private linkFunction: (uri: string) => ResourceObjectDescriptor, fieldProcessor: FieldProcessor) {
-        super(name, title, children, fieldProcessor);
-        if (!linkFunction && !actions) {
-            throw new Error('Not a valid resource');
-        }
+  constructor(name: string | undefined, title: string | undefined, children: GenericPropertyDescriptor[], private actions: ResourceActions | undefined,
+              private linkFunction: (uri: string) => ResourceObjectDescriptor, fieldProcessor: FieldProcessor) {
+    super(name, title, children, fieldProcessor);
+    if (!linkFunction && !actions) {
+      throw new Error('Not a valid resource');
     }
+  }
 
-    getActions(): ResourceActions {
-        return this.actions;
-    }
+  getActions(): ResourceActions {
+    return this.actions!;
+  }
 
-    getDescriptorForLink(uri: string): ResourceObjectDescriptor {
-        return this.linkFunction ? this.linkFunction(uri) : undefined;
-    }
+  getDescriptorForLink(uri: string): ResourceObjectDescriptor | undefined {
+    return this.linkFunction ? this.linkFunction(uri) : undefined;
+  }
 }

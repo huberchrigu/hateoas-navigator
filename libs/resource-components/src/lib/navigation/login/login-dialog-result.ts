@@ -1,5 +1,5 @@
 export class LoginDialogResult {
-  constructor(public loginData: LoginData) {
+  constructor(public loginData: LoginData | null) {
   }
 
   isCancelled() {

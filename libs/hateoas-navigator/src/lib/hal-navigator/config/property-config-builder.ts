@@ -9,9 +9,9 @@ export class PropertyConfigBuilder {
   queries: { [queryName: string]: QueryConfig } = {};
   actionLinks: { [actionName: string]: PropertyConfig } = {};
 
-  private title: string;
+  private title!: string;
   private custom: PropertyConfig = {};
-  private items: PropertyConfig;
+  private items!: PropertyConfig;
 
   withProperty(propertyName: string, config: PropertyConfig): PropertyConfigBuilder {
     this.properties[propertyName] = config;

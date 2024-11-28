@@ -1,7 +1,7 @@
-import {GenericArrayValueType, JsonValueType} from '../value-type/json-value-type';
+import {GenericArrayValueType, JsonValueType} from '../value-type';
 import {AbstractProperty} from '../abstract-property';
 import {PropertyFactory} from '../factory/property-factory';
-import {ArrayDescriptor, GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
+import {ArrayDescriptor, GenericPropertyDescriptor} from '../../descriptor';
 import {GenericProperty} from '../generic-property';
 import {ArrayProperty} from './array-property';
 
@@ -26,10 +26,10 @@ export class ArrayPropertyImpl<CHILDREN extends JsonValueType>
   }
 
   getArrayItems(): GenericProperty<CHILDREN, GenericPropertyDescriptor>[] {
-    return this.getValue().map(item => this.propertyFactory.create(this.getName(), item));
+    return this.getValue()!.map(item => this.propertyFactory.create(this.getName(), item));
   }
 
-  getDisplayValue(): string | number {
+  getDisplayValue(): number | null | string {
     const arrayItems = this.getArrayItems();
     if (arrayItems.length === 0) {
       return '';

@@ -13,7 +13,7 @@ export class InputPropertyInjector {
 
   private getAllInputProperties(): string[] {
     const componentType = this.component.componentType as { [field: string]: any };
-    const propDecorators = componentType.propDecorators as { [property: string]: PropDecorator[] };
+    const propDecorators = componentType['propDecorators'] as { [property: string]: PropDecorator[] };
     const properties = propDecorators ? Object.keys(propDecorators) : [];
     return properties
       .filter(property => propDecorators[property]

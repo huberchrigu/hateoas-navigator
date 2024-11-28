@@ -3,8 +3,8 @@ import {AbstractControl, UntypedFormArray} from '@angular/forms';
 import {ArrayField, FormControlFactory, FormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {FormListComponentInput} from './form-list-component-input';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
-import {FormFieldComponentInput} from '../form-field/form-field.component';
+import {CustomizableComponentType} from '../../customizable';
+import {FormFieldComponentInput} from '../form-field';
 import {MatToolbar} from '@angular/material/toolbar';
 import {CustomizableComponent} from '../../customizable';
 import {MatButton} from '@angular/material/button';
@@ -25,10 +25,10 @@ export class FormListComponent implements FormListComponentInput {
   private formControlFactory = new FormControlFactory();
 
   @Input()
-  control: UntypedFormArray;
+  control!: UntypedFormArray;
 
   @Input()
-  field: ArrayField;
+  field!: ArrayField;
 
   onRemove(control: AbstractControl) {
     const index = this.control.controls.indexOf(control);

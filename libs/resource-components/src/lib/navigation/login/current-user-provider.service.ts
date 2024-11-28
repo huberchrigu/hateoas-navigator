@@ -12,6 +12,6 @@ export class CurrentUserProviderService extends CurrentUserProvider {
   }
 
   getUserId(): string {
-    return this.loginService.getUserId();
+    return this.loginService.getUserId()!;
   }
 }

@@ -2,24 +2,24 @@ import {from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 class ProxyFactory<T> {
-  private cache = {};
+  private cache: { [key: string]: any } = {};
 
   private static getKey(args: any[]) {
     return JSON.stringify(args);
   }
 
-  constructor(private proxyTarget: (...args) => Observable<T>) {
+  constructor(private proxyTarget: ((...args: any) => any) | undefined) {
   }
 
-  getProxy(): (...args) => Observable<T> {
+  getProxy(): (...args: any) => Observable<T> {
     const self = this;
-    return function(...args) {
+    return (...args) => {
       const key = ProxyFactory.getKey(args);
       const value = self.cache[key];
       if (value) {
         return from([value]);
       } else {
-        const observable = self.proxyTarget.apply(this, args);
+        const observable = self.proxyTarget!.apply(this, args);
         return observable.pipe(map(newValue => {
           if (newValue) {
             self.cache[key] = newValue;
@@ -32,11 +32,11 @@ class ProxyFactory<T> {
 }
 
 export function Cacheable(): MethodDecorator {
-  return cacheableFunction as (...args) => any;
-
-  function cacheableFunction(target: object, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args) => any>) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const proxyTarget = descriptor.value;
-    descriptor.value = new ProxyFactory(proxyTarget).getProxy();
+    descriptor.value = function (...args: any[]) {
+      return new ProxyFactory(proxyTarget).getProxy().apply(this, args);
+    };
     return descriptor;
-  }
+  };
 }

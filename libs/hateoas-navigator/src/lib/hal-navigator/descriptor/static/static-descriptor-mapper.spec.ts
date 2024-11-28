@@ -6,11 +6,11 @@ import {ObjectDescriptor} from '../generic-property-descriptor';
 describe('StaticDescriptorMapper', () => {
   it('should return time option', () => {
     const testee = new StaticDescriptorMapper('test', {
-      properties: {
-        child: {
-          dateTimeType: DateTimeType.TIME
-        } as PropertyConfig
-      }
+        properties: {
+            child: {
+                dateTimeType: DateTimeType.TIME
+            } as PropertyConfig
+        }
     } as PropertyConfig, {}).toDescriptor() as ObjectDescriptor;
 
     const child = testee.getChildDescriptor('child').toFormFieldBuilder().build() as DatePickerField;

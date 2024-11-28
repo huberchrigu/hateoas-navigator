@@ -7,5 +7,5 @@ export interface ResourceObjectDescriptor extends ObjectDescriptor {
   /**
    * For a given resource /resource/xyz, it returns the descriptor for a link /resource/xyz/action.
    */
-  getDescriptorForLink(uri: string): ResourceObjectDescriptor;
+  getDescriptorForLink(uri: string): ResourceObjectDescriptor | undefined;
 }

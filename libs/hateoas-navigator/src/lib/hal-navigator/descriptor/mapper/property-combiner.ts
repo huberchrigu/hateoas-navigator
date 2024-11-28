@@ -3,7 +3,7 @@ export class PropertyCombiner<T> {
 
   }
 
-  getFirst<K extends keyof T>(fieldName: K): T[K] {
+  getFirst<K extends keyof T>(fieldName: K): T[K] | undefined {
     return this.priorityList.map(value => value[fieldName]).find(value => value !== undefined);
   }
 
@@ -15,19 +15,19 @@ export class PropertyCombiner<T> {
    * Currently null values are filtered out as well, and if no value left, undefined is returned.
    * Actually null is not undefined and should be treated differently. But yet it is easier for testing.
    */
-  map<K extends keyof T, R>(fieldName: K, mapFunc: (parent: T, value: T[K]) => R): Array<R> {
+  map<K extends keyof T, R>(fieldName: K, mapFunc: (parent: T, value: T[K]) => R): Array<R> | undefined {
     const array = this.priorityList.map(value => {
       const field = value[fieldName];
       return field ? mapFunc(value, field) : undefined;
     }).filter(value => value);
     if (array.length > 0) {
-      return array;
+      return array as Array<R>;
     } else {
       return undefined;
     }
   }
 
-  reduce<K extends keyof T, U>(fieldName: K, reduceFunc: (previous: U, current: T[K]) => U, reduceInitial: U): U {
+  reduce<K extends keyof T, U>(fieldName: K, reduceFunc: (previous: U, current: T[K]) => U, reduceInitial: U): U | undefined {
     const mapped = this.map(fieldName, (parent, value) => value);
     return mapped ? mapped.reduce((previous, current) => reduceFunc(previous, current), reduceInitial) : undefined;
   }
@@ -43,7 +43,7 @@ export class PropertyCombiner<T> {
    * if it is the only inner array element
    * with the given key.
    */
-  groupValuesBy<R>(valueFunction: (T) => Array<R>, keyFunction: (value: R) => string, ignoreNewKeysFor: (T) => boolean): Array<Array<R>> {
+  groupValuesBy<R>(valueFunction: (item: T) => Array<R> | undefined, keyFunction: (value: R) => string, ignoreNewKeysFor: (element: T) => boolean): Array<Array<R>> | undefined {
     const values: Array<Array<R>> = this.priorityList
       .filter(value => !ignoreNewKeysFor(value))
       .map(value => valueFunction(value) as Array<R>)
@@ -51,7 +51,7 @@ export class PropertyCombiner<T> {
     if (values.some(v => v.length > 0)) {
       const regroupedByKey = this.regroupBy<R>(values, keyFunction);
       this.priorityList.filter(value => ignoreNewKeysFor(value))
-        .map(value => valueFunction(value))
+        .map(value => valueFunction(value) as Array<R>)
         .filter(value => value)
         .reduce((previous, current) => previous.concat(current), [])
         .forEach(ignoredValue => {
@@ -66,7 +66,7 @@ export class PropertyCombiner<T> {
     }
   }
 
-  private regroupBy<TYPE>(values: Array<Array<TYPE>>, keyFunction: (TYPE) => string): { [key: string]: Array<TYPE> } {
+  private regroupBy<TYPE>(values: Array<Array<TYPE>>, keyFunction: (arg0: TYPE) => string): { [key: string]: Array<TYPE> } {
     const map: { [key: string]: Array<TYPE> } = {};
     values.forEach(innerValues => innerValues.forEach(value => {
       const key = keyFunction(value);

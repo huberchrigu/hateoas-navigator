@@ -8,7 +8,7 @@ export interface GenericProperty<V, D extends GenericPropertyDescriptor> {
   /**
    * The value in a form that can be used in a view.
    */
-  getDisplayValue(): string | number;
+  getDisplayValue(): number | null | string;
 
   /**
    * The value as {@link JsonValueType native JSON type} that can be used as form value.
@@ -26,7 +26,7 @@ export interface GenericProperty<V, D extends GenericPropertyDescriptor> {
   /**
    * The original raw value.
    */
-  getValue(): V;
+  getValue(): V | null;
 
   /**
    * The property has a {@link GenericPropertyDescriptor descriptor} if it was resolved and found.

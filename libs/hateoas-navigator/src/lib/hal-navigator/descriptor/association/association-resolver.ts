@@ -2,7 +2,7 @@ import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provid
 import {combineLatest, forkJoin, Observable, of} from 'rxjs';
 import {ArrayDescriptor, AssociationDescriptor, ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import {map, flatMap, tap} from 'rxjs/operators';
-import {LOGGER} from '../../../logging/logger';
+import {LOGGER} from '../../../logging';
 import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
 /**
@@ -40,7 +40,7 @@ export class AssociationResolver {
     const arrayItems = descriptor.orNull<ArrayDescriptor, 'getItemsDescriptor'>(d => d.getItemsDescriptor);
 
     const resolvedChildren: Observable<GenericPropertyDescriptor[]> = children.length > 0 ? this.resolveAll(children) : of([]);
-    const resolvedArrayItem: Observable<GenericPropertyDescriptor> = arrayItems ?
+    const resolvedArrayItem: Observable<GenericPropertyDescriptor | null> = arrayItems ?
       this.resolveAssociations(arrayItems) :
       of(null);
 
@@ -48,7 +48,7 @@ export class AssociationResolver {
       .pipe(map(() => descriptor));
   }
 
-  private resolveAssociation(descriptor: GenericPropertyDescriptor): Observable<ResourceObjectDescriptor> {
+  private resolveAssociation(descriptor: GenericPropertyDescriptor): Observable<ResourceObjectDescriptor | null> {
     const associatedResourceName = descriptor.orNull<AssociationDescriptor, 'getAssociatedResourceName'>(d =>
       d.getAssociatedResourceName);
     return associatedResourceName ? this.fetchDescriptorWithAssociations(associatedResourceName)

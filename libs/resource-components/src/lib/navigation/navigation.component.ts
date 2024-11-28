@@ -23,7 +23,7 @@ import {NgForOf, NgIf} from '@angular/common';
   styleUrls: ['./navigation.component.sass']
 })
 export class NavigationComponent implements OnInit {
-  items: Array<NavigationItem>;
+  items!: Array<NavigationItem>;
 
   @Input()
   enableLogin = false;

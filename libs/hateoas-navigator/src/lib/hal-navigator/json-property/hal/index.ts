@@ -1,1 +1,1 @@
-export {HalProperty} from './hal-property';
+export type {HalProperty} from './hal-property';

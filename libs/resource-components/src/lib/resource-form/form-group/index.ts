@@ -1,1 +1,1 @@
-export {FormGroupComponentInput} from './form-group-component-input';
+export type {FormGroupComponentInput} from './form-group-component-input';

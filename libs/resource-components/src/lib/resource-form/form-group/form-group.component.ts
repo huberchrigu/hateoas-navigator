@@ -3,8 +3,8 @@ import {FormField} from 'hateoas-navigator';
 import {ReactiveFormsModule, UntypedFormGroup} from '@angular/forms';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {FormGroupComponentInput} from './form-group-component-input';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
-import {FormFieldComponentInput} from '../form-field/form-field.component';
+import {CustomizableComponentType} from '../../customizable';
+import {FormFieldComponentInput} from '../form-field';
 import {CustomizableComponent} from '../../customizable';
 import {NgForOf} from '@angular/common';
 
@@ -19,10 +19,10 @@ import {NgForOf} from '@angular/common';
 })
 export class FormGroupComponent implements OnInit, FormGroupComponentInput {
   @Input()
-  fields: FormField[];
+  fields!: FormField[];
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup!: UntypedFormGroup;
 
   ngOnInit(): void {
     if (!this.formGroup.controls) {
@@ -35,7 +35,7 @@ export class FormGroupComponent implements OnInit, FormGroupComponentInput {
   }
 
   getFormFieldInput(field: FormField): FormFieldComponentInput {
-    const control = this.formGroup.get(field.getName());
+    const control = this.formGroup.get(field.getName()!)!;
     return {control, field};
   }
 }

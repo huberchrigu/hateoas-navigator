@@ -14,7 +14,7 @@ export class AlpsDocumentAdapter {
    */
   getRepresentationDescriptor(): AlpsDescriptorAdapter {
     const representation = this.getDescriptors().find(d => d.id.endsWith(AlpsDocumentAdapter.REPRESENTATION_POSTFIX));
-    return new AlpsDescriptorAdapter(representation);
+    return new AlpsDescriptorAdapter(representation!);
   }
 
   getAllDescriptors() {

@@ -1,4 +1,4 @@
-import {LOGGER} from '../../logging/logger';
+import {LOGGER} from '../../logging';
 import {FormFieldType} from './form-field-type';
 import {DateTimeType, FormFieldSupport} from '../config';
 import {FormField} from './form-field';
@@ -19,20 +19,20 @@ export class FormFieldBuilder {
   private static readonly ONE_VALUE_FIELDS = ['type', 'required', 'readOnly', 'title',
     'options', 'dateTimeType', 'linkedResource'];
 
-  private type: FormFieldType;
-  private required: boolean;
-  private readOnly: boolean;
-  private title: string;
-  private arraySpecProviders: Array<() => FormFieldBuilder>;
-  private subFields: FormFieldBuilder[];
-  private options: any[];
-  private dateTimeType: DateTimeType;
-  private linkedResource: string;
+  private type: FormFieldType | undefined;
+  private required: boolean | undefined;
+  private readOnly: boolean | undefined;
+  private title: string | undefined;
+  private arraySpecProviders: Array<() => FormFieldBuilder> | undefined;
+  private subFields: FormFieldBuilder[] | undefined;
+  private options: any[] | undefined;
+  private dateTimeType: DateTimeType | undefined;
+  private linkedResource: string | undefined;
 
   constructor(private name?: string) {
   }
 
-  withType(type: FormFieldType) {
+  withType(type: FormFieldType | undefined) {
     this.type = type;
     return this;
   }
@@ -42,12 +42,12 @@ export class FormFieldBuilder {
     return this;
   }
 
-  withReadOnly(readOnly: boolean) {
+  withReadOnly(readOnly: boolean | undefined) {
     this.readOnly = readOnly;
     return this;
   }
 
-  withTitle(title: string) {
+  withTitle(title: string | undefined) {
     this.title = title;
     return this;
   }
@@ -67,17 +67,17 @@ export class FormFieldBuilder {
     return this;
   }
 
-  withOptions(options: any[]) {
+  withOptions(options: any[] | undefined) {
     this.options = options;
     return this;
   }
 
-  withDateTimeType(dateTimeType: DateTimeType) {
+  withDateTimeType(dateTimeType: DateTimeType | undefined) {
     this.dateTimeType = dateTimeType;
     return this;
   }
 
-  withLinkedResource(resourceName: string) {
+  withLinkedResource(resourceName: string | undefined) {
     this.linkedResource = resourceName;
     return this;
   }
@@ -85,7 +85,7 @@ export class FormFieldBuilder {
   /**
    * @return null if the type or name is null.
    */
-  build(): FormField {
+  build(): FormField | null {
     const type = this.type ? this.type : this.guessType();
     if (!type) {
       LOGGER.warn('Form field ' + this.name + ' will be skipped since its type is missing');
@@ -95,10 +95,10 @@ export class FormFieldBuilder {
     if (type === FormFieldType.SUB_FORM) {
       this.assertEmptyAttributes(type, this.dateTimeType, this.options, this.linkedResource);
       formField = new SubFormField(this.name, this.required, this.readOnly, this.title,
-        this.subFields ? this.subFields.map(sf => sf.build()).filter(f => f) : []);
+        this.subFields ? this.subFields.map(sf => sf.build()).filter(f => f) as FormField[] : []);
     } else if (type === FormFieldType.ARRAY) {
       // as an array might contain the same definition as its spec, ignore other attributes
-      formField = new ArrayField(this.name, this.required, this.readOnly, this.title, this.evaluateArraySpec().build());
+      formField = new ArrayField(this.name, this.required, this.readOnly, this.title, this.evaluateArraySpec().build()!);
     } else if (type === FormFieldType.DATE_PICKER) {
       this.assertEmptyAttributes(type, this.subFields, this.options, this.linkedResource);
       formField = new DatePickerField(this.name, this.required, this.readOnly, this.title, this.dateTimeType);
@@ -119,6 +119,7 @@ export class FormFieldBuilder {
     if (!this.name) {
       this.name = other.name;
     }
+    // @ts-ignore
     this.setIfEmpty(other, FormFieldBuilder.ONE_VALUE_FIELDS);
     this.combineArraySpec(other.arraySpecProviders);
     this.combineSubFields(other.subFields);
@@ -129,7 +130,7 @@ export class FormFieldBuilder {
    *
    * @param config May be <code>null</code>.
    */
-  fromConfig(config: FormFieldSupport) {
+  fromConfig(config: FormFieldSupport | null) {
     if (config) {
       return this.setIfDefined(config.dateTimeType, v => this.withDateTimeType(v))
         .setIfDefined(config.enumOptions, v => this.withOptions(v))
@@ -139,7 +140,7 @@ export class FormFieldBuilder {
     return this;
   }
 
-  private guessType(): FormFieldType {
+  private guessType(): FormFieldType | null {
     if (this.subFields) {
       return FormFieldType.SUB_FORM;
     } else if (this.dateTimeType) {
@@ -158,18 +159,19 @@ export class FormFieldBuilder {
     }
   }
 
-  private setIfEmpty(other: FormFieldBuilder, attributes: string[]) {
+  private setIfEmpty(other: FormFieldBuilder, attributes: (keyof FormFieldBuilder)[]) {
     attributes.forEach(attribute => {
       if (this[attribute] === undefined) {
+        // @ts-ignore
         this[attribute] = other[attribute];
       }
     });
   }
 
   /**
-   * Array specifications should only be resolved when needed. Therefore the providers are collected and evaluated during the build phase.
+   * Array specifications should only be resolved when needed. Therefore, the providers are collected and evaluated during the build phase.
    */
-  private combineArraySpec(others: Array<() => FormFieldBuilder>) {
+  private combineArraySpec(others: Array<() => FormFieldBuilder> | undefined) {
     if (!others) {
       return;
     }
@@ -180,7 +182,7 @@ export class FormFieldBuilder {
     }
   }
 
-  private combineSubFields(other: FormFieldBuilder[]) {
+  private combineSubFields(other: FormFieldBuilder[] | undefined) {
     if (!other) {
       return;
     }
@@ -189,6 +191,7 @@ export class FormFieldBuilder {
       this.groupByName(newSubFields, this.subFields);
     }
     this.groupByName(newSubFields, other);
+    // @ts-ignore
     this.subFields = Object.keys(newSubFields).map(fieldName => newSubFields[fieldName]);
   }
 
@@ -207,6 +210,7 @@ export class FormFieldBuilder {
   }
 
   private evaluateArraySpec() {
+    // @ts-ignore
     return this.arraySpecProviders.reduce((previous, current) => {
       const newSpec = current();
       return newSpec ? previous.combineWith(newSpec) : previous;

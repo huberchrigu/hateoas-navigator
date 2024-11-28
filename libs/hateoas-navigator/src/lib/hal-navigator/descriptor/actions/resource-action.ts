@@ -1,7 +1,7 @@
 import {ActionType} from './action-type';
 
 export class ResourceAction {
-  constructor(private type: ActionType, private enabled) {
+  constructor(private type: ActionType, private enabled: boolean) {
 
   }
 

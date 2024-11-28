@@ -1,6 +1,6 @@
 import {AlpsDescriptor} from '../../alps-document/alps-descriptor';
 import {AlpsDescriptorAdapter} from '../../alps-document/alps-descriptor-adapter';
-import {ResourceActions} from '../actions/resource-actions';
+import {ResourceActions} from '../actions';
 import {ResourceAction} from '../actions/resource-action';
 import {Required, Validate} from '../../../decorators/required';
 import {ActionType} from '../actions/action-type';
@@ -11,9 +11,9 @@ import {DescriptorType} from '../mapper/internal/descriptor-type';
 export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
   private static readonly REPRESENTATION_PREFIX = '-representation';
 
-  private readonly name: string;
+  private readonly name: string | undefined;
 
-  private static guessType(children: Array<AlpsDescriptor>, actions: ResourceActions, associatedResourceName: string): DescriptorType {
+  private static guessType(children: Array<AlpsDescriptor>, actions: ResourceActions, associatedResourceName: string): DescriptorType | undefined {
     if (associatedResourceName) {
       return 'association';
     } else if (children) {
@@ -39,11 +39,11 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
     const actions = this.toActions();
     const associatedResourceName = this.getAssociatedResourceName();
     builder.withName(this.name)
-      .withType(AlpsDescriptorMapper.guessType(children, actions, associatedResourceName))
-      .withActions(actions)
+      .withType(AlpsDescriptorMapper.guessType(children, actions!, associatedResourceName!))
+      .withActions(actions!)
       .withChildren(children)
       .withArrayItems(this.getArrayItems())
-      .withAssociation(associatedResourceName)
+      .withAssociation(associatedResourceName!)
       .withBuilder(alps => new AlpsDescriptorMapper(alps, []));
   }
 
@@ -68,7 +68,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
     return this.alps;
   }
 
-  private getAssociatedResourceName(): string {
+  private getAssociatedResourceName(): string | null {
     if (this.alps.rt) {
       return new AlpsDescriptorAdapter(this.alps).getCollectionResourceName();
     }
@@ -82,7 +82,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
     descriptorIds
       .filter(id => id)
       .forEach(id => {
-        const action = this.toAction(id, resourceName);
+        const action = this.toAction(id, resourceName!);
         if (action) {
           actions.push(action);
         }
@@ -90,7 +90,7 @@ export class AlpsDescriptorMapper extends DescriptorMapper<AlpsDescriptor> {
     return actions.length > 0 ? new ResourceActions(actions) : null;
   }
 
-  @Validate
+  @Validate()
   private toAction(@Required descriptorId: string, resourceName: string) {
     switch (descriptorId) {
       case 'get-' + resourceName:

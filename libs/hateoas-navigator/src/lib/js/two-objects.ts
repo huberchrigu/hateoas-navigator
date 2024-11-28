@@ -11,6 +11,7 @@ export class TwoObjects {
     if (keys1.length !== keys2.length) {
       return false;
     }
+    // @ts-ignore
     return !keys1.some(key => !new TwoAny(this.o1[key], this.o2[key]).areEqual());
   }
 }

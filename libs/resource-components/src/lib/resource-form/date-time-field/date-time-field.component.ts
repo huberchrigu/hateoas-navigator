@@ -27,10 +27,10 @@ import {MatTimepicker, MatTimepickerInput} from '@angular/material/timepicker';
 })
 export class DateTimeFieldComponent implements DateTimeFieldComponentInput {
   @Input()
-  field: DatePickerField;
+  field!: DatePickerField;
 
   @Input()
-  control: UntypedFormControl;
+  control!: UntypedFormControl;
 
   getType(): string {
     switch (this.field.getDateTimeType()) {

@@ -2,19 +2,18 @@ import {catchError, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Inject, Injectable, Optional} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
-import {CollectionAdapter} from '../collection/collection-adapter';
-import {NavigationFactory} from '../navigation/navigation-factory';
-import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
+import {CollectionAdapter} from '../collection';
+import {NavigationFactory} from '../navigation';
+import {HalResourceObject} from '../hal-resource';
 import {Required, Validate} from '../../decorators/required';
 import {ItemCacheService} from '../item/cache/item-cache.service';
 import {MODULE_CONFIG, ModuleConfiguration} from '../config';
-import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {Cacheable} from '../cache/cacheable';
 import {Api} from './api';
 import {HeaderOptions} from '../http/header-options';
-import {ResourceLink} from '../link-object/resource-link';
-import {ResourceObjectPropertyFactoryService} from '../hal-resource/resource-object-property-factory.service';
-import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
+import {ResourceLink} from '../link-object';
+import {ResourceObjectPropertyFactoryService} from '../hal-resource';
+import {VersionedResourceObjectProperty} from '../hal-resource';
 import {CurrentUserProvider} from './current-user-provider';
 import {GetCollectionFallback} from './get-collection-fallback';
 
@@ -24,7 +23,7 @@ import {GetCollectionFallback} from './get-collection-fallback';
 @Injectable()
 export class ResourceService {
 
-  private static getOptions(headers?: HttpHeaders): { headers: HttpHeaders, observe: 'response' } {
+  private static getOptions(headers?: HttpHeaders): { headers: HttpHeaders | undefined, observe: 'response' } {
     return {
       headers,
       observe: 'response'
@@ -33,7 +32,6 @@ export class ResourceService {
 
   constructor(private httpClient: HttpClient, private resourceCacheService: ItemCacheService,
               @Inject(MODULE_CONFIG) private moduleConfig: ModuleConfiguration,
-              private descriptorResolver: ResourceDescriptorProvider,
               private resourceFactory: ResourceObjectPropertyFactoryService,
               @Optional() private currentUserProvider?: CurrentUserProvider) {
   }
@@ -45,14 +43,14 @@ export class ResourceService {
       map(root => new NavigationFactory(root)));
   }
 
-  @Validate
+  @Validate()
   getCollection(@Required resourceName: string): Observable<CollectionAdapter> {
     const fallback = new GetCollectionFallback(resourceName, this.moduleConfig,
       uri => this.getCustomCollection(resourceName, uri), this.currentUserProvider);
     return this.getCustomCollection(resourceName, '/' + resourceName, fallback);
   }
 
-  @Validate
+  @Validate()
   getCustomCollection(@Required resourceName: string, @Required uri: string,
                       fallback?: GetCollectionFallback): Observable<CollectionAdapter> {
     const headers = fallback ? fallback.getFallbackHeaders() : undefined;
@@ -62,37 +60,37 @@ export class ResourceService {
     return fallback ? response.pipe(catchError(r => fallback.handleError(r))) : response;
   }
 
-  @Validate
+  @Validate()
   deleteResource(@Required document: HalResourceObject, version: string): Observable<HttpResponse<void>> {
     const resourceLink = ResourceLink.fromResourceObject(document, undefined).toRelativeLink();
     return this.removeFromBackendAndCache(resourceLink.getUri(), version);
   }
 
-  @Validate
+  @Validate()
   create(@Required resourceName: string, object: any): Observable<VersionedResourceObjectProperty> {
     return this.createAndCache(resourceName, '/' + resourceName, object);
   }
 
-  @Validate
+  @Validate()
   update(@Required resourceName: string, id: string, object: any, version: string): Observable<VersionedResourceObjectProperty> {
     return this.updateItemAndCachedVersion(resourceName, '/' + resourceName + '/' + id, object, version,
       this.moduleConfig.updateMethod === 'PATCH');
   }
 
-  @Validate
+  @Validate()
   getItem(@Required resourceName: string, @Required id: string): Observable<VersionedResourceObjectProperty> {
     return this.getItemFromResourceOrCache(resourceName, `/${resourceName}/${id}`, id);
   }
 
   @Cacheable()
-  @Validate
+  @Validate()
   getOptionsForCustomUri(@Required uri: string): Observable<string[]> {
     return this.httpClient.options(Api.PREFIX + uri, {observe: 'response'}).pipe(
-      map(response => response.headers.get('Allow').split(','))
+      map(response => response.headers.get('Allow')!.split(','))
     );
   }
 
-  @Validate
+  @Validate()
   executeCustomAction(@Required uri: string, @Required actionOn: VersionedResourceObjectProperty, @Required method: string, body: object):
     Observable<VersionedResourceObjectProperty> {
     const version = actionOn.getVersion();
@@ -134,11 +132,11 @@ export class ResourceService {
   }
 
   private getFromApi<T>(resourceUrl: string, headers?: HttpHeaders): Observable<T> {
-    return this.getResponseFromApi<T>(resourceUrl, headers).pipe(map(response => response.body));
+    return this.getResponseFromApi<T>(resourceUrl, headers).pipe(map(response => response.body!));
   }
 
-  @Validate
-  private getResponseFromApi<T>(@Required resourceUrl: string, headers: HttpHeaders): Observable<HttpResponse<T>> {
+  @Validate()
+  private getResponseFromApi<T>(@Required resourceUrl: string, headers?: HttpHeaders): Observable<HttpResponse<T>> {
     return this.httpClient.get<T>(Api.PREFIX + resourceUrl, ResourceService.getOptions(headers));
   }
 

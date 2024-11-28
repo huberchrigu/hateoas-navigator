@@ -1,5 +1,5 @@
 export class SendDataDialogResult {
-  constructor(public method: string, public body: object) {
+  constructor(public method: string | null, public body: object | null) {
 
   }
 

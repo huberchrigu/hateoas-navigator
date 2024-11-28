@@ -1,16 +1,16 @@
-import {ResourceActions} from '../actions/resource-actions';
+import {ResourceActions} from '../actions';
 import {DescriptorMapper} from './descriptor-mapper';
 import {GenericPropertyDescriptor} from '../generic-property-descriptor';
 import {ResourceObjectDescriptor} from '../resource-object-descriptor';
-import {LOGGER} from '../../../logging/logger';
+import {LOGGER} from '../../../logging';
 import {PropertyDescriptorImpl} from './internal/property-descriptor-impl';
 import {ArrayDescriptorImpl} from './internal/array-descriptor-impl';
 import {ObjectDescriptorImpl} from './internal/object-descriptor-impl';
 import {AssociationDescriptorImpl} from './internal/association-descriptor-impl';
 import {ResourceDescriptorImpl} from './internal/resource-descriptor-impl';
 import {DescriptorType} from './internal/descriptor-type';
+import {FormFieldBuilder, FormFieldType} from '../../form';
 import {FieldProcessor} from './internal/field-processor';
-import {FormFieldType} from '../../form';
 
 /**
  * A builder does not only simplify building a new [PropertyDescriptor],
@@ -23,15 +23,15 @@ export class DescriptorBuilder<T> {
    * This is a special flag for association types: White it is an association for GETs (it points to an URI containing
    * a single or an array of resource items), it is an array of associations for POST/PUTs.
    */
-  public isArrayOfAssociations: boolean = undefined;
-  public name: string;
-  public title: string;
-  public actions: ResourceActions;
-  public children: Array<T>;
-  public arrayItems: T;
-  public association: string;
-  public linkFunction: (uri: string) => T;
-  public builderFunction: (value: T) => DescriptorMapper<T>;
+  public isArrayOfAssociations: boolean | undefined = undefined;
+  public name: string | undefined;
+  public title: string | undefined;
+  public actions: ResourceActions | undefined;
+  public children: Array<T> | null | undefined;
+  public arrayItems: T | null | undefined;
+  public association: string | undefined;
+  public linkFunction: ((uri: string) => T | null) | undefined;
+  public builderFunction: ((value: T) => DescriptorMapper<T> | null) | undefined;
   public type?: DescriptorType;
   private logResult = false;
   public fieldProcessor: FieldProcessor = processor => processor;
@@ -46,12 +46,12 @@ export class DescriptorBuilder<T> {
     this.logResult = true;
   }
 
-  withType(type: DescriptorType) {
+  withType(type: DescriptorType | undefined) {
     this.type = type;
     return this;
   }
 
-  withName(name: string) {
+  withName(name: string | undefined) {
     this.name = name;
     return this;
   }
@@ -61,22 +61,22 @@ export class DescriptorBuilder<T> {
     return this;
   }
 
-  withChildren(children: Array<T>) {
+  withChildren(children: Array<T> | null) {
     this.children = children;
     return this;
   }
 
-  withArrayItems(arrayItems: T) {
+  withArrayItems(arrayItems: T | null | undefined) {
     this.arrayItems = arrayItems;
     return this;
   }
 
-  withAssociation(name: string) {
+  withAssociation(name: string | undefined) {
     this.association = name;
     return this;
   }
 
-  withTitle(title: string) {
+  withTitle(title: string | undefined) {
     this.title = title;
     return this;
   }
@@ -86,7 +86,7 @@ export class DescriptorBuilder<T> {
     return this;
   }
 
-  withLinkFunction(linkFunction: (uri: string) => T) {
+  withLinkFunction(linkFunction: ((uri: string) => T | null) | undefined) {
     this.linkFunction = linkFunction;
     return this;
   }
@@ -96,7 +96,7 @@ export class DescriptorBuilder<T> {
     return this;
   }
 
-  withIsArrayOfAssociations(isArrayOfAssociations: boolean) {
+  withIsArrayOfAssociations(isArrayOfAssociations: boolean | undefined) {
     this.isArrayOfAssociations = isArrayOfAssociations;
     return this;
   }
@@ -110,7 +110,7 @@ export class DescriptorBuilder<T> {
   toDescriptor(): GenericPropertyDescriptor {
     let descriptor: GenericPropertyDescriptor;
     if (this.isType('array', !!this.arrayItems)) {
-      descriptor = new ArrayDescriptorImpl(this.name, this.title, this.buildDescriptor(this.arrayItems), this.fieldProcessor);
+      descriptor = new ArrayDescriptorImpl(this.name, this.title, this.buildDescriptor(this.arrayItems!), this.fieldProcessor);
     } else if (this.isType('object', !!this.children) || this.isType('resource')) {
       const children = this.buildDescriptors(this.children);
       if (this.isType('resource') || this.actions || this.linkFunction) {
@@ -121,9 +121,9 @@ export class DescriptorBuilder<T> {
           this.logWarning('The resource descriptor does not provide a link function.');
         }
         descriptor = new ResourceDescriptorImpl(this.name, this.title, children, this.actions,
-          (uri: string) => this.buildDescriptor(this.linkFunction(uri)) as ResourceObjectDescriptor, this.fieldProcessor);
+          (uri: string) => this.buildDescriptor(this.linkFunction!(uri)!) as ResourceObjectDescriptor, this.fieldProcessor!);
       } else {
-        descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor);
+        descriptor = new ObjectDescriptorImpl(this.name, this.title, children, this.fieldProcessor!);
       }
     } else if (this.isType('association', !!this.association)) {
       descriptor = this.getDescriptorForAssociationType();
@@ -131,7 +131,7 @@ export class DescriptorBuilder<T> {
       if (this.type !== 'primitive') {
         this.logWarning('The type "primitive" was auto-guessed. Try to set the type explicitly.');
       }
-      descriptor = new PropertyDescriptorImpl(this.name, this.title, this.fieldProcessor);
+      descriptor = new PropertyDescriptorImpl(this.name, this.title, this.fieldProcessor!);
     }
     if (this.logResult) {
       LOGGER.debug(this.mapperName + ' -> ' + JSON.stringify(descriptor));
@@ -143,13 +143,13 @@ export class DescriptorBuilder<T> {
    * An association can point to a single resource item or to an array of resource items.
    */
   private getDescriptorForAssociationType() {
-    const associationDescriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor);
-    const isArrayOfAssociations = this.isArrayOfAssociations !== undefined ? this.isArrayOfAssociations : this.name.endsWith('s');
+    const associationDescriptor = new AssociationDescriptorImpl(this.name, this.title, this.association, this.fieldProcessor!);
+    const isArrayOfAssociations = this.isArrayOfAssociations !== undefined ? this.isArrayOfAssociations : this.name!.endsWith('s');
     if (isArrayOfAssociations) {
       if (this.isArrayOfAssociations === undefined) {
         this.logWarning('It was auto-guessed to be an array of associations. Rather set the according configuration instead.');
       }
-      const arrayFieldProperties = formFieldBuilder => this.fieldProcessor(formFieldBuilder)
+      const arrayFieldProperties = (formFieldBuilder: FormFieldBuilder) => this.fieldProcessor!(formFieldBuilder)
         .withType(FormFieldType.ARRAY);
       return new ArrayDescriptorImpl(this.name, this.title, associationDescriptor, arrayFieldProperties);
     } else {
@@ -181,10 +181,10 @@ export class DescriptorBuilder<T> {
   }
 
   private buildDescriptor(value: T): GenericPropertyDescriptor {
-    return this.builderFunction(value).toDescriptor();
+    return this.builderFunction!(value)!.toDescriptor();
   }
 
-  private buildDescriptors(children: Array<T>): GenericPropertyDescriptor[] {
-    return children.map(c => this.buildDescriptor(c));
+  private buildDescriptors(children: Array<T> | null | undefined): GenericPropertyDescriptor[] {
+    return children!.map(c => this.buildDescriptor(c));
   }
 }

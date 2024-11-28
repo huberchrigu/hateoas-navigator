@@ -3,18 +3,18 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ResourceObjectProperty, ResourceLink, VersionedResourceObjectProperty} from 'hateoas-navigator';
 import {ResourceService} from 'hateoas-navigator';
 import {MatDialog} from '@angular/material/dialog';
-import {SendDataDialogData} from './send-data-dialog/send-data-dialog-data';
-import {SendDataDialogResult} from './send-data-dialog/send-data-dialog-result';
+import {SendDataDialogData} from './send-data-dialog';
+import {SendDataDialogResult} from './send-data-dialog';
 import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
 import {flatMap} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
-import {ResourceListComponent} from '../resource-list/resource-list.component';
+import {ResourceListComponent} from '../resource-list';
 import {SendDataDialogComponent} from './send-data-dialog/send-data-dialog.component';
 import {MessageService} from '../message-dialog/message.service';
-import {MessageDialogData} from '../message-dialog/message-dialog-data';
+import {MessageDialogData} from '../message-dialog';
 import {CustomComponentService} from '../customizable/custom-component.service';
-import {CustomizableComponentType} from '../customizable/custom-component-configuration';
-import {ItemPropertiesComponentInput} from './item-properties/item-properties.component';
+import {CustomizableComponentType} from '../customizable';
+import {ItemPropertiesComponentInput} from './item-properties';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitleGroup} from '@angular/material/card';
 import {CustomizableComponent} from '../customizable';
@@ -40,7 +40,7 @@ import {NgForOf, NgIf} from '@angular/common';
 })
 export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];
-  resourceObject: VersionedResourceObjectProperty;
+  resourceObject!: VersionedResourceObjectProperty;
 
   constructor(private route: ActivatedRoute, private resourceService: ResourceService,
               private dialog: MatDialog, private customComponentService: CustomComponentService,
@@ -49,6 +49,7 @@ export class ResourceItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    // @ts-ignore
     this.route.data.subscribe((data: { resourceObject: VersionedResourceObjectProperty }) => {
       this.initResource(data.resourceObject);
     });
@@ -65,7 +66,7 @@ export class ResourceItemComponent implements OnInit {
     } as MessageDialogData;
     this.messageService.openConfirmationDialog(data, (result) => {
       if (result && result.confirmed) {
-        this.resourceService.deleteResource(this.resourceObject.getValue(), this.resourceObject.getVersion())
+        this.resourceService.deleteResource(this.resourceObject.getValue()!, this.resourceObject.getVersion())
           .subscribe(() => {
             return this.router.navigate(['..'], {relativeTo: this.route});
           });
@@ -97,7 +98,7 @@ export class ResourceItemComponent implements OnInit {
 
   isLinkDisabled(link: ResourceLink): boolean {
     const resources = this.resourceObject.getEmbeddedResourcesOrNull(link.getRelationType());
-    return resources && resources.length === 0;
+    return resources!! && resources.length === 0;
   }
 
   getItemPropertiesType() {
@@ -115,7 +116,7 @@ export class ResourceItemComponent implements OnInit {
   }
 
   private goToResourceList(resources: ResourceObjectProperty[]): Promise<boolean> {
-    const queryParams = {};
+    const queryParams: { [key: string]: any } = {};
     queryParams[ResourceListComponent.FILTER_PARAM] = resources.map(resource => resource.getSelfLink().getResourceId());
     if (resources.length === 0) {
       throw new Error('Cannot got to empty list');
@@ -135,13 +136,13 @@ export class ResourceItemComponent implements OnInit {
   private openDialogForCustomLink(uri: string, methods: string[]) {
     const dialogRef = this.dialog.open(this.customComponentService.getByDefaultComponent(SendDataDialogComponent), {
       width: '600px',
-      data: new SendDataDialogData(methods, this.resourceObject.getDescriptor().getDescriptorForLink(uri))
+      data: new SendDataDialogData(methods, this.resourceObject.getDescriptor().getDescriptorForLink(uri)!)
     });
     dialogRef.afterClosed().subscribe((result: SendDataDialogResult) => {
       if (!result || result.isCancelled()) {
         return;
       }
-      return this.resourceService.executeCustomAction(uri, this.resourceObject, result.method, result.body)
+      return this.resourceService.executeCustomAction(uri, this.resourceObject, result.method!, result.body!)
         .pipe(
           flatMap(resource => this.resourceFactory
             .resolveDescriptorAndAssociations(resource.getName(), resource.getValue(),

@@ -13,10 +13,10 @@ import {CustomComponentService} from '../../customizable/custom-component.servic
 @Injectable({providedIn: 'root'})
 export class LoginService {
   private static TOKEN_HEADER = 'X-Auth-Token';
-  private username: string;
+  private username: string | undefined;
 
   private loggedIn = false;
-  private token: string;
+  private token: string | undefined;
 
   constructor(private httpClient: HttpClient, private dialog: MatDialog, private customComponentService: CustomComponentService) {
   }
@@ -33,7 +33,7 @@ export class LoginService {
     }
   }
 
-  getUserId(): string {
+  getUserId(): string | undefined {
     return this.username;
   }
 
@@ -60,7 +60,7 @@ export class LoginService {
       password: loginData.password
     };
     this.httpClient.post<any>('/login', body, {observe: 'response'}).subscribe(response => {
-      this.token = response.headers.get(LoginService.TOKEN_HEADER);
+      this.token = response.headers.get(LoginService.TOKEN_HEADER)!;
       this.username = response.body.username;
       this.loggedIn = true;
     });

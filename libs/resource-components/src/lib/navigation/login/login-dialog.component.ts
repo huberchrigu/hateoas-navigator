@@ -2,7 +2,7 @@ import {ReactiveFormsModule, UntypedFormControl, UntypedFormGroup} from '@angula
 import {LoginDialogResult} from './login-dialog-result';
 import {Component} from '@angular/core';
 import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomizableComponentType} from '../../customizable';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {MatFormField} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';

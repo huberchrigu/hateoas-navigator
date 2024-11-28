@@ -1,7 +1,7 @@
-import {ObjectProperty, JsonObjectProperty} from '../json-property/object/object-property';
-import {HalValueType} from './value-type/hal-value-type';
-import {ResourceObjectDescriptor} from '../descriptor/resource-object-descriptor';
-import {ResourceLink} from '../link-object/resource-link';
+import {ObjectProperty, JsonObjectProperty} from '../json-property';
+import {HalValueType} from './value-type';
+import {ResourceObjectDescriptor} from '../descriptor';
+import {ResourceLink} from '../link-object';
 
 
 /**
@@ -32,12 +32,12 @@ export interface ResourceObjectProperty extends ObjectProperty<HalValueType> {
    *
    * @return null if it does not exist or if it is an array.
    */
-  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty;
+  getEmbeddedResourceOrNull(linkRelationType: string): ResourceObjectProperty | null;
 
   /**
    * Like {@link getEmbeddedResourceOrNull}, but returns null if the embedded is not an array.
    */
-  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[];
+  getEmbeddedResourcesOrNull(linkRelationType: string): ResourceObjectProperty[] | undefined;
 
   getDescriptor(): ResourceObjectDescriptor;
 

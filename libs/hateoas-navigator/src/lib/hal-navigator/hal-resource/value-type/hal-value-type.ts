@@ -4,7 +4,7 @@ import {
   GenericArrayValueType,
   GenericObjectValueType,
   JsonValueType
-} from '../../json-property/value-type/json-value-type';
+} from '../../json-property';
 
 /**
  * {@link JsonValueType JSON types} plus HAL {@link HalResourceObject resource objects}.

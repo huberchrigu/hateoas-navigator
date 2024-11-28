@@ -1,1 +1,1 @@
-export {CheckboxFieldComponentInput} from './checkbox-field-component-input';
+export type {CheckboxFieldComponentInput} from './checkbox-field-component-input';

@@ -1,15 +1,15 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {AbstractControl} from '@angular/forms';
 import {FormField, FormFieldType, SubFormField} from 'hateoas-navigator';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
-import {InputFieldComponentInput} from '../input-field/input-field-component-input';
-import {FormGroupComponentInput} from '../form-group/form-group-component-input';
+import {CustomizableComponentType} from '../../customizable';
+import {InputFieldComponentInput} from '../input-field';
+import {FormGroupComponentInput} from '../form-group';
 import {FieldComponentInput} from '../field-component-input';
-import {CheckboxFieldComponentInput} from '../checkbox-field/checkbox-field-component-input';
-import {DateTimeFieldComponentInput} from '../date-time-field/date-time-field-component-input';
-import {SelectFieldComponentInput} from '../select-field/select-field-component-input';
-import {AssociationFieldComponentInput} from '../association-field/association-field-component-input';
-import {FormListComponentInput} from '../form-list/form-list-component-input';
+import {CheckboxFieldComponentInput} from '../checkbox-field';
+import {DateTimeFieldComponentInput} from '../date-time-field';
+import {SelectFieldComponentInput} from '../select-field';
+import {AssociationFieldComponentInput} from '../association-field';
+import {FormListComponentInput} from '../form-list';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CustomizableComponent} from '../../customizable';
 import {MatError} from '@angular/material/form-field';
@@ -26,10 +26,10 @@ import {NgIf} from '@angular/common';
 })
 export class FormFieldComponent implements OnInit, FormFieldComponentInput {
   @Input()
-  field: FormField;
+  field!: FormField;
 
   @Input()
-  control: AbstractControl;
+  control!: AbstractControl;
 
   ngOnInit(): void {
     if (!this.field) {

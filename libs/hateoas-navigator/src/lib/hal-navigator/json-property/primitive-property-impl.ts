@@ -1,5 +1,5 @@
 import {DateConverter} from './converter/date-converter';
-import {PrimitiveValueType} from './value-type/json-value-type';
+import {PrimitiveValueType} from './value-type';
 import {GenericPropertyDescriptor} from '../descriptor';
 import {AbstractProperty} from './abstract-property';
 import {AssociationDescriptor} from '../descriptor/generic-property-descriptor';
@@ -8,7 +8,7 @@ import {PrimitiveProperty} from './generic-property';
 export class PrimitivePropertyImpl extends AbstractProperty<PrimitiveValueType, DescriptorType> implements PrimitiveProperty {
   private dateConverter = new DateConverter();
 
-  constructor(name: string, value: PrimitiveValueType, descriptor: DescriptorType) {
+  constructor(name: string, value: PrimitiveValueType, descriptor: DescriptorType | null) {
     super(name, value, descriptor);
   }
 
@@ -23,7 +23,7 @@ export class PrimitivePropertyImpl extends AbstractProperty<PrimitiveValueType, 
     return value;
   }
 
-  getDisplayValue(): string | number {
+  getDisplayValue(): number | null | string {
     const v = this.getValue();
     if (typeof v === 'string') {
       const date = this.dateConverter.parseAndFormat(this.getValue());

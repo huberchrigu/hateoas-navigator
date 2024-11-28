@@ -22,23 +22,26 @@ import {CustomizableComponentType} from './custom-component-configuration';
  */
 @Component({
   selector: 'lib-customizable',
+  imports: [
+    CustomizableDirective
+  ],
   template: '<ng-template libCustomizable></ng-template>'
 })
 export class CustomizableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
-  type: CustomizableComponentType;
+  type!: CustomizableComponentType;
 
   @Input()
   input: { [property: string]: any } = {};
 
-  private injector: InputPropertyInjector;
-  private initialValues: SimpleChanges;
+  private injector!: InputPropertyInjector;
+  private initialValues!: SimpleChanges;
 
   @ViewChild(CustomizableDirective, {static: true})
-  customizable: CustomizableDirective;
+  customizable!: CustomizableDirective;
 
-  private component: ComponentRef<any>;
+  private component!: ComponentRef<any>;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private customComponentService: CustomComponentService) {
@@ -60,7 +63,7 @@ export class CustomizableComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.injector) {
-      const input = changes.input;
+      const input = changes['input'];
       this.injector.fromChanges(input);
     } else {
       this.initialValues = changes;

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Data, Router, RouterLink} from '@angular/router';
 import {DataSource} from '@angular/cdk/collections';
 import {
   ResourceObjectProperty,
@@ -12,10 +12,10 @@ import {combineLatest, of} from 'rxjs';
 import {flatMap, map} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dialog.component';
-import {ResourceSearchDialogData} from './search-dialog/resource-search-dialog-data';
-import {ResourceSearchDialogResult} from './search-dialog/resource-search-dialog-result';
+import {ResourceSearchDialogData} from './search-dialog';
+import {ResourceSearchDialogResult} from './search-dialog';
 import {CustomComponentService} from '../customizable/custom-component.service';
-import {MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable} from '@angular/material/table';
+import {MatCell, MatColumnDef, MatHeaderCell, MatHeaderRow, MatRow, MatTable} from '@angular/material/table';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatAnchor, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -28,7 +28,6 @@ import {NgForOf, NgIf} from '@angular/common';
     MatCell,
     MatHeaderRow,
     MatRow,
-    MatRowDef,
     MatToolbar,
     MatAnchor,
     RouterLink,
@@ -36,9 +35,6 @@ import {NgForOf, NgIf} from '@angular/common';
     MatIcon,
     MatTable,
     MatColumnDef,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatHeaderRowDef,
     NgForOf,
     NgIf
   ],
@@ -53,21 +49,21 @@ export class ResourceListComponent implements OnInit {
 
   static FILTER_PARAM = 'filter';
 
-  collection: CollectionAdapter;
-  propertyNames: Array<string>;
+  collection!: CollectionAdapter;
+  propertyNames!: Array<string>;
 
-  dataSource: DataSource<ResourceObjectProperty>;
+  dataSource!: DataSource<ResourceObjectProperty>;
 
   ngOnInit() {
     combineLatest([
-      this.route.data.pipe(map((data: ResourceListRouteData) => data.collectionAdapter)),
+      this.route.data.pipe(map((data: ResourceListRouteData | Data) => data.collectionAdapter)),
       this.route.queryParams.pipe(map(params => params[ResourceListComponent.FILTER_PARAM]))
     ]).subscribe(([collection, ids]) => {
       this.initCollection(collection, ids && !Array.isArray(ids) ? [ids] : ids);
     });
   }
 
-  private initCollection(collection, ids: string[] = null) {
+  private initCollection(collection: CollectionAdapter, ids: string[] | null = null) {
     this.initTableMetadata(collection);
     this.initDataSource(collection, ids);
   }
@@ -94,7 +90,7 @@ export class ResourceListComponent implements OnInit {
    * @deprecated
    */
   getDisplayValue(item: VersionedResourceObjectProperty, propertyName: string) {
-    return item.getChildProperty(propertyName).getDisplayValue();
+    return item.getChildProperty(propertyName)!.getDisplayValue();
   }
 
   isAddEnabled() {
@@ -120,7 +116,7 @@ export class ResourceListComponent implements OnInit {
     this.propertyNames = this.collection.getPropertyNames();
   }
 
-  private initDataSource(collection: CollectionAdapter, ids: string[]) {
+  private initDataSource(collection: CollectionAdapter, ids: string[] | null) {
     this.dataSource = {
       connect: () => of(ids ? collection.filterByIds(ids) : collection.getItems()),
       disconnect: () => {

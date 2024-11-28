@@ -1,14 +1,14 @@
 import {JsonSchema} from '../../schema/json-schema';
 import {SchemaReferenceFactory} from '../../schema/schema-reference-factory';
-import {FormFieldBuilder} from '../../form/form-field-builder';
+import {FormFieldBuilder} from '../../form';
 import {getFormType} from '../../form/form-field-type';
 import {DescriptorMapper} from '../mapper/descriptor-mapper';
 import {DescriptorBuilder} from '../mapper/descriptor-builder';
-import {LOGGER} from '../../../logging/logger';
+import {LOGGER} from '../../../logging';
 import {DescriptorType} from '../mapper/internal/descriptor-type';
 
 class NamedJsonSchema {
-  constructor(public name, public schema: JsonSchema) {
+  constructor(public name: string, public schema: JsonSchema) {
   }
 }
 
@@ -33,11 +33,11 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
         this.getRequiredProperties().some(p => p === named.name)));
   }
 
-  private getTitle(): string {
+  private getTitle(): string | undefined {
     return this.schema.title;
   }
 
-  private getChildrenDescriptors(): Array<NamedJsonSchema> {
+  private getChildrenDescriptors(): Array<NamedJsonSchema> | null {
     const children = this.getProperties();
     if (!children) {
       return null;
@@ -49,14 +49,14 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
   /**
    * Keep the array property's name.
    */
-  private getArrayItemsDescriptor(): NamedJsonSchema {
+  private getArrayItemsDescriptor(): NamedJsonSchema | null {
     if (!this.schema.items) {
       return null;
     }
     return new NamedJsonSchema(this.name, this.resolveReference(this.schema.items));
   }
 
-  private getType(): DescriptorType {
+  private getType(): DescriptorType | undefined {
     switch (this.schema.type) {
       case 'boolean':
       case 'integer':
@@ -91,7 +91,7 @@ export class JsonSchemaDescriptorMapper extends DescriptorMapper<NamedJsonSchema
       .withOptions(this.schema.enum);
   }
 
-  private getProperties(): { [propertyName: string]: JsonSchema } {
+  private getProperties(): { [propertyName: string]: JsonSchema } | null | undefined {
     if (this.schema.type !== 'object') {
       return null;
     }

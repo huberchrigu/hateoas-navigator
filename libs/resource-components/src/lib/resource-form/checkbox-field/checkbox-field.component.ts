@@ -3,7 +3,7 @@ import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
 import {FormField} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CheckboxFieldComponentInput} from './checkbox-field-component-input';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomizableComponentType} from '../../customizable';
 import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
@@ -16,10 +16,10 @@ import {MatCheckbox} from '@angular/material/checkbox';
 })
 export class CheckboxFieldComponent implements CheckboxFieldComponentInput {
   @Input()
-  field: FormField;
+  field!: FormField;
 
   @Input()
-  control: UntypedFormControl;
+  control!: UntypedFormControl;
 
 }
 

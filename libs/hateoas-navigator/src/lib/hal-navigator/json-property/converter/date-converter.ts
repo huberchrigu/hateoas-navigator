@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import {Moment} from 'moment';
 
 /**
@@ -12,15 +12,15 @@ export class DateConverter {
   constructor(private format = 'LLL') {
   }
 
-  parseAndFormat(value: any): string {
+  parseAndFormat(value: any): string | undefined {
     return this.parseAndDo(value, (date: Moment) => date.format(this.format), time => time.format('HH:mm'));
   }
 
-  parseToDate(value: any): Date {
+  parseToDate(value: any): Date | undefined {
     return this.parseAndDo(value, (date: Moment) => date.toDate(), date => date.toDate());
   }
 
-  private parseAndDo<T>(value: any, executeOnDate: (date: Moment) => T, executeOnTime: (date: Moment) => T): T {
+  private parseAndDo<T>(value: any, executeOnDate: (date: Moment) => T, executeOnTime: (date: Moment) => T): T | undefined {
     if (value && typeof value === 'string') {
       const date = this.getValidDate(value);
       if (date) {
@@ -34,12 +34,12 @@ export class DateConverter {
     return undefined;
   }
 
-  private getValidDate(value: string): Moment {
+  private getValidDate(value: string): moment.Moment | undefined {
     const dateWithTimezone = moment.utc(value, DateConverter.DATE_FORMATS, true);
     return dateWithTimezone.isValid() ? dateWithTimezone.local() : undefined;
   }
 
-  private getValidTime(value: string): Moment {
+  private getValidTime(value: string): moment.Moment | undefined {
     const time = moment.utc(value, DateConverter.TIME_FORMATS, true);
     return time.isValid() ? time.local() : undefined;
   }

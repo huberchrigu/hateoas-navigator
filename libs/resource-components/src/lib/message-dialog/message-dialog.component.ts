@@ -1,11 +1,21 @@
 import {Component, Inject} from '@angular/core';
 import {MessageDialogData} from './message-dialog-data';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {MessageDialogResult} from './message-dialog-result';
 import {CustomComponentService} from '../customizable/custom-component.service';
-import {CustomizableComponentType} from '../customizable/custom-component-configuration';
+import {CustomizableComponentType} from '../customizable';
+import {MatButton} from '@angular/material/button';
+import {CommonModule, NgIf} from '@angular/common';
 
 @Component({
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    NgIf,
+    CommonModule
+  ],
   templateUrl: './message-dialog.component.html'
 })
 export class MessageDialogComponent {

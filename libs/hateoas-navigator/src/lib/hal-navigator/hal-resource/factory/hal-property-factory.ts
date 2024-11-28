@@ -1,10 +1,10 @@
 import {PropertyFactory} from '../../json-property/factory/property-factory';
-import {HalResourceObject, HalValueType} from '../value-type/hal-value-type';
-import {ArrayPropertyImpl} from '../../json-property/array/array-property-impl';
+import {HalResourceObject, HalValueType} from '../value-type';
+import {ArrayPropertyImpl} from '../../json-property';
 import {ObjectPropertyImpl} from '../../json-property/object/object-property-impl';
-import {PrimitivePropertyImpl} from '../../json-property/primitive-property-impl';
-import {PrimitiveValueType} from '../../json-property/value-type/json-value-type';
-import {ResourceObjectDescriptor} from '../../descriptor/resource-object-descriptor';
+import {PrimitivePropertyImpl} from '../../json-property';
+import {PrimitiveValueType} from '../../json-property';
+import {ResourceObjectDescriptor} from '../../descriptor';
 import {HalResourceFactory} from './hal-resource-factory';
 import {
   ArrayDescriptor,
@@ -12,19 +12,19 @@ import {
   ObjectDescriptor, GenericPropertyDescriptor
 } from '../../descriptor/generic-property-descriptor';
 import {ResourceObjectProperty} from '../resource-object-property';
-import {HalProperty} from '../../json-property/hal/hal-property';
-import {ArrayProperty} from '../../json-property/array/array-property';
+import {HalProperty} from '../../json-property';
+import {ArrayProperty} from '../../json-property';
 import {EmptyPropertyImpl} from '../../json-property/empty-property-impl';
 
 export class HalPropertyFactory implements PropertyFactory<HalValueType> {
   private forArray = false;
   private forArrayOfAssociations = false;
 
-  constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceObjectDescriptor = null) {
+  constructor(private halResourceFactory: HalResourceFactory, private parentDescriptor: ResourceObjectDescriptor | null = null) {
   }
 
   /**
-   * An embedded resource is described as an association to another resource type, but does already contain real values. Therefore
+   * An embedded resource is described as an association to another resource type, but does already contain real values. Therefore,
    * the association is resolved to the associated resource's descriptor.
    */
   createEmbedded(propertyName: string, associationOrArrayOfAssociations: HalValueType):
@@ -70,7 +70,7 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
       d.getChildDescriptor, name) : null;
   }
 
-  private getArrayDesc(): GenericPropertyDescriptor {
+  private getArrayDesc(): GenericPropertyDescriptor | null {
     if (!this.parentDescriptor) {
       return null;
     }

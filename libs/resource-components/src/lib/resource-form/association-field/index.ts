@@ -1,1 +1,1 @@
-export {AssociationFieldComponentInput} from './association-field-component-input';
+export type {AssociationFieldComponentInput} from './association-field-component-input';

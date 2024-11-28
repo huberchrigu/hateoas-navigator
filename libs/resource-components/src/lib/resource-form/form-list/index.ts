@@ -1,1 +1,1 @@
-export {FormListComponentInput} from './form-list-component-input';
+export type {FormListComponentInput} from './form-list-component-input';

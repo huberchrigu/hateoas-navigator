@@ -21,10 +21,10 @@ import {NgForOf} from '@angular/common';
 })
 export class SelectFieldComponent implements SelectFieldComponentInput {
   @Input()
-  field: SelectField;
+  field!: SelectField;
 
   @Input()
-  control: UntypedFormControl;
+  control!: UntypedFormControl;
 }
 
 CustomComponentService.registerCustomizableComponent(CustomizableComponentType.SELECT_FIELD, SelectFieldComponent);

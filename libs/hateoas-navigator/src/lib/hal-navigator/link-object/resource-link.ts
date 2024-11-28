@@ -1,4 +1,4 @@
-import {HalResourceObject} from '../hal-resource/value-type/hal-value-type';
+import {HalResourceObject} from '../hal-resource';
 import {ResourceDescriptorProvider} from '../descriptor/provider/resource-descriptor-provider';
 import {LinkObject} from './link-object';
 import {Observable} from 'rxjs';
@@ -31,11 +31,11 @@ import {AbsoluteLink} from './absolute-link';
  */
 export class ResourceLink {
 
-  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver: ResourceDescriptorProvider) {
+  constructor(private linkRelationType: string, private link: LinkObject, private resourceDescriptorResolver?: ResourceDescriptorProvider) {
   }
 
-  static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver: ResourceDescriptorProvider) {
-    return new ResourceLink('self', resourceObject._links.self, resourceDescriptorResolver);
+  static fromResourceObject(resourceObject: HalResourceObject, resourceDescriptorResolver?: ResourceDescriptorProvider) {
+    return new ResourceLink('self', resourceObject._links!.self, resourceDescriptorResolver);
   }
 
   static linkFromId(resource: string, id: string): RelativeLink {
@@ -82,7 +82,7 @@ export class ResourceLink {
   }
 
   getResourceDescriptor(): Observable<GenericPropertyDescriptor> {
-    return this.resourceDescriptorResolver.resolve(this.getResourceName());
+    return this.resourceDescriptorResolver!.resolve(this.getResourceName());
   }
 
   /**

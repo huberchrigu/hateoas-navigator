@@ -2,7 +2,7 @@ import {FormFieldSupport, QueryConfig} from './module-configuration';
 
 export class QueryConfigBuilder {
   private params: { [paramName: string]: FormFieldSupport } = {};
-  private title: string;
+  private title!: string;
 
   withParam(paramName: string, config: FormFieldSupport): this {
     this.params[paramName] = config;
