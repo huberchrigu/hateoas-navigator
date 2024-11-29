@@ -25,7 +25,8 @@ import {CustomizableComponentType} from './custom-component-configuration';
   imports: [
     CustomizableDirective
   ],
-  template: '<ng-template libCustomizable></ng-template>'
+  template: '<ng-template libCustomizable></ng-template>',
+  standalone: true
 })
 export class CustomizableComponent implements OnInit, OnChanges, OnDestroy {
 

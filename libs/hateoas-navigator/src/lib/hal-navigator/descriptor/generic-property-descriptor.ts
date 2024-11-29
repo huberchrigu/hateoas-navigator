@@ -35,7 +35,7 @@ export interface GenericPropertyDescriptor {
    * @param fct The function of T
    * @param args The function's arguments
    */
-  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Parameters<ToFunction<T[F]>>): ReturnType<ToFunction<T[F]>> | null;
+  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Array<Parameters<ToFunction<T[F]>>[number]>): ReturnType<ToFunction<T[F]>> | null;
 
   /**
    * Convenience method that returns the function's result, if this descriptor is of the given type.
@@ -46,7 +46,7 @@ export interface GenericPropertyDescriptor {
 }
 
 export abstract class AbstractPropDescriptor implements GenericPropertyDescriptor {
-  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Parameters<ToFunction<T[F]>>): ReturnType<ToFunction<T[F]>> | null {
+  orNull<T extends GenericPropertyDescriptor, F extends keyof T>(fct: (name: T) => T[F], ...args: Array<Parameters<ToFunction<T[F]>>[number]>): ReturnType<ToFunction<T[F]>> | null {
     try {
       // @ts-ignore
       return apply(fct(this), this, args);

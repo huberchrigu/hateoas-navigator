@@ -16,7 +16,8 @@ import {CommonModule, NgIf} from '@angular/common';
     NgIf,
     CommonModule
   ],
-  templateUrl: './message-dialog.component.html'
+  templateUrl: './message-dialog.component.html',
+  standalone: true
 })
 export class MessageDialogComponent {
 

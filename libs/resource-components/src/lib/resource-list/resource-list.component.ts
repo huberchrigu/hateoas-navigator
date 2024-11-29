@@ -38,7 +38,8 @@ import {NgForOf, NgIf} from '@angular/common';
     NgForOf,
     NgIf
   ],
-  styleUrls: ['./resource-list.component.css']
+  styleUrls: ['./resource-list.component.css'],
+  standalone: true
 })
 export class ResourceListComponent implements OnInit {
 
@@ -105,7 +106,7 @@ export class ResourceListComponent implements OnInit {
       });
       dialogRef.afterClosed().subscribe((result: ResourceSearchDialogResult) => {
         if (result && !result.isCancelled()) {
-          this.updateCollection(result.uri);
+          this.updateCollection(result.uri!);
         }
       });
     });

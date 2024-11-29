@@ -15,7 +15,8 @@ import {NgForOf} from '@angular/common';
     CustomizableComponent,
     NgForOf
   ],
-  styleUrls: ['./form-group.component.sass']
+  styleUrls: ['./form-group.component.sass'],
+  standalone: true
 })
 export class FormGroupComponent implements OnInit, FormGroupComponentInput {
   @Input()

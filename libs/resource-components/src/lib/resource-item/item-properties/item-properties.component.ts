@@ -12,7 +12,8 @@ import {NgForOf, NgIf} from '@angular/common';
     NgForOf,
     NgIf
   ],
-  styleUrls: ['./item-properties.component.sass']
+  styleUrls: ['./item-properties.component.sass'],
+  standalone: true
 })
 export class ItemPropertiesComponent implements ItemPropertiesComponentInput {
 

@@ -12,7 +12,8 @@ import {MatCheckbox} from '@angular/material/checkbox';
     MatCheckbox,
     ReactiveFormsModule
   ],
-  styleUrls: ['../form-fields.sass', './checkbox-field.component.sass']
+  styleUrls: ['../form-fields.sass', './checkbox-field.component.sass'],
+  standalone: true
 })
 export class CheckboxFieldComponent implements CheckboxFieldComponentInput {
   @Input()

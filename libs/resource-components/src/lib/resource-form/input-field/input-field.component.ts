@@ -14,7 +14,8 @@ import {MatInput} from '@angular/material/input';
     MatFormField,
     MatInput
   ],
-  styleUrls: ['./input-field.component.sass', '../form-fields.sass']
+  styleUrls: ['./input-field.component.sass', '../form-fields.sass'],
+  standalone: true
 })
 export class InputFieldComponent implements InputFieldComponentInput {
   @Input()

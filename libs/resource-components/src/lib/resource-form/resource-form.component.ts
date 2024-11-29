@@ -25,7 +25,8 @@ import {NgIf} from '@angular/common';
     MatButton,
     NgIf
   ],
-  styleUrls: ['./resource-form.component.sass']
+  styleUrls: ['./resource-form.component.sass'],
+  standalone: true
 })
 export class ResourceFormComponent implements OnInit {
   fields!: FormField[];

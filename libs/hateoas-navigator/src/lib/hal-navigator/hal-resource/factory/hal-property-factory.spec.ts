@@ -1,16 +1,18 @@
 import {HalPropertyFactory} from './hal-property-factory';
 import {HalResourceFactory} from './hal-resource-factory';
-import {ResourceObjectDescriptor} from '../../descriptor/resource-object-descriptor';
+import {ResourceObjectDescriptor} from '../../descriptor';
 import {
   ArrayDescriptorMockBuilder, AssociationDescriptorMockBuilder, PropertyDescriptorMockBuilder,
   ResourceDescriptorMockBuilder
 } from '../../descriptor/combining/property-descriptor-mock-builder.spec';
 import {ResourceObjectProperty} from '../resource-object-property';
-import {JsonArrayProperty} from '../../json-property/array/array-property';
+import {JsonArrayProperty} from '../../json-property';
+import {HalValueType} from '../value-type';
+import SpyObj = jasmine.SpyObj;
 
 describe('HalPropertyFactory', () => {
   let resourceFactory: HalResourceFactory;
-  let resourceDesc: ResourceObjectDescriptor;
+  let resourceDesc: SpyObj<ResourceObjectDescriptor>;
 
   beforeAll(() => {
     resourceFactory = jasmine.createSpyObj('resourceFactory', ['create']);
@@ -27,14 +29,14 @@ describe('HalPropertyFactory', () => {
     resourceDesc = new ResourceDescriptorMockBuilder()
       .withChildDescriptor(arrayDescriptor)
       .withChildrenDescriptors([arrayDescriptor])
-      .build();
+      .build() as SpyObj<ResourceObjectDescriptor>;
   });
 
   it('should resolve associations', () => {
     const testee = new HalPropertyFactory(resourceFactory, resourceDesc);
     const result = testee.createEmbedded('array', [{
       item: 1
-    }]) as JsonArrayProperty;
+    }] as HalValueType) as JsonArrayProperty;
 
     const items = result.getArrayItems();
     expect(items.length).toBe(1);

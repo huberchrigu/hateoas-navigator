@@ -33,7 +33,7 @@ describe('CombiningDescriptorMapper', () => {
     const resourceWithGets = descriptorMapper({
       actions: toActions(ActionType.GET_COLLECTION, ActionType.GET_ITEM)
     } as DescriptorBuilder<any>);
-    let testee;
+    let testee: ResourceObjectDescriptor;
     try {
       testee = new CombiningDescriptorMapper([property, resourceWithCreateAndDelete, resourceWithGets], {})
         .toDescriptor() as ResourceObjectDescriptor;

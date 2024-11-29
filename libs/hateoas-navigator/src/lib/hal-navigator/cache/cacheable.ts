@@ -13,12 +13,13 @@ class ProxyFactory<T> {
 
   getProxy(): (...args: any) => Observable<T> {
     const self = this;
-    return (...args) => {
+    return function (...args) {
       const key = ProxyFactory.getKey(args);
       const value = self.cache[key];
       if (value) {
         return from([value]);
       } else {
+        // @ts-ignore
         const observable = self.proxyTarget!.apply(this, args);
         return observable.pipe(map(newValue => {
           if (newValue) {
@@ -34,9 +35,7 @@ class ProxyFactory<T> {
 export function Cacheable(): MethodDecorator {
   return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const proxyTarget = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-      return new ProxyFactory(proxyTarget).getProxy().apply(this, args);
-    };
+    descriptor.value = new ProxyFactory(proxyTarget).getProxy();
     return descriptor;
   };
 }

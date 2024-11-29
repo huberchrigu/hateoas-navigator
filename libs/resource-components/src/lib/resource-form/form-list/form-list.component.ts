@@ -18,7 +18,8 @@ import {NgForOf} from '@angular/common';
     MatButton,
     NgForOf
   ],
-  styleUrls: ['./form-list.component.sass']
+  styleUrls: ['./form-list.component.sass'],
+  standalone: true
 })
 export class FormListComponent implements FormListComponentInput {
 

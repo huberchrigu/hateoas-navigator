@@ -23,7 +23,8 @@ import {MatTimepicker, MatTimepickerInput} from '@angular/material/timepicker';
     MatTimepicker,
     MatTimepickerInput
   ],
-  styleUrls: ['./date-time-field.component.sass', '../form-fields.sass']
+  styleUrls: ['./date-time-field.component.sass', '../form-fields.sass'],
+  standalone: true
 })
 export class DateTimeFieldComponent implements DateTimeFieldComponentInput {
   @Input()

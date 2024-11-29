@@ -1,5 +1,5 @@
-import {ArrayDescriptor, GenericPropertyDescriptor} from '../../descriptor/generic-property-descriptor';
-import {GenericArrayValueType, JsonValueType} from '../value-type/json-value-type';
+import {ArrayDescriptor, GenericPropertyDescriptor} from '../../descriptor';
+import {GenericArrayValueType, JsonValueType} from '../value-type';
 import {GenericProperty} from '../generic-property';
 
 /**

@@ -22,7 +22,8 @@ import {NgIf} from '@angular/common';
     MatError,
     NgIf
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true
 })
 export class FormFieldComponent implements OnInit, FormFieldComponentInput {
   @Input()

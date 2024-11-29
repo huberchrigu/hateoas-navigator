@@ -22,7 +22,8 @@ import {NgIf} from '@angular/common';
     MatButton,
     NgIf
   ],
-  templateUrl: './send-data-dialog.component.html'
+  templateUrl: './send-data-dialog.component.html',
+  standalone: true
 })
 export class SendDataDialogComponent {
 

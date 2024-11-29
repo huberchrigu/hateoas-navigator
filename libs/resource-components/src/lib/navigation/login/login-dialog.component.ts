@@ -19,7 +19,8 @@ import {MatAnchor, MatButton} from '@angular/material/button';
     MatAnchor,
     MatButton
   ],
-  templateUrl: './login-dialog.component.html'
+  templateUrl: './login-dialog.component.html',
+  standalone: true
 })
 export class LoginDialogComponent {
 

@@ -20,7 +20,8 @@ import {NgForOf, NgIf} from '@angular/common';
     NgForOf,
     NgIf
   ],
-  styleUrls: ['./navigation.component.sass']
+  styleUrls: ['./navigation.component.sass'],
+  standalone: true
 })
 export class NavigationComponent implements OnInit {
   items!: Array<NavigationItem>;

@@ -9,8 +9,9 @@
   "peerDependencies": {
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
-    "@angular/material": "^8.1.2",
+    "@angular/material": "^19.0.0",
     "moment": "^2.24.0",
     "hateoas-navigator": "^0.1.0"
-  }
+  },
+  "sideEffects": false
 }

@@ -17,7 +17,8 @@ import {NgForOf} from '@angular/common';
     MatOption,
     NgForOf
   ],
-  styleUrls: ['../form-fields.sass']
+  styleUrls: ['../form-fields.sass'],
+  standalone: true
 })
 export class SelectFieldComponent implements SelectFieldComponentInput {
   @Input()

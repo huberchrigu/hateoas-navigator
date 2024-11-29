@@ -47,6 +47,6 @@ describe('JsonSchemaDescriptorMapper', () => {
     const builder = testee.toBuilder();
 
     expect(builder.type).toEqual('array');
-    expect(builder.arrayItems.schema.format).toEqual('uri');
+    expect(builder.arrayItems!.schema.format).toEqual('uri');
   });
 });

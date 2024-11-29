@@ -36,7 +36,8 @@ import {NgForOf, NgIf} from '@angular/common';
     NgForOf,
     MatCardTitleGroup
   ],
-  styleUrls: ['./resource-item.component.sass']
+  styleUrls: ['./resource-item.component.sass'],
+  standalone: true
 })
 export class ResourceItemComponent implements OnInit {
   specialLinks: ResourceLink[] = [];

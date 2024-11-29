@@ -1,13 +1,13 @@
 import {UntypedFormArray} from '@angular/forms';
-import {FormControlFactory} from './form-control-factory';
+import {FormControlFactory} from 'hateoas-navigator';
 import {FormFieldType} from './form-field-type';
 import {FormField} from './form-field';
 import createSpyObj = jasmine.createSpyObj;
 import SpyObjMethodNames = jasmine.SpyObjMethodNames;
 import {ArrayField} from './array-field';
 import {SubFormField} from './sub-form-field';
-import {JsonArrayProperty} from '../json-property/array/array-property';
-import {VersionedResourceObjectProperty} from '../hal-resource/resource-object-property';
+import {JsonArrayProperty} from 'hateoas-navigator';
+import {VersionedResourceObjectProperty} from 'hateoas-navigator';
 
 describe('FormControlFactory', () => {
   it('should overtake values of an array of objects', () => {

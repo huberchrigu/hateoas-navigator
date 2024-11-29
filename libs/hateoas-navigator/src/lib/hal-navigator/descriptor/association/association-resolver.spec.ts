@@ -54,17 +54,18 @@ describe('AssociationResolver', () => {
   }));
 
   function getMockedPropertyDescriptor(resource: string, associationName: string): Observable<ResourceObjectDescriptor> {
-    const rootResource = of(new ResourceDescriptorMockBuilder()
+    const rootResource = new ResourceDescriptorMockBuilder()
       .withChildrenDescriptors([new AssociationDescriptorMockBuilder()
         .withAssociatedResourceName(associationName)
         .withName(associationName)
         .build()])
       .withName(resource)
-      .build());
-    const linkedResource = of(new ResourceDescriptorMockBuilder()
+      .build();
+    const linkedResource = new ResourceDescriptorMockBuilder()
       .withChildrenDescriptors([])
       .withName(associationName)
-      .build());
-    return resource === 'rootResource' ? rootResource : linkedResource;
+      .build();
+    const result = resource === 'rootResource' ? rootResource : linkedResource;
+    return of(result) as Observable<ResourceObjectDescriptor>;
   }
 });

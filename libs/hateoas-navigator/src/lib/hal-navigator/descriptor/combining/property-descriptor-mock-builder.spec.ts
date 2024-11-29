@@ -1,10 +1,10 @@
 import SpyObj = jasmine.SpyObj;
 import SpyObjMethodNames = jasmine.SpyObjMethodNames;
-import {FormFieldBuilder} from '../../form/form-field-builder';
+import {FormFieldBuilder} from 'hateoas-navigator';
 import {ArrayDescriptor, AssociationDescriptor, ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import Spy = jasmine.Spy;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import {ResourceObjectDescriptor} from '../resource-object-descriptor';
+import {ResourceObjectDescriptor} from 'hateoas-navigator';
 
 export class PropertyDescriptorMockBuilder<T extends GenericPropertyDescriptor> {
   protected methodNames = {
@@ -47,12 +47,12 @@ export class ObjectDescriptorMockBuilder extends PropertyDescriptorMockBuilder<O
 
 export class ResourceDescriptorMockBuilder extends PropertyDescriptorMockBuilder<ResourceObjectDescriptor> {
   withChildrenDescriptors(children: Array<GenericPropertyDescriptor>) {
-    this.methodNames.getChildDescriptors = children;
+    this.methodNames['getChildDescriptors'] = children;
     return this;
   }
 
   withChildDescriptor(child: GenericPropertyDescriptor) {
-    this.methodNames.getChildDescriptor = child;
+    this.methodNames['getChildDescriptor'] = child;
     return this;
   }
 }

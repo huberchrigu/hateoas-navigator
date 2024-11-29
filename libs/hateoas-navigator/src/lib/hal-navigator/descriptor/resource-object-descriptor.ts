@@ -1,4 +1,4 @@
-import {ResourceActions} from './actions/resource-actions';
+import {ResourceActions} from './actions';
 import {ObjectDescriptor} from './generic-property-descriptor';
 
 export interface ResourceObjectDescriptor extends ObjectDescriptor {

@@ -16,9 +16,9 @@ import {
   ResourceLink,
   ResourceObjectDescriptor
 } from 'hateoas-navigator';
-import {CustomizableComponentType} from '../../customizable/custom-component-configuration';
+import {CustomizableComponentType} from '../../customizable';
 import {CustomComponentService} from '../../customizable/custom-component.service';
-import {FormGroupComponentInput} from '../../resource-form/form-group/form-group-component-input';
+import {FormGroupComponentInput} from '../../resource-form';
 import {MatFormField} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {CustomizableComponent} from '../../customizable';
@@ -40,7 +40,8 @@ import {NgForOf} from '@angular/common';
     MatDialogContent,
     NgForOf
   ],
-  styleUrls: ['../../resource-form/form-fields.sass']
+  styleUrls: ['../../resource-form/form-fields.sass'],
+  standalone: true
 })
 export class ResourceSearchDialogComponent implements OnInit {
 
@@ -127,14 +128,15 @@ export class ResourceSearchDialogComponent implements OnInit {
     const value = this.queryControl.value;
     const newParams = this.urls[value].getTemplatedParams();
 
-    this.fields.splice(0, this.fields.length, ...this.toFields(newParams, this.getQueryConfig(this.urls[value].getRelationType())));
+    this.fields.splice(0, this.fields.length, ...this.toFields(newParams, this.getQueryConfig(this.urls[value].getRelationType())!));
     const newControls = new FormControlFactory().getControls(this.fields);
     Object.keys(this.fieldControls.controls).forEach(control => this.fieldControls.removeControl(control));
     Object.keys(newControls).forEach(control => this.fieldControls.addControl(control, newControls[control]));
   }
 
-  private toFields(newParams: string[], queryConfig: QueryConfig): (FormField | null)[] {
-    return newParams.map(param => this.toField(param, queryConfig && queryConfig.params ? queryConfig.params[param] : null));
+  private toFields(newParams: string[], queryConfig: QueryConfig): FormField[] {
+    return newParams.map(param => this.toField(param, queryConfig && queryConfig.params ? queryConfig.params[param] : null))
+      .filter(field => field) as FormField[];
   }
 
   private toField(param: string, config: FormFieldSupport | null): FormField | null {
@@ -145,12 +147,12 @@ export class ResourceSearchDialogComponent implements OnInit {
       .build();
   }
 
-  private getResourceConfig(): PropertyConfig {
-    const resourceName = this.descriptor.getName();
+  private getResourceConfig(): PropertyConfig | null {
+    const resourceName = this.descriptor.getName()!;
     return this.config.itemConfigs ? this.config.itemConfigs[resourceName] : null;
   }
 
-  private getQueryConfig(query: string): QueryConfig {
+  private getQueryConfig(query: string): QueryConfig | null {
     const config = this.getResourceConfig();
     return config && config.queries ? config.queries[query] : null;
   }

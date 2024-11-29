@@ -26,7 +26,8 @@ import {MatInput} from '@angular/material/input';
     NgForOf,
     MatInput
   ],
-  styleUrls: ['./association-field.component.sass', '../form-fields.sass']
+  styleUrls: ['./association-field.component.sass', '../form-fields.sass'],
+  standalone: true
 })
 export class AssociationFieldComponent implements OnInit, AssociationFieldComponentInput {
   @Input()

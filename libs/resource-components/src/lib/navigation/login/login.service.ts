@@ -49,7 +49,7 @@ export class LoginService {
     const dialogRef = this.dialog.open(this.customComponentService.getByDefaultComponent(LoginDialogComponent));
     dialogRef.afterClosed().subscribe((loginForm: LoginDialogResult) => {
       if (loginForm && !loginForm.isCancelled()) {
-        this.loginRequest(loginForm.loginData);
+        this.loginRequest(loginForm.loginData!);
       }
     });
   }

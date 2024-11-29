@@ -35,7 +35,7 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
         new HalPropertyFactory(this.halResourceFactory, childDesc as ResourceObjectDescriptor)
           .asFactoryOfArrayItems(true)) as ArrayProperty<HalResourceObject>;
     } else if (associationOrArrayOfAssociations && typeof associationOrArrayOfAssociations === 'object') {
-      return this.halResourceFactory.create(propertyName, associationOrArrayOfAssociations,
+      return this.halResourceFactory.create(propertyName, associationOrArrayOfAssociations as HalResourceObject,
         childDesc ? (childDesc as AssociationDescriptor).getResource() : null);
     }
     throw new Error(`${propertyName} is not an embedded resource or an array of resources`);
@@ -48,7 +48,7 @@ export class HalPropertyFactory implements PropertyFactory<HalValueType> {
       return new ArrayPropertyImpl(name, value, childDesc as ArrayDescriptor, childFactory.asFactoryOfArrayItems());
     } else if (value && typeof value === 'object') {
       if (value._links) {
-        return this.halResourceFactory.create(name, value, childDesc as ResourceObjectDescriptor);
+        return this.halResourceFactory.create(name, value as HalResourceObject, childDesc as ResourceObjectDescriptor);
       } else {
         return new ObjectPropertyImpl(name, value, childDesc as ObjectDescriptor, childFactory);
       }

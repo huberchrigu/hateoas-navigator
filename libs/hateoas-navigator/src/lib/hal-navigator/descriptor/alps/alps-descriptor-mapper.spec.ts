@@ -13,7 +13,7 @@ describe('AlpsDescriptorMapper', () => {
       id: 'get-resources'
     } as AlpsDescriptor;
     const testee = new AlpsDescriptorMapper(representation, [representation, getItem, getCollection]);
-    const actions = testee.toBuilder().actions;
+    const actions = testee.toBuilder().actions!;
 
     expect(actions.getAll().length).toBe(2);
     expect(actions.isGetItemEnabled()).toBeTruthy();

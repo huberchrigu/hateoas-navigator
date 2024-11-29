@@ -1,13 +1,11 @@
-import {GenericArrayValueType, JsonValueType} from '../value-type';
+import {ArrayValueType, GenericArrayValueType, JsonValueType} from '../value-type';
 import {AbstractProperty} from '../abstract-property';
 import {PropertyFactory} from '../factory/property-factory';
 import {ArrayDescriptor, GenericPropertyDescriptor} from '../../descriptor';
 import {GenericProperty} from '../generic-property';
 import {ArrayProperty} from './array-property';
 
-export class ArrayPropertyImpl<CHILDREN extends JsonValueType>
-  extends AbstractProperty<GenericArrayValueType<CHILDREN>, ArrayDescriptor>
-  implements ArrayProperty<CHILDREN> {
+export class ArrayPropertyImpl<CHILDREN extends JsonValueType> extends AbstractProperty<GenericArrayValueType<CHILDREN>, ArrayDescriptor> implements ArrayProperty<CHILDREN> {
   constructor(
     name: string,
     value: GenericArrayValueType<CHILDREN>,
@@ -21,8 +19,8 @@ export class ArrayPropertyImpl<CHILDREN extends JsonValueType>
    * If this property was flagged to be a URI (i.e. it is an embedded resource object), extract the URI.
    * Transform other values otherwise.
    */
-  getFormValue(): any[] {
-    return this.getArrayItems().map(item => item.getFormValue());
+  getFormValue(): ArrayValueType {
+    return this.getArrayItems().map(item => item.getFormValue()) as ArrayValueType;
   }
 
   getArrayItems(): GenericProperty<CHILDREN, GenericPropertyDescriptor>[] {
