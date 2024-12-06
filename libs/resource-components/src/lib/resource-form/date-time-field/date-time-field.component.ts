@@ -8,7 +8,6 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {MatFormField} from '@angular/material/form-field';
 import {NgIf} from '@angular/common';
 import {MatInput} from '@angular/material/input';
-import {MatTimepicker, MatTimepickerInput} from '@angular/material/timepicker';
 
 @Component({
   templateUrl: './date-time-field.component.html',
@@ -19,9 +18,7 @@ import {MatTimepicker, MatTimepickerInput} from '@angular/material/timepicker';
     ReactiveFormsModule,
     MatDatepicker,
     NgIf,
-    MatInput,
-    MatTimepicker,
-    MatTimepickerInput
+    MatInput
   ],
   styleUrls: ['./date-time-field.component.sass', '../form-fields.sass'],
   standalone: true

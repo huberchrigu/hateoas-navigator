@@ -8,9 +8,6 @@
   <input matInput type="time" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
 </mat-form-field>
 
-<mat-form-field class="cmp-full-width" *ngIf="getType() === 'datetime'">
-  <input matInput [matDatepicker]="datePicker" [matTimepicker]="timePicker" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">>
-  <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-  <mat-datepicker #datePicker></mat-datepicker>
-  <mat-timepicker #timePicker></mat-timepicker>
+<mat-form-field class="cmp-full-width" *ngIf="getType() === 'datetime'"><!-- TODO: This solutino currently does not work, as the timezone is missing -->
+  <input matInput type="datetime-" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
 </mat-form-field>
