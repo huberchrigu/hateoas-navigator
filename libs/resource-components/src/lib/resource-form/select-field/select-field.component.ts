@@ -6,7 +6,7 @@ import {SelectFieldComponentInput} from './select-field-component-input';
 import {CustomizableComponentType} from '../../customizable';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {MatFormField} from '@angular/material/form-field';
-import {NgForOf} from '@angular/common';
+import {JsonPipe} from '@angular/common';
 
 @Component({
   templateUrl: './select-field.component.html',
@@ -15,7 +15,7 @@ import {NgForOf} from '@angular/common';
     MatFormField,
     ReactiveFormsModule,
     MatOption,
-    NgForOf
+    JsonPipe
   ],
   styleUrls: ['../form-fields.sass'],
   standalone: true

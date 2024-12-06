@@ -27,6 +27,7 @@ export class PropertyDescriptorMockBuilder<T extends GenericPropertyDescriptor> 
     const keys: (keyof T)[] = Object.keys(this.methodNames) as (keyof T)[];
     keys.push('orNull', 'orEmpty');
     const mock = jasmine.createSpyObj<T>('propDescriptor', keys as any as SpyObjMethodNames<T>);
+    // @ts-ignore
     Object.keys(this.methodNames).forEach(key => mock[key].and.returnValue(this.methodNames[key]));
     return this.postConstruct(mock);
   }
@@ -78,13 +79,15 @@ export class AssociationDescriptorMockBuilder extends PropertyDescriptorMockBuil
     return this;
   }
 
+  // @ts-ignore
   protected postConstruct(spy: jasmine.SpyObj<AssociationDescriptor>): jasmine.SpyObj<AssociationDescriptor> {
     const resourceName = this.methodNames.getAssociatedResourceName;
     if (resourceName) {
       spy.resolveResource.and.callFake((descriptorProvider: ResourceDescriptorProvider) => descriptorProvider.resolve(resourceName));
     }
     if (spy.setResolvedResource && !this.methodNames.getResource) {
-      let resource;
+      // @ts-ignore
+      let resource: ResourceObjectDescriptor;
       spy.setResolvedResource.and.callFake(r => resource = r);
       spy.getResource.and.callFake(() => resource);
     }

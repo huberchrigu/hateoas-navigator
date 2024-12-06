@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ItemPropertiesComponent} from './item-properties.component';
 import {By} from '@angular/platform-browser';
@@ -10,12 +10,12 @@ describe('ItemPropertiesComponent', () => {
   let fixture: ComponentFixture<ItemPropertiesComponent>;
   let arrayProperty: JsonArrayProperty;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ItemPropertiesComponent]
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ItemPropertiesComponent]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ItemPropertiesComponent);
@@ -34,6 +34,7 @@ describe('ItemPropertiesComponent', () => {
    * Jasmine mock cannot be used due to `instanceof` usage.
    */
   function initArrayProperty() {
+    // @ts-ignore
     arrayProperty = new ArrayPropertyImpl('array', [], {getTitle: () => 'Array'} as ArrayDescriptor, null);
   }
 });

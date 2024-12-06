@@ -20,7 +20,7 @@ describe('FormControlFactory', () => {
     ];
     const resourceProperty = createSpyObj<JsonArrayProperty>('resourceProperty', ['getFormValue']);
     resourceProperty.getFormValue.and.returnValue([{value: 1}, {value: 2}]);
-    const properties = {
+    const properties: { [key: string]: any } = {
       array: resourceProperty
     };
     const item = {
@@ -29,7 +29,7 @@ describe('FormControlFactory', () => {
     const testee = new FormControlFactory(item);
     const result = testee.getControls(fields);
     expect(Object.keys(result).length).toBe(1);
-    const arrayControl = result.array as UntypedFormArray;
+    const arrayControl = result['array'] as UntypedFormArray;
     expect(arrayControl).not.toBeNull();
     expect(arrayControl.controls.length).toBe(2);
     expect(arrayControl.controls[0].value).toEqual({value: 1});
@@ -38,7 +38,7 @@ describe('FormControlFactory', () => {
 
 function createFieldMock<T extends FormField>(
   name: string,
-  type: FormFieldType, mockedMethods: { [NAME in keyof T]?: any } = null
+  type: FormFieldType, mockedMethods: { [NAME in keyof T]?: any } | null = null
 ): FormField {
   const methodNames = {
     getName: name,
@@ -47,6 +47,7 @@ function createFieldMock<T extends FormField>(
     isRequired: false
   } as SpyObjMethodNames<T>;
   if (mockedMethods) {
+    // @ts-ignore
     Object.keys(mockedMethods).forEach(key => methodNames[key] = mockedMethods[key]);
   }
   return jasmine.createSpyObj<T>('formControlFactory', methodNames);

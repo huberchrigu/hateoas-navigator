@@ -27,7 +27,7 @@ describe('DefaultDescriptorProvider', () => {
     descriptor: {
       id: 'resource-representation',
       descriptor: []
-    } as AlpsDescriptor
+    } as unknown as AlpsDescriptor
   } as AlpsDescriptorAdapter;
   schemaService.getAlps.and.returnValue(of({
     getRepresentationDescriptor: () => alpsDescriptor,

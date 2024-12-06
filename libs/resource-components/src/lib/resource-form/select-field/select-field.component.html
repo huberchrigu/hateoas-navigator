@@ -1,7 +1,9 @@
 <mat-form-field class="cmp-full-width">
+  <p>DEBUG: {{ field.getOptions() | json }}</p>
   <mat-select [placeholder]="field.getTitle()" [formControl]="control">
-    <mat-option *ngFor="let option of field.getOptions()" [value]="option">
-      {{ option }}
-    </mat-option>
+    @for (option of field.getOptions(); track option) {
+      <p>DEBUG: {{ option }}</p>
+      <mat-option [value]="option">{{ option }}</mat-option>
+    }
   </mat-select>
 </mat-form-field>

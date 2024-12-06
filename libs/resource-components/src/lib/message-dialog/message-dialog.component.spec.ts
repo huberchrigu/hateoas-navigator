@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {MessageDialogComponent} from './message-dialog.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
@@ -8,9 +8,9 @@ describe('MessageDialogComponent', () => {
   let component: MessageDialogComponent;
   let fixture: ComponentFixture<MessageDialogComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [MessageDialogComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MessageDialogComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {
@@ -21,7 +21,7 @@ describe('MessageDialogComponent', () => {
         }]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MessageDialogComponent);

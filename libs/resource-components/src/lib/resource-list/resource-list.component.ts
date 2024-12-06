@@ -15,7 +15,7 @@ import {ResourceSearchDialogComponent} from './search-dialog/resource-search-dia
 import {ResourceSearchDialogData} from './search-dialog';
 import {ResourceSearchDialogResult} from './search-dialog';
 import {CustomComponentService} from '../customizable/custom-component.service';
-import {MatCell, MatColumnDef, MatHeaderCell, MatHeaderRow, MatRow, MatTable} from '@angular/material/table';
+import {MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable} from '@angular/material/table';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatAnchor, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -36,7 +36,11 @@ import {NgForOf, NgIf} from '@angular/common';
     MatTable,
     MatColumnDef,
     NgForOf,
-    NgIf
+    NgIf,
+    MatHeaderRowDef,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatRowDef
   ],
   styleUrls: ['./resource-list.component.css'],
   standalone: true

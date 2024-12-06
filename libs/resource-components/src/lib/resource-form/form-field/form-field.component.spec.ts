@@ -1,28 +1,29 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FormFieldComponent} from './form-field.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {FormField} from 'hateoas-navigator';
-import {UntypedFormControl} from '@angular/forms';
+import {FormField, SubFormField} from 'hateoas-navigator';
+import {UntypedFormGroup} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import SpyObj = jasmine.SpyObj;
-import {SubFormField} from 'hateoas-navigator';
+import {DUMMY_CUSTOM_COMPONENT_SERVICE_PROVIDER} from '../../customizable/dummy.component';
 
 describe('FormFieldComponent', () => {
   let component: FormFieldComponent;
   let fixture: ComponentFixture<FormFieldComponent>;
-  let control: SpyObj<UntypedFormControl>;
+  let control: SpyObj<UntypedFormGroup>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [FormFieldComponent],
-      schemas: [NO_ERRORS_SCHEMA]
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormFieldComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [DUMMY_CUSTOM_COMPONENT_SERVICE_PROVIDER]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
-    control = jasmine.createSpyObj<UntypedFormControl>('FormControl', ['hasError']);
+    control = jasmine.createSpyObj<UntypedFormGroup>('FormControl', ['hasError']);
     fixture = TestBed.createComponent(FormFieldComponent);
     component = fixture.componentInstance;
     component.field = new SubFormField('field', true, false, 'Field', [{} as FormField]);
@@ -52,3 +53,4 @@ describe('FormFieldComponent', () => {
     return fixture.debugElement.query(By.css('mat-error'));
   }
 });
+

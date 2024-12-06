@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceItemComponent} from './resource-item.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, provideRoutes} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {ResourceService} from 'hateoas-navigator';
 import {VersionedResourceObjectProperty} from 'hateoas-navigator';
@@ -12,7 +12,7 @@ import {ResourceObjectDescriptor} from 'hateoas-navigator';
 import {of} from 'rxjs';
 import {PrimitivePropertyImpl} from 'hateoas-navigator';
 import {ResourceObjectPropertyFactoryService} from 'hateoas-navigator';
-import {CustomComponentService} from '../customizable/custom-component.service';
+import {DUMMY_CUSTOM_COMPONENT_SERVICE_PROVIDER} from '../customizable/dummy.component';
 
 describe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
@@ -24,7 +24,7 @@ describe('ResourceItemComponent', () => {
     isUpdateEnabled: () => true
   } as ResourceActions;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     versionedResourceObject = jasmine.createSpyObj<VersionedResourceObjectProperty>('resourceObject',
       ['getChildProperties', 'getDescriptor', 'getOtherLinks']);
     versionedResourceObject.getChildProperties.and.returnValue([
@@ -36,8 +36,8 @@ describe('ResourceItemComponent', () => {
     } as ResourceObjectDescriptor);
     versionedResourceObject.getOtherLinks.and.returnValue([]);
 
-    TestBed.configureTestingModule({
-      declarations: [ResourceItemComponent],
+    await TestBed.configureTestingModule({
+      imports: [ResourceItemComponent],
       providers: [
         {
           provide: ActivatedRoute, useValue: {
@@ -48,15 +48,15 @@ describe('ResourceItemComponent', () => {
           }
         },
         {provide: MatDialog, useValue: {}},
-        {provide: Router, useValue: {}},
+        provideRoutes([]),
         {provide: ResourceService, useValue: {}},
         {provide: ResourceObjectPropertyFactoryService, useValue: {}},
-        {provide: CustomComponentService, useValue: {}}
+        DUMMY_CUSTOM_COMPONENT_SERVICE_PROVIDER
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ResourceItemComponent);

@@ -1,36 +1,37 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceFormComponent} from './resource-form.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {GenericPropertyDescriptor, ResourceService} from 'hateoas-navigator';
-import {ActivatedRoute, Data, Router} from '@angular/router';
+import {ActivatedRoute, Data, provideRoutes} from '@angular/router';
 import createSpyObj = jasmine.createSpyObj;
 import {SubFormField} from 'hateoas-navigator';
 import {FormFieldBuilder} from 'hateoas-navigator';
 import {FormField} from 'hateoas-navigator';
 import {of} from 'rxjs';
+import {CustomComponentService} from '../customizable/custom-component.service';
 
 describe('ResourceFormComponent', () => {
   let component: ResourceFormComponent;
   let fixture: ComponentFixture<ResourceFormComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
       const resourceDescriptor = jasmine.createSpyObj<GenericPropertyDescriptor>('resourceDescriptor',
         ['toFormFieldBuilder', 'getTitle']);
       const form = {
         getSubFields: () => []
-      } as SubFormField as FormField;
+      } as unknown as SubFormField as FormField;
       resourceDescriptor.toFormFieldBuilder.and.returnValue({
         build: () => form
       } as FormFieldBuilder);
       resourceDescriptor.getTitle.and.returnValue('Resource');
 
-      TestBed.configureTestingModule({
-        declarations: [ResourceFormComponent],
+      await TestBed.configureTestingModule({
+        imports: [ResourceFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
         providers: [
           {provide: ResourceService, useValue: createSpyObj('halDocumentService', ['create', 'update'])},
-          {provide: Router, useValue: createSpyObj('router', ['navigateByUrl'])},
+          provideRoutes([]),
           {
             provide: ActivatedRoute,
             useValue: {
@@ -38,10 +39,11 @@ describe('ResourceFormComponent', () => {
                 resourceDescriptor
               } as Data)
             } as ActivatedRoute
-          }
+          },
+          {provide: CustomComponentService, useFactory: () => new CustomComponentService([])}
         ]
       }).compileComponents();
-    })
+    }
   );
 
   beforeEach(() => {

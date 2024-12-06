@@ -39,6 +39,8 @@ describe('CombiningDescriptorMapper', () => {
         .toDescriptor() as ResourceObjectDescriptor;
     } catch (e) {
       console.error(e);
+      fail();
+      return;
     }
     expect(testee.getActions().isUpdateEnabled()).toBeFalsy();
     expect(testee.getActions().isCreateEnabled()).toBeTruthy();

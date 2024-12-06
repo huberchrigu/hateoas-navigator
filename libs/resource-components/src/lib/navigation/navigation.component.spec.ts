@@ -1,9 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {NavigationComponent} from './navigation.component';
 import {ResourceService, NavigationFactory} from 'hateoas-navigator';
 import {of} from 'rxjs';
-import {LoginService} from './login/login.service';
+import {LoginService} from './login';
+import {ActivatedRoute} from '@angular/router';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -12,22 +13,23 @@ describe('NavigationComponent', () => {
   const serviceMock = {
     getRootNavigation: () => of({
       getItems: () => of([])
-    } as NavigationFactory)
+    } as unknown as NavigationFactory)
   } as ResourceService;
 
   const loginMock = jasmine.createSpyObj<LoginService>(['isLoggedIn', 'getUserId']);
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [NavigationComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NavigationComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {provide: ResourceService, useValue: serviceMock},
-        {provide: LoginService, useValue: loginMock}
+        {provide: LoginService, useValue: loginMock},
+        {provide: ActivatedRoute, useValue: {}}
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NavigationComponent);
