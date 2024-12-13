@@ -12,19 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 10
+          node-version: '23'
+          cache: 'yarn'
 
-      - name: Install yarn
-        run: |
-          curl -o- -L https://yarnpkg.com/install.sh | bash -s
-          echo "::add-path::$HOME/.yarn/bin"
-
-      - name: Install dependencies
-        run: yarn install
+      - name: Install project dependencies
+        run: yarn
 
       - name: Build hateoas-navigator
         run: npm run build hateoas-navigator
