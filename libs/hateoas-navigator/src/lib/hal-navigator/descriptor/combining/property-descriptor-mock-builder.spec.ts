@@ -4,7 +4,7 @@ import {FormFieldBuilder} from 'hateoas-navigator';
 import {ArrayDescriptor, AssociationDescriptor, ObjectDescriptor, GenericPropertyDescriptor} from '../generic-property-descriptor';
 import Spy = jasmine.Spy;
 import {ResourceDescriptorProvider} from '../provider/resource-descriptor-provider';
-import {ResourceObjectDescriptor} from 'hateoas-navigator';
+import {ResourceObjectDescriptor} from '../resource-object-descriptor';
 
 export class PropertyDescriptorMockBuilder<T extends GenericPropertyDescriptor> {
   protected methodNames = {
