@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-hateoas-navigator:
+    name: hateoas-navigator build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 10
+
+      - name: Install yarn
+        run: |
+          curl -o- -L https://yarnpkg.com/install.sh | bash -s
+          echo "::add-path::$HOME/.yarn/bin"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build hateoas-navigator
+        run: npm run build hateoas-navigator
+
+      - name: Build resource-components
+        run: npm run build resource-components
+
+      - name: Build demo
+        run: npm run build demo
+
+      - name: Run Tests for hateoas-navigator
+        run: npm run test -- hateoas-navigator --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+      - name: Run Tests for resource-components
+        run: npm run ng build hateoas-navigator && npm run test -- resource-components --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+      - name: Run Tests for demo
+        run: npm run ng build hateoas-navigator && npm run ng build resource-components && npm run test -- demo --no-watch --no-progress --browsers=ChromeHeadlessCI
