@@ -1,5 +1,5 @@
-import {Component, Input} from '@angular/core';
-import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormControl, ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
 import {DatePickerField, DateTimeType} from 'hateoas-navigator';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {DateTimeFieldComponentInput} from './date-time-field-component-input';
@@ -23,12 +23,26 @@ import {MatInput} from '@angular/material/input';
   styleUrls: ['./date-time-field.component.sass', '../form-fields.sass'],
   standalone: true
 })
-export class DateTimeFieldComponent implements DateTimeFieldComponentInput {
+export class DateTimeFieldComponent implements DateTimeFieldComponentInput, OnInit {
   @Input()
   field!: DatePickerField;
 
   @Input()
   control!: UntypedFormControl;
+
+  dateTimeControl!: FormControl<string | null>;
+
+  private timezoneSuffix = ':00Z';
+
+  ngOnInit() {
+    if (this.field.getDateTimeType() === DateTimeType.DATE_TIME) {
+      this.dateTimeControl = new FormControl(this.withoutTimeZone(this.control.value));
+    }
+  }
+
+  private withoutTimeZone(time: string) {
+    return time && time.length + this.timezoneSuffix.length ? time.substring(0, time.length - this.timezoneSuffix.length) : time; // TODO: This is just a simplification
+  }
 
   getType(): string {
     switch (this.field.getDateTimeType()) {
@@ -41,6 +55,10 @@ export class DateTimeFieldComponent implements DateTimeFieldComponentInput {
       default:
         throw new Error('Missing date/time type for ' + this.field.getName());
     }
+  }
+
+  updateDateTime(event: Event) {
+    this.control.setValue(this.dateTimeControl.value + this.timezoneSuffix); // TODO: This is just a simplification
   }
 }
 

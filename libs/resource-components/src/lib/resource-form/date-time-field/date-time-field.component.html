@@ -8,6 +8,6 @@
   <input matInput type="time" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
 </mat-form-field>
 
-<mat-form-field class="cmp-full-width" *ngIf="getType() === 'datetime'"><!-- TODO: This solutino currently does not work, as the timezone is missing -->
-  <input matInput type="datetime-" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
+<mat-form-field class="cmp-full-width" *ngIf="getType() === 'datetime'">
+  <input matInput type="datetime-local" [placeholder]="field.getTitle()" [formControl]="dateTimeControl" [required]="field.isRequired()" (change)="updateDateTime($event)">
 </mat-form-field>

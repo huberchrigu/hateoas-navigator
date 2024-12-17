@@ -29,8 +29,11 @@ describe('DateTimeFieldComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should set date with timezone', () => {
     assertInputElement();
+    component.control.setValue('2020-01-01T00:00:00Z');
+    fixture.detectChanges();
+    expect(component.control.value).toBe('2020-01-01T00:00:00Z')
   });
 
   it('should support all types', () => {
