@@ -36,7 +36,7 @@ export class AssociationFieldComponent implements OnInit, AssociationFieldCompon
   @Input()
   control!: UntypedFormControl;
 
-  filteredItems!: Observable<Array<LinkItem>>;
+  filteredItems!: Observable<Array<LinkItem>>; // TODO: It seems like this is not updated correctly
   private resolvedItems: Array<LinkItem> = [];
 
   constructor(private halDocumentService: ResourceService) {
