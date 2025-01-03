@@ -20,6 +20,9 @@ export class HttpInterceptorService implements HttpInterceptor {
   constructor(private messageService: MessageService, private loginService: LoginService) {
   }
 
+  /**
+   * Handle specific response codes only. 400 will be supported with a standard response body later.
+   */
   private static getTitle(error: HttpResponse<any>) {
     const status = error.status;
     switch (status) {
