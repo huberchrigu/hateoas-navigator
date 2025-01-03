@@ -1,9 +1,10 @@
 <mat-form-field class="cmp-full-width">
-  <input [formControl]="control" matInput [placeholder]="field.getTitle()" [attr.aria-label]="field.getTitle()"
+  <mat-label>{{ field.getTitle() }}</mat-label>
+  <input type="text" [formControl]="control" matInput [placeholder]="field.getTitle()" [attr.aria-label]="field.getTitle()"
          [matAutocomplete]="auto">
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="toTitle()">
-    <mat-option *ngFor="let value of filteredItems | async" [value]="value.name">
-      <span>{{ value.title }}</span>
-    </mat-option>
+    @for (option of filteredItems | async; track option.name) {
+      <mat-option [value]="option.name">{{ option.title }}</mat-option>
+    }
   </mat-autocomplete>
 </mat-form-field>
