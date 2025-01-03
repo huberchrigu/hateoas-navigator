@@ -1,11 +1,15 @@
 <mat-form-field class="cmp-full-width" *ngIf="getType() === 'date'">
-  <input matInput [matDatepicker]="picker" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-label>{{ field.getTitle() }}</mat-label>
+  <input matInput [matDatepicker]="picker" [formControl]="control" [required]="field.isRequired()">
+  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
 
 <mat-form-field class="cmp-full-width" *ngIf="getType() === 'time'">
-  <input matInput type="time" [placeholder]="field.getTitle()" [formControl]="control" [required]="field.isRequired()">
+  <mat-label>{{ field.getTitle() }}</mat-label>
+  <input matInput [matTimepicker]="picker" [formControl]="control" [required]="field.isRequired()">
+  <mat-timepicker-toggle matIconSuffix [for]="picker"/>
+  <mat-timepicker #picker/>
 </mat-form-field>
 
 <mat-form-field class="cmp-full-width" *ngIf="getType() === 'datetime'">

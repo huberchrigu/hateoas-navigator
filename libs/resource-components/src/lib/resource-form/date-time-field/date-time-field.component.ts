@@ -5,11 +5,16 @@ import {CustomComponentService} from '../../customizable/custom-component.servic
 import {DateTimeFieldComponentInput} from './date-time-field-component-input';
 import {CustomizableComponentType} from '../../customizable';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatFormField} from '@angular/material/form-field';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {NgIf} from '@angular/common';
 import {MatInput} from '@angular/material/input';
 import moment from 'moment';
+import {MatTimepicker, MatTimepickerInput, MatTimepickerToggle} from '@angular/material/timepicker';
 
+/**
+ * Important: The Angular Material timepicker saves the value as Date, which can cause issues if the backend ignores the date part.
+ * Example: "12:00 AM" for +01:00 results in yesterday's date with time 23:00 and timezone Z.
+ */
 @Component({
   templateUrl: './date-time-field.component.html',
   imports: [
@@ -19,7 +24,11 @@ import moment from 'moment';
     ReactiveFormsModule,
     MatDatepicker,
     NgIf,
-    MatInput
+    MatInput,
+    MatTimepickerInput,
+    MatTimepickerToggle,
+    MatTimepicker,
+    MatLabel
   ],
   styleUrls: ['./date-time-field.component.sass', '../form-fields.sass'],
   standalone: true
