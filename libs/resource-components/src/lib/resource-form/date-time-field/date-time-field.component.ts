@@ -8,6 +8,7 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {MatFormField} from '@angular/material/form-field';
 import {NgIf} from '@angular/common';
 import {MatInput} from '@angular/material/input';
+import moment from 'moment';
 
 @Component({
   templateUrl: './date-time-field.component.html',
@@ -32,16 +33,10 @@ export class DateTimeFieldComponent implements DateTimeFieldComponentInput, OnIn
 
   dateTimeControl!: FormControl<string | null>;
 
-  private timezoneSuffix = ':00Z';
-
   ngOnInit() {
     if (this.field.getDateTimeType() === DateTimeType.DATE_TIME) {
       this.dateTimeControl = new FormControl(this.withoutTimeZone(this.control.value));
     }
-  }
-
-  private withoutTimeZone(time: string) {
-    return time && time.length + this.timezoneSuffix.length ? time.substring(0, time.length - this.timezoneSuffix.length) : time; // TODO: This is just a simplification
   }
 
   getType(): string {
@@ -57,8 +52,16 @@ export class DateTimeFieldComponent implements DateTimeFieldComponentInput, OnIn
     }
   }
 
-  updateDateTime(event: Event) {
-    this.control.setValue(this.dateTimeControl.value + this.timezoneSuffix); // TODO: This is just a simplification
+  updateDateTime(_event: Event) {
+    this.control.setValue(this.withTimeZone(this.dateTimeControl.value));
+  }
+
+  private withTimeZone(time: string | null) {
+    return time ? moment(time).format() : time;
+  }
+
+  private withoutTimeZone(time: string) {
+    return time ? moment(time).local().format('YYYY-MM-DDTHH:mm') : time;
   }
 }
 
