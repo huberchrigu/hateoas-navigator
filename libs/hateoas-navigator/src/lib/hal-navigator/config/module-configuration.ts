@@ -1,5 +1,5 @@
 import {InjectionToken} from '@angular/core';
-import {FormFieldType} from '../form/form-field-type';
+import {FormFieldType} from '../form';
 
 export interface ModuleConfiguration {
   /**
@@ -14,6 +14,7 @@ export interface FormFieldSupport {
   type?: FormFieldType;
   dateTimeType?: DateTimeType;
   enumOptions?: string[];
+  readOnly?: boolean;
 }
 
 export interface PropertyConfig extends FormFieldSupport {

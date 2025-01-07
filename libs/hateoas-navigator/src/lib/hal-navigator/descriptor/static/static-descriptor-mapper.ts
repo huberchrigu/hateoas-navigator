@@ -59,6 +59,7 @@ export class StaticDescriptorMapper extends DescriptorMapper<NamedConfig> {
     return formFieldBuilder
       .withDateTimeType(this.config.dateTimeType)
       .withLinkedResource(this.config.associatedResourceName)
-      .withOptions(this.config.enumOptions);
+      .withOptions(this.config.enumOptions)
+      .withReadOnly(this.config.readOnly);
   }
 }

@@ -8,7 +8,7 @@ import {CustomizableComponentType} from '../../customizable';
 import {AssociationFieldComponentInput} from './association-field-component-input';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
-import {AsyncPipe, NgForOf} from '@angular/common';
+import {AsyncPipe} from '@angular/common';
 import {MatInput} from '@angular/material/input';
 
 /**
@@ -23,7 +23,6 @@ import {MatInput} from '@angular/material/input';
     MatAutocomplete,
     MatOption,
     AsyncPipe,
-    NgForOf,
     MatInput,
     MatLabel
   ],
@@ -53,7 +52,7 @@ export class AssociationFieldComponent implements OnInit, AssociationFieldCompon
     this.filteredItems = valueAndItemsObservable.pipe(map(valueAndItems => this.filterValues(valueAndItems[0] as string, valueAndItems[1] as LinkItem[])));
   }
 
-  toTitle(name: string): string {
+  toTitle = (name: string) => {
     if (name) {
       const item = this.resolvedItems.find(resolvedItem => resolvedItem.name === name);
       return item ? item.title : 'loading...';

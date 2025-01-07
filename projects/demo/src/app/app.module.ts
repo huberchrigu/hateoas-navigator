@@ -11,6 +11,13 @@ const halNavConfig: ModuleConfiguration = {
   updateMethod: 'PATCH',
   itemConfigs: {
     meetingGroups: new PropertyConfigBuilder()
+      .withProperty('members', new PropertyConfigBuilder()
+        .with('isArrayOfAssociations', true)
+        .withArrayItems(new PropertyConfigBuilder()
+          .with('associatedResourceName', 'users')
+          .with('readOnly', false)
+          .build())
+        .build())
       .withProperty('preferences', new PropertyConfigBuilder()
         .withArrayItems(new PropertyConfigBuilder()
           .withProperty('timeSpan', new PropertyConfigBuilder()
