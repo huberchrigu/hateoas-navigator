@@ -45,9 +45,10 @@ describe('AssociationFieldComponent', () => {
   });
 
   it('should show option', () => {
+    fixture.debugElement.query(By.css('input')).nativeElement.dispatchEvent(new Event('focusin'));
     const option = fixture.debugElement.query(By.css('mat-option'));
     expect(option).not.toBeNull();
-    expect(option.attributes['value']).toBe(href);
+    expect(option.attributes['ng-reflect-value']).toBe(href);
     expect(option.nativeElement.textContent).toBe(title);
   });
 });

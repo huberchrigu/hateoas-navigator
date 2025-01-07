@@ -1,12 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {LinkField, ResourceService} from 'hateoas-navigator';
-import {combineLatest, Observable} from 'rxjs';
+import {combineLatest, Observable, startWith, tap} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {CustomComponentService} from '../../customizable/custom-component.service';
 import {CustomizableComponentType} from '../../customizable';
 import {AssociationFieldComponentInput} from './association-field-component-input';
-import {MatFormField} from '@angular/material/form-field';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
 import {AsyncPipe, NgForOf} from '@angular/common';
 import {MatInput} from '@angular/material/input';
@@ -24,7 +24,8 @@ import {MatInput} from '@angular/material/input';
     MatOption,
     AsyncPipe,
     NgForOf,
-    MatInput
+    MatInput,
+    MatLabel
   ],
   styleUrls: ['./association-field.component.sass', '../form-fields.sass'],
   standalone: true
@@ -34,32 +35,30 @@ export class AssociationFieldComponent implements OnInit, AssociationFieldCompon
   field!: LinkField;
 
   @Input()
-  control!: UntypedFormControl;
+  control!: FormControl<string>;
 
-  filteredItems!: Observable<Array<LinkItem>>; // TODO: It seems like this is not updated correctly
+  filteredItems!: Observable<Array<LinkItem>>;
   private resolvedItems: Array<LinkItem> = [];
 
   constructor(private halDocumentService: ResourceService) {
   }
 
   ngOnInit() {
-    const allItems = this.initItems();
-    const valueChanges = this.control.valueChanges;
+    const allItems = this.initItems().pipe(
+      startWith([]),
+      tap((items: LinkItem[]) => this.resolvedItems = items)
+    );
+    const valueChanges = this.control.valueChanges.pipe(startWith(''));
     const valueAndItemsObservable = combineLatest([valueChanges, allItems]);
-    this.filteredItems = valueAndItemsObservable.pipe(map(valueAndItems => this.filterValues(valueAndItems[0], valueAndItems[1])));
-    this.initItems().subscribe(all => {
-      this.updateItems(all);
-    });
+    this.filteredItems = valueAndItemsObservable.pipe(map(valueAndItems => this.filterValues(valueAndItems[0] as string, valueAndItems[1] as LinkItem[])));
   }
 
-  toTitle(): (name: any) => string {
-    return name => {
-      if (name) {
-        const item = this.resolvedItems.find(resolvedItem => resolvedItem.name === name);
-        return item ? item.title : 'loading...';
-      }
-      return '';
-    };
+  toTitle(name: string): string {
+    if (name) {
+      const item = this.resolvedItems.find(resolvedItem => resolvedItem.name === name);
+      return item ? item.title : 'loading...';
+    }
+    return '';
   }
 
   private filterValues(value: string, items: Array<LinkItem>): Array<LinkItem> {
@@ -79,14 +78,6 @@ export class AssociationFieldComponent implements OnInit, AssociationFieldCompon
           title: '' + item.getDisplayValue()
         };
       })));
-  }
-
-  /**
-   * Set the value of the control again, so that change detection is triggered.
-   */
-  private updateItems(all: LinkItem[]) {
-    this.resolvedItems.push(...all);
-    this.control.setValue(this.control.value);
   }
 }
 

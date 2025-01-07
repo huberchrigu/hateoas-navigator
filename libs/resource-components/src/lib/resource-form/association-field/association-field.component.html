@@ -1,9 +1,8 @@
 <mat-form-field class="cmp-full-width">
   <mat-label>{{ field.getTitle() }}</mat-label>
-  <input type="text" [formControl]="control" matInput [placeholder]="field.getTitle()" [attr.aria-label]="field.getTitle()"
-         [matAutocomplete]="auto">
-  <mat-autocomplete #auto="matAutocomplete" [displayWith]="toTitle()">
-    @for (option of filteredItems | async; track option.name) {
+  <input type="text" [formControl]="control" matInput [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="toTitle">
+    @for (option of filteredItems | async; track option) {
       <mat-option [value]="option.name">{{ option.title }}</mat-option>
     }
   </mat-autocomplete>
